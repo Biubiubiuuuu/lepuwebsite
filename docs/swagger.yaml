@@ -1,0 +1,686 @@
+definitions:
+  entity.EditUser:
+    properties:
+      QQ:
+        description: QQ
+        type: string
+      email:
+        description: 邮箱
+        type: string
+      landlinenumber:
+        description: 座机号码
+        type: string
+      nickname:
+        description: 姓名
+        type: string
+      sex:
+        description: 性别 0:未知 ｜ 1:男 ｜ 2:女 （空或其他默认未知）
+        type: string
+      telephone:
+        description: 手机号码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
+  entity.EditUserPass:
+    properties:
+      new_pass:
+        description: 新密码
+        type: string
+      old_pass:
+        description: 旧密码
+        type: string
+    type: object
+  entity.ResponseData:
+    properties:
+      data:
+        additionalProperties: true
+        description: 返回数据
+        type: object
+      message:
+        description: 提示信息
+        type: string
+      status:
+        description: 成功失败标志；true：成功 、false：失败
+        type: boolean
+    type: object
+  entity.UserFindStoreRequest:
+    properties:
+      description:
+        description: 详细描述
+        type: string
+      industry_id:
+        description: 经营业态ID
+        type: integer
+      lots:
+        description: 考虑地段
+        items:
+          type: string
+        type: array
+      max_area:
+        description: 最大面积（单位：平方米）
+        type: number
+      max_rent:
+        description: 最高租金（单位：元/月）
+        type: number
+      min_area:
+        description: 最小面积（单位：平方米）
+        type: number
+      min_rent:
+        description: 最低租金（单位：元/月）
+        type: number
+      nickname:
+        description: 联系人
+        type: string
+      store_type_id:
+        description: 店铺类型ID
+        type: integer
+      telephone:
+        description: 联系手机
+        type: string
+      title:
+        description: 标题
+        type: string
+    type: object
+  entity.UserLogin:
+    properties:
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
+  entity.UserRegister:
+    properties:
+      code:
+        description: 验证码
+        type: string
+      password:
+        description: 密码
+        type: string
+      telephone:
+        description: 手机号码
+        type: string
+    type: object
+info:
+  contact: {}
+  license: {}
+paths:
+  /api/v1/basic/areatype:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查询面积分类
+      tags:
+      - 基础数据
+  /api/v1/basic/city:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 省代码
+        in: query
+        name: province_code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 根据省代码获取城市
+      tags:
+      - 基础数据
+  /api/v1/basic/district:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 城市代码
+        in: query
+        name: city_code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 根据城市代码获取区
+      tags:
+      - 基础数据
+  /api/v1/basic/districts:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 获取所有区
+      tags:
+      - 基础数据
+  /api/v1/basic/enableIndustry:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查询已启用行业类型
+      tags:
+      - 基础数据
+  /api/v1/basic/enableStoreType:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查询已启用店铺类型
+      tags:
+      - 基础数据
+  /api/v1/basic/industry:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查询行业类型
+      tags:
+      - 基础数据
+  /api/v1/basic/industryRange:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查询适合经营范围
+      tags:
+      - 基础数据
+  /api/v1/basic/province:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 获取省
+      tags:
+      - 基础数据
+  /api/v1/basic/renttype:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查询租金分类
+      tags:
+      - 基础数据
+  /api/v1/basic/storeType:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查询店铺类型
+      tags:
+      - 基础数据
+  /api/v1/basic/street:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 区代码
+        in: query
+        name: district_code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 根据区代码获取街道
+      tags:
+      - 基础数据
+  /api/v1/common/verificationcode:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 手机号码
+        in: query
+        name: tel
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 获取验证码
+      tags:
+      - 公共接口
+  /api/v1/user:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查看用户信息
+      tags:
+      - 用户
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.EditUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改用户信息
+      tags:
+      - 用户
+  /api/v1/user/edituserpass:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.EditUserPass'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改用户密码
+      tags:
+      - 用户
+  /api/v1/user/findStore:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UserFindStoreRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 我要找铺
+      tags:
+      - 用户
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UserFindStoreRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改我要找铺信息
+      tags:
+      - 用户
+  /api/v1/user/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 用户登录
+      tags:
+      - 用户
+  /api/v1/user/propertyInfo:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查看用户已发布物业信息
+      tags:
+      - 用户
+  /api/v1/user/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UserRegister'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 注册
+      tags:
+      - 用户
+  /api/v1/user/storetransfer:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 经营业态ID
+        in: formData
+        name: industry_id
+        required: true
+        type: string
+      - description: 店铺类型
+        in: formData
+        name: store_type_id
+        required: true
+        type: string
+      - description: 可否空转
+        in: formData
+        name: idling
+        required: true
+        type: boolean
+      - description: 面积（单位：平方米）
+        in: formData
+        name: area
+        required: true
+        type: string
+      - description: 租金（单位：元/月）
+        in: formData
+        name: rent
+        required: true
+        type: string
+      - description: 转让费用（单位：万元 不录入则显示为面议）
+        in: formData
+        name: transfer_fee
+        type: string
+      - description: 适合经营范围id，多个用，拼接
+        in: formData
+        name: industry_ranges
+        required: true
+        type: string
+      - description: 图片
+        in: formData
+        name: image
+        type: file
+      - description: 标题
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: 联系人
+        in: formData
+        name: nickname
+        required: true
+        type: string
+      - description: 联系手机
+        in: formData
+        name: telephone
+        required: true
+        type: string
+      - description: 省代码
+        in: formData
+        name: province_code
+        required: true
+        type: string
+      - description: 城市代码
+        in: formData
+        name: city_code
+        required: true
+        type: string
+      - description: 区代码
+        in: formData
+        name: district_code
+        required: true
+        type: string
+      - description: 街道代码
+        in: formData
+        name: street_code
+        type: string
+      - description: 详细地址
+        in: formData
+        name: address
+        required: true
+        type: string
+      - description: 详细描述
+        in: formData
+        name: description
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 店铺转让
+      tags:
+      - 用户
+    put:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 经营业态ID
+        in: formData
+        name: industry_id
+        required: true
+        type: string
+      - description: 店铺类型
+        in: formData
+        name: store_type_id
+        required: true
+        type: string
+      - description: 可否空转
+        in: formData
+        name: idling
+        required: true
+        type: boolean
+      - description: 面积（单位：平方米）
+        in: formData
+        name: area
+        required: true
+        type: string
+      - description: 是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中
+        in: formData
+        name: in_operation
+        required: true
+        type: string
+      - description: 租金（单位：元/月）
+        in: formData
+        name: rent
+        required: true
+        type: string
+      - description: 转让费用（单位：万元 不录入则显示为面议）
+        in: formData
+        name: transfer_fee
+        type: string
+      - description: 适合经营范围id，多个用，拼接
+        in: formData
+        name: industry_ranges
+        required: true
+        type: string
+      - description: 图片
+        in: formData
+        name: image
+        type: file
+      - description: 标题
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: 联系人
+        in: formData
+        name: nickname
+        required: true
+        type: string
+      - description: 联系手机
+        in: formData
+        name: telephone
+        required: true
+        type: string
+      - description: 省代码
+        in: formData
+        name: province_code
+        required: true
+        type: string
+      - description: 城市代码
+        in: formData
+        name: city_code
+        required: true
+        type: string
+      - description: 区代码
+        in: formData
+        name: district_code
+        required: true
+        type: string
+      - description: 街道代码
+        in: formData
+        name: street_code
+        type: string
+      - description: 详细地址
+        in: formData
+        name: address
+        required: true
+        type: string
+      - description: 详细描述
+        in: formData
+        name: description
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改店铺转让信息
+      tags:
+      - 用户
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
