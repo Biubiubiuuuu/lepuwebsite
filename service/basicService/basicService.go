@@ -144,11 +144,10 @@ func QueryIndustry() (res entity.ResponseData) {
 }
 
 // 查询已启用经营行业范围
-func QueryEnableIndustryRange() (res entity.ResponseData) {
+func QueryEnableIndustryByParentID() (res entity.ResponseData) {
 	data := make(map[string]interface{})
-	i := model.Industry{}
-	industrys := i.QueryEnableIndustryRange()
-	data["industryrange"] = industrys
+	industrys := model.QueryEnableIndustryByParentID()
+	data["industrys"] = industrys
 	res.Data = data
 	res.Status = true
 	res.Message = "获取成功"

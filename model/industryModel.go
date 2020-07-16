@@ -52,21 +52,15 @@ func (i *Industry) QueryIndustry() (industrys []Industry) {
 	return
 }
 
-// 删除行业(可批量)
-func (i *Industry) DeleteIndustry(ids []int64) error {
+// 删除行业类型，返回受影响行数
+func DelIndustry(ids []int64) int64 {
 	db := mysql.GetMysqlDB()
-	tx := db.Begin()
-	if err := tx.Unscoped().Delete("id in (?)", ids).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
-	tx.Commit()
-	return nil
+	return db.Where("id in (?)", ids).Unscoped().Delete(&Industry{}).RowsAffected
 }
 
-// 查询已启用适合经营范围
-func (i *Industry) QueryEnableIndustryRange() (industrys []Industry) {
+// 查询已启用最上级行业类型
+func QueryEnableIndustryByParentID() (industrys []Industry) {
 	db := mysql.GetMysqlDB()
-	db.Where("is_enable = ? AND parent_id IN (SELECT id FROM industry WHERE parent_id = 0)", true).Order("sort desc").Find(&industrys)
+	db.Where("is_enable = true AND parent_id = 0").Order("sort desc").Find(&industrys)
 	return
 }

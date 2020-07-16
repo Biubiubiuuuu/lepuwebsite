@@ -37,14 +37,14 @@ func (r *RentType) QueryRentType() (rentTypes []RentType) {
 	return
 }
 
-// 删除租金分类(可批量)
-func (r *RentType) DeleteRentType(ids []int64) error {
+// 删除面积分类，返回受影响行数
+func DelRentType(ids []int64) int64 {
 	db := mysql.GetMysqlDB()
-	tx := db.Begin()
-	if err := tx.Unscoped().Delete("id in (?)", ids).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
-	tx.Commit()
-	return nil
+	return db.Where("id in (?)", ids).Unscoped().Delete(&RentType{}).RowsAffected
+}
+
+// 查询已添加面积范围最大值
+func (r *RentType) QueryMaxRent() error {
+	db := mysql.GetMysqlDB()
+	return db.Raw("SELECT * FROM rent_type WHERE max_rent = (SELECT MAX(max_rent) FROM rent_type)").Scan(&r).Error
 }

@@ -89,3 +89,30 @@ type UserFindStoreRequest struct {
 	MinRent     float64  `json:"min_rent"`      // 最低租金（单位：元/月）
 	MaxRent     float64  `json:"max_rent"`      // 最高租金（单位：元/月）
 }
+
+// 添加面积分类请求
+type AreaTypeRequest struct {
+	MinArea float64 `json:"min_area"` // 最小面积（单位：平方米）
+	MaxArea float64 `json:"max_area"` // 最大面积（单位：平方米）
+}
+
+// 添加租金分类请求
+type RentTypeRequest struct {
+	MinRent float64 `json:"min_rent"` // 最低租金（单位：元/月）
+	MaxRent float64 `json:"max_rent"` // 最高租金（单位：元/月）
+}
+
+// 经营业态请求
+type IndustryRequest struct {
+	Name     string `json:"name"`      // 行业名称
+	Sort     int64  `json:"sort"`      // 行业排序 越大越靠前
+	IsEnable bool   `json:"is_enable"` // 是否启用
+	ParentID int64  `json:"parent_id"` // 父类型ID
+}
+
+// 店铺类型请求
+type StoreTypeRequest struct {
+	Name     string `json:"name"`      // 类型名称
+	Sort     int64  `json:"sort"`      // 类型排序 越大越靠前
+	IsEnable bool   `json:"is_enable"` // 是否启用
+}

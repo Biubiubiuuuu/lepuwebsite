@@ -1,10 +1,546 @@
 {
     "swagger": "2.0",
     "info": {
+        "description": "{{.Description}}",
+        "title": "{{.Title}}",
         "contact": {},
-        "license": {}
+        "license": {},
+        "version": "{{.Version}}"
     },
+    "host": "{{.Host}}",
+    "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/admin/areaType": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "添加面积分类",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.AreaTypeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/areaType/{ids}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "删除面积分类",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "面积分类ID 多个用,分开",
+                        "name": "ids",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/areaType/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "修改面积分类",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "面积分类ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.AreaTypeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/industry": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "添加经营业态",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.IndustryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/industry/{ids}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "删除经营业态",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "租金分类ID 多个用,分开",
+                        "name": "ids",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/industry/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "修改经营业态",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "经营业态ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.IndustryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "用户登录",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.UserLogin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/rentType": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "添加租金分类",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.RentTypeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/rentType/{ids}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "删除租金分类",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "租金分类ID 多个用,分开",
+                        "name": "ids",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/rentType/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "修改租金分类",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "租金分类ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.RentTypeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/storeType": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "添加店铺类型",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.StoreTypeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/storeType/{ids}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "删除店铺类型",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "租金分类ID 多个用,分开",
+                        "name": "ids",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/storeType/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "修改店铺类型",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "经营业态ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.StoreTypeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/basic/areatype": {
             "get": {
                 "consumes": [
@@ -21,6 +557,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -52,6 +589,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -83,6 +621,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -105,6 +644,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -127,6 +667,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -149,6 +690,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -171,6 +713,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -193,6 +736,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -215,6 +759,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -237,6 +782,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -259,6 +805,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -290,6 +837,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -321,6 +869,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -348,6 +897,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -376,6 +926,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.EditUser"
                         }
                     }
@@ -384,6 +935,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -414,6 +966,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.EditUserPass"
                         }
                     }
@@ -422,6 +975,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -452,6 +1006,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.UserFindStoreRequest"
                         }
                     }
@@ -460,6 +1015,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -488,6 +1044,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.UserFindStoreRequest"
                         }
                     }
@@ -496,6 +1053,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -521,6 +1079,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.UserLogin"
                         }
                     }
@@ -529,6 +1088,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -556,6 +1116,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -581,6 +1142,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.UserRegister"
                         }
                     }
@@ -589,6 +1151,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -740,6 +1303,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -882,6 +1446,7 @@
                     "200": {
                         "description": "desc",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -890,6 +1455,19 @@
         }
     },
     "definitions": {
+        "entity.AreaTypeRequest": {
+            "type": "object",
+            "properties": {
+                "max_area": {
+                    "description": "最大面积（单位：平方米）",
+                    "type": "number"
+                },
+                "min_area": {
+                    "description": "最小面积（单位：平方米）",
+                    "type": "number"
+                }
+            }
+        },
         "entity.EditUser": {
             "type": "object",
             "properties": {
@@ -936,13 +1514,46 @@
                 }
             }
         },
+        "entity.IndustryRequest": {
+            "type": "object",
+            "properties": {
+                "is_enable": {
+                    "description": "是否启用",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "行业名称",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "父类型ID",
+                    "type": "integer"
+                },
+                "sort": {
+                    "description": "行业排序 越大越靠前",
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.RentTypeRequest": {
+            "type": "object",
+            "properties": {
+                "max_rent": {
+                    "description": "最高租金（单位：元/月）",
+                    "type": "number"
+                },
+                "min_rent": {
+                    "description": "最低租金（单位：元/月）",
+                    "type": "number"
+                }
+            }
+        },
         "entity.ResponseData": {
             "type": "object",
             "properties": {
                 "data": {
                     "description": "返回数据",
-                    "type": "object",
-                    "additionalProperties": true
+                    "type": "object"
                 },
                 "message": {
                     "description": "提示信息",
@@ -951,6 +1562,23 @@
                 "status": {
                     "description": "成功失败标志；true：成功 、false：失败",
                     "type": "boolean"
+                }
+            }
+        },
+        "entity.StoreTypeRequest": {
+            "type": "object",
+            "properties": {
+                "is_enable": {
+                    "description": "是否启用",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "类型名称",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "类型排序 越大越靠前",
+                    "type": "integer"
                 }
             }
         },

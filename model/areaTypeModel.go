@@ -37,14 +37,14 @@ func (a *AreaType) QueryAreaType() (AreaTypes []AreaType) {
 	return
 }
 
-// 删除面积分类(可批量)
-func (a *AreaType) DeleteAreaType(ids []int64) error {
+// 查询已添加面积范围最大值
+func (a *AreaType) QueryMaxArea() error {
 	db := mysql.GetMysqlDB()
-	tx := db.Begin()
-	if err := tx.Unscoped().Delete("id in (?)", ids).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
-	tx.Commit()
-	return nil
+	return db.Raw("SELECT * FROM area_type WHERE max_area = (SELECT MAX(max_area) FROM area_type)").Scan(&a).Error
+}
+
+// 删除面积分类，返回受影响行数
+func DelAreaType(ids []int64) int64 {
+	db := mysql.GetMysqlDB()
+	return db.Where("id in (?)", ids).Unscoped().Delete(&AreaType{}).RowsAffected
 }

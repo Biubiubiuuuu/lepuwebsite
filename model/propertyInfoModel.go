@@ -1,8 +1,9 @@
 package model
 
 import (
-	"github.com/Biubiubiuuuu/yuepuwebsite/db/mysql"
 	"strings"
+
+	"github.com/Biubiubiuuuu/yuepuwebsite/db/mysql"
 )
 
 // PropertyInfo 物业信息
@@ -153,66 +154,106 @@ func (p *PropertyInfo) QueryPropertyInfo(pageSize int, page int, args map[string
 	query = query.Joins("LEFT JOIN area_type ON area_type.id = property_info.area_type_id")
 	query = query.Joins("LEFT JOIN rent_type ON rent_type.id = property_info.rent_type_id")
 	query = query.Joins("LEFT JOIN user ON user.id = property_info.audit_id AND property_info.source_id = user.id")
-	if v, ok := args["telephone"]; ok {
+	if v, ok := args["telephone"]; ok && v.(string) != "" {
 		var buf strings.Builder
 		buf.WriteString("%")
 		buf.WriteString(v.(string))
 		buf.WriteString("%")
 		query = query.Where("property_info.telephone like ?", buf.String())
 	}
-	if v, ok := args["title"]; ok {
+	if v, ok := args["title"]; ok && v.(string) != "" {
 		var buf strings.Builder
 		buf.WriteString("%")
 		buf.WriteString(v.(string))
 		buf.WriteString("%")
 		query = query.Where("property_info.title like ?", buf.String())
 	}
-	if v, ok := args["province_code"]; ok {
+	if v, ok := args["province_code"]; ok && v.(string) != "" {
 		query = query.Where("province.code = ?", v.(string))
 	}
-	if v, ok := args["city_code"]; ok {
+	if v, ok := args["city_code"]; ok && v.(string) != "" {
 		query = query.Where("city.code = ?", v.(string))
 	}
-	if v, ok := args["district_code"]; ok {
+	if v, ok := args["district_code"]; ok && v.(string) != "" {
 		query = query.Where("district.code = ?", v.(string))
 	}
-	if v, ok := args["street_code"]; ok {
+	if v, ok := args["street_code"]; ok && v.(string) != "" {
 		query = query.Where("street.code = ?", v.(string))
 	}
-	if v, ok := args["audit"]; ok {
+	if v, ok := args["audit"]; ok && v.(string) != "" {
 		query = query.Where("property_info.audit = ?", v.(string))
 	}
-	if v, ok := args["industry_id"]; ok {
+	if v, ok := args["industry_id"]; ok && v.(string) != "" {
 		query = query.Where("property_info.industry_id = ?", v.(string))
 	}
-	if v, ok := args["area_type_id"]; ok {
+	if v, ok := args["area_type_id"]; ok && v.(string) != "" {
 		query = query.Where("property_info.area_type_id = ?", v.(string))
 	}
-	if v, ok := args["rent_type_id"]; ok {
+	if v, ok := args["rent_type_id"]; ok && v.(string) != "" {
 		query = query.Where("property_info.rent_type_id = ?", v.(string))
 	}
-	if v, ok := args["min_area"]; ok {
+	if v, ok := args["min_area"]; ok && v.(string) != "" {
 		query = query.Where("property_info.area BETWEEN ? AND ?", v.(string), v.(string))
 	}
 	v1, ok1 := args["min_area"]
 	v2, ok2 := args["max_area"]
-	if ok1 && ok2 {
+	if ok1 && ok2 && v1.(string) != "" && v2.(string) != "" {
 		query = query.Where("property_info.area BETWEEN ? AND ?", v1.(string), v2.(string))
-	} else if ok1 {
+	} else if ok1 && v1.(string) != "" {
 		query = query.Where("property_info.area >= ?", v1.(string))
-	} else if ok2 {
+	} else if ok2 && v2.(string) != "" {
 		query = query.Where("property_info.area <= ?", v2.(string))
 	}
 	v3, ok3 := args["min_rent"]
 	v4, ok4 := args["max_rent"]
-	if ok3 && ok4 {
+	if ok3 && ok4 && v3.(string) != "" && v4.(string) != "" {
 		query = query.Where("property_info.rent BETWEEN ? AND ?", v3.(string), v4.(string))
-	} else if ok3 {
+	} else if ok3 && v3.(string) != "" {
 		query = query.Where("property_info.rent >= ?", v3.(string))
-	} else if ok4 {
+	} else if ok4 && v4.(string) != "" {
 		query = query.Where("property_info.rent <= ?", v4.(string))
 	}
 	query.Count(&count)
 	query.Limit(pageSize).Offset((page - 1) * pageSize).Find(&propertyInfoScans)
 	return
+}
+
+// 查询物业信息是否关联面积分类
+func QueryPropertyInfoRelationAreaType(ids []int64) bool {
+	db := mysql.GetMysqlDB()
+	var propertyInfos []PropertyInfo
+	if count := db.Where("area_type_id in (?)", ids).Find(&propertyInfos).RowsAffected; count > 0 {
+		return true
+	}
+	return false
+}
+
+// 查询物业信息是否关联租金分类
+func QueryPropertyInfoRelationRentType(ids []int64) bool {
+	db := mysql.GetMysqlDB()
+	var propertyInfos []PropertyInfo
+	if count := db.Where("rent_type_id in (?)", ids).Find(&propertyInfos).RowsAffected; count > 0 {
+		return true
+	}
+	return false
+}
+
+// 查询物业信息是否关联行业
+func QueryPropertyInfoRelationIndustry(ids []int64) bool {
+	db := mysql.GetMysqlDB()
+	var propertyInfos []PropertyInfo
+	if count := db.Where("industry_id in (?)", ids).Find(&propertyInfos).RowsAffected; count > 0 {
+		return true
+	}
+	return false
+}
+
+// 查询物业信息是否关联店铺类型
+func QueryPropertyInfoRelationStoreTypeID(ids []int64) bool {
+	db := mysql.GetMysqlDB()
+	var propertyInfos []PropertyInfo
+	if count := db.Where("store_type_id in (?)", ids).Find(&propertyInfos).RowsAffected; count > 0 {
+		return true
+	}
+	return false
 }

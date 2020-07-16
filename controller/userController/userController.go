@@ -1,12 +1,13 @@
 package userController
 
 import (
-	"github.com/Biubiubiuuuu/yuepuwebsite/helper/configHelper"
-	"github.com/Biubiubiuuuu/yuepuwebsite/helper/fileHelper"
-	"github.com/google/uuid"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/Biubiubiuuuu/yuepuwebsite/helper/configHelper"
+	"github.com/Biubiubiuuuu/yuepuwebsite/helper/fileHelper"
+	"github.com/google/uuid"
 
 	"github.com/Biubiubiuuuu/yuepuwebsite/controller/commonController"
 	"github.com/Biubiubiuuuu/yuepuwebsite/entity"

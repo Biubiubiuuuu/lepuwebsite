@@ -40,25 +40,11 @@ func (u *User) Edit(args map[string]interface{}) error {
 //  param token
 //  return user,error
 func (u *User) QueryByToken() error {
-	return db.Where("token = ?", u.Token).First(&u).Error
+	return db.Where("token = ? AND ISNULL(token)=0 AND LENGTH(trim(token))>0", u.Token).First(&u).Error
 }
 
-// 查询用户信息 by telephone
-//  param telephone
+// 查询用户信息 by telephone or username
+//  param telephone or username
 func (u *User) QueryByUsernameOrPhone() error {
 	return db.Where("telephone = ? OR username = ?", u.Telephone, u.Username).First(&u).Error
-}
-
-// 查询网站注册用户
-func (u *User) QueryUser(pageSize int, page int) (users []User) {
-	db := mysql.GetMysqlDB()
-	db.Limit(pageSize).Offset((page - 1) * pageSize).Find(&users)
-	return
-}
-
-// 查询网站注册用户总记录数
-func (u *User) QueryUserCount() (count int) {
-	db := mysql.GetMysqlDB()
-	db.Model(&User{}).Count(&count)
-	return
 }

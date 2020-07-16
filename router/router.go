@@ -1,11 +1,13 @@
 package router
 
 import (
+	"github.com/Biubiubiuuuu/yuepuwebsite/controller/adminController"
 	"github.com/Biubiubiuuuu/yuepuwebsite/controller/basicController"
 	"github.com/Biubiubiuuuu/yuepuwebsite/controller/commonController"
 	"github.com/Biubiubiuuuu/yuepuwebsite/controller/userController"
 	"github.com/Biubiubiuuuu/yuepuwebsite/docs"
 	"github.com/Biubiubiuuuu/yuepuwebsite/helper/configHelper"
+	"github.com/Biubiubiuuuu/yuepuwebsite/middleware/adminMiddleware"
 	"github.com/Biubiubiuuuu/yuepuwebsite/middleware/crossMiddleware"
 	"github.com/Biubiubiuuuu/yuepuwebsite/middleware/errorMiddleware"
 	"github.com/Biubiubiuuuu/yuepuwebsite/middleware/jwtMiddleware"
@@ -37,6 +39,7 @@ func Init() *gin.Engine {
 	InitUser(router)
 	InitCommon(router)
 	InitBasic(router)
+	InitAdmin(router)
 	//gin swaager
 	router.GET("/swagger/*any", ginswagger.WrapHandler(swaggerFiles.Handler))
 	//404
@@ -82,5 +85,26 @@ func InitBasic(router *gin.Engine) {
 	api.GET("storeType", basicController.QueryStoreType)
 	api.GET("enableIndustry", basicController.QueryEnableIndustry)
 	api.GET("industry", basicController.QueryIndustry)
-	api.GET("industryRange", basicController.QueryEnableIndustryRange)
+	api.GET("industryRange", basicController.QueryEnableIndustryByParentID)
+}
+
+// 后台
+func InitAdmin(router *gin.Engine) {
+	api := router.Group("api/v1/admin")
+	api.POST("login", adminController.Login)
+	api.Use(jwtMiddleware.JWT(), adminMiddleware.UserTypeIsAdmin())
+	{
+		api.POST("areaType", adminController.CreateAreaType)
+		api.PUT("areaType/:id", adminController.EditAreaType)
+		api.DELETE("areaType/:ids", adminController.DelAreaType)
+		api.POST("rentType", adminController.CreateRentType)
+		api.PUT("rentType/:id", adminController.EditRentType)
+		api.DELETE("rentType/:ids", adminController.DelRentType)
+		api.POST("industry", adminController.AddIndustry)
+		api.PUT("industry/:id", adminController.EditIndustry)
+		api.DELETE("industry/:ids", adminController.DelIndustry)
+		api.POST("storeType", adminController.AddStoreType)
+		api.PUT("storeType/:id", adminController.EditStoreType)
+		api.DELETE("storeType/:ids", adminController.DelStoreType)
+	}
 }

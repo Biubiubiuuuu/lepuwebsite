@@ -1,6 +1,8 @@
 package userService
 
 import (
+	"strings"
+
 	"github.com/Biubiubiuuuu/yuepuwebsite/entity"
 	"github.com/Biubiubiuuuu/yuepuwebsite/helper/encryptHelper"
 	"github.com/Biubiubiuuuu/yuepuwebsite/helper/jwtHelper"
@@ -8,8 +10,6 @@ import (
 	"github.com/Biubiubiuuuu/yuepuwebsite/model"
 	"github.com/Biubiubiuuuu/yuepuwebsite/service/commonService"
 	"github.com/google/uuid"
-	"strings"
-	"time"
 )
 
 // 用户注册
@@ -30,22 +30,22 @@ func Register(req entity.UserRegister) (res entity.ResponseData) {
 		res.Message = "密码格式不正确，密码可包含数字、英文、!@#$&*.,字符，长度6-20"
 		return
 	}
-	v := model.Verificationcode{Tel: req.Telephone}
-	if err := v.GetVerificationcode(); err != nil {
-		res.Message = "验证码获取失败"
-		return
-	}
-	t1 := utilsHelper.TimestampToTime(v.CreateTime)
-	t2 := time.Now()
-	sub := t2.Sub(t1)
-	if sub.Seconds() > 60 {
-		res.Message = "验证码已过期，请重新获取"
-		return
-	}
-	if v.Code != req.Code {
-		res.Message = "验证码错误"
-		return
-	}
+	/* 	v := model.Verificationcode{Tel: req.Telephone}
+	   	if err := v.GetVerificationcode(); err != nil {
+	   		res.Message = "验证码获取失败"
+	   		return
+	   	}
+	   	t1 := utilsHelper.TimestampToTime(v.CreateTime)
+	   	t2 := time.Now()
+	   	sub := t2.Sub(t1)
+	   	if sub.Seconds() > 60 {
+	   		res.Message = "验证码已过期，请重新获取"
+	   		return
+	   	}
+	   	if v.Code != req.Code {
+	   		res.Message = "验证码错误"
+	   		return
+	   	} */
 	uuid, _ := uuid.NewUUID()
 	u := model.User{
 		Username:  req.Telephone,
@@ -677,3 +677,22 @@ func EditUserFindStore(token string, req entity.UserFindStoreRequest) (res entit
 	res.Message = "修改成功"
 	return
 }
+
+// 查询物业详情
+func QueryPropertyInfoByID(id int64) (res entity.ResponseData) {
+	pro := model.PropertyInfoScan{}
+	pro.ID = id
+	if err := pro.QueryPropertyInfoByID(); err != nil {
+		res.Message = "物业信息不存在"
+		return
+	}
+	data := map[string]interface{}{
+		"propertyInfo": pro,
+	}
+	res.Status = true
+	res.Data = data
+	res.Message = "查询成功"
+	return
+}
+
+// 精准匹配

@@ -135,13 +135,13 @@ func QueryIndustry(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// @Summary 查询适合经营范围
+// @Summary 查询已启用最上级行业
 // @tags 基础数据
 // @Accept  application/x-www-form-urlencoded
 // @Produce  json
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/basic/industryRange [GET]
-func QueryEnableIndustryRange(c *gin.Context) {
-	res := basicService.QueryEnableIndustryRange()
+// @Router /api/v1/basic/industryParent [GET]
+func QueryEnableIndustryByParentID(c *gin.Context) {
+	res := basicService.QueryEnableIndustryByParentID()
 	c.JSON(http.StatusOK, res)
 }

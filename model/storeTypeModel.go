@@ -51,14 +51,8 @@ func (s *StoreType) QueryStoreType() (storeTypes []StoreType) {
 	return
 }
 
-// 删除店铺类型(可批量)
-func (s *StoreType) DeleteStoreType(ids []int64) error {
+// 删除店铺类型，返回受影响行数
+func DelStoreType(ids []int64) int64 {
 	db := mysql.GetMysqlDB()
-	tx := db.Begin()
-	if err := tx.Unscoped().Delete("id in (?)", ids).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
-	tx.Commit()
-	return nil
+	return db.Where("id in (?)", ids).Unscoped().Delete(&StoreType{}).RowsAffected
 }
