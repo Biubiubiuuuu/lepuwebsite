@@ -1,4 +1,3 @@
-basePath: '{{.BasePath}}'
 definitions:
   entity.AreaTypeRequest:
     properties:
@@ -69,6 +68,7 @@ definitions:
   entity.ResponseData:
     properties:
       data:
+        additionalProperties: true
         description: 返回数据
         type: object
       message:
@@ -149,13 +149,9 @@ definitions:
         description: 手机号码
         type: string
     type: object
-host: '{{.Host}}'
 info:
   contact: {}
-  description: '{{.Description}}'
   license: {}
-  title: '{{.Title}}'
-  version: '{{.Version}}'
 paths:
   /api/v1/admin/areaType:
     post:
@@ -168,7 +164,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.AreaTypeRequest'
-          type: object
       produces:
       - application/json
       responses:
@@ -176,7 +171,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 添加面积分类
@@ -198,7 +192,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.AreaTypeRequest'
-          type: object
       produces:
       - application/json
       responses:
@@ -206,7 +199,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 修改面积分类
@@ -229,7 +221,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 删除面积分类
@@ -246,7 +237,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.IndustryRequest'
-          type: object
       produces:
       - application/json
       responses:
@@ -254,7 +244,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 添加经营业态
@@ -276,7 +265,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.IndustryRequest'
-          type: object
       produces:
       - application/json
       responses:
@@ -284,7 +272,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 修改经营业态
@@ -307,7 +294,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 删除经营业态
@@ -324,7 +310,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.UserLogin'
-          type: object
       produces:
       - application/json
       responses:
@@ -332,7 +317,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 用户登录
       tags:
       - 后台
@@ -347,7 +331,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.RentTypeRequest'
-          type: object
       produces:
       - application/json
       responses:
@@ -355,7 +338,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 添加租金分类
@@ -377,7 +359,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.RentTypeRequest'
-          type: object
       produces:
       - application/json
       responses:
@@ -385,7 +366,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 修改租金分类
@@ -408,7 +388,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 删除租金分类
@@ -425,7 +404,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.StoreTypeRequest'
-          type: object
       produces:
       - application/json
       responses:
@@ -433,7 +411,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 添加店铺类型
@@ -455,7 +432,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.StoreTypeRequest'
-          type: object
       produces:
       - application/json
       responses:
@@ -463,7 +439,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 修改店铺类型
@@ -486,7 +461,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 删除店铺类型
@@ -503,7 +477,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 查询面积分类
       tags:
       - 基础数据
@@ -524,7 +497,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 根据省代码获取城市
       tags:
       - 基础数据
@@ -545,7 +517,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 根据城市代码获取区
       tags:
       - 基础数据
@@ -560,7 +531,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 获取所有区
       tags:
       - 基础数据
@@ -575,7 +545,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 查询已启用行业类型
       tags:
       - 基础数据
@@ -590,7 +559,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 查询已启用店铺类型
       tags:
       - 基础数据
@@ -605,11 +573,10 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 查询行业类型
       tags:
       - 基础数据
-  /api/v1/basic/industryRange:
+  /api/v1/basic/industryParent:
     get:
       consumes:
       - application/x-www-form-urlencoded
@@ -620,8 +587,7 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
-      summary: 查询适合经营范围
+      summary: 查询已启用最上级行业
       tags:
       - 基础数据
   /api/v1/basic/province:
@@ -635,7 +601,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 获取省
       tags:
       - 基础数据
@@ -650,7 +615,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 查询租金分类
       tags:
       - 基础数据
@@ -665,7 +629,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 查询店铺类型
       tags:
       - 基础数据
@@ -686,7 +649,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 根据区代码获取街道
       tags:
       - 基础数据
@@ -707,10 +669,113 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 获取验证码
       tags:
       - 公共接口
+  /api/v1/propertyInfo:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 行业ID
+        in: query
+        name: industry_id
+        type: string
+      - description: 店铺类型ID
+        in: query
+        name: store_type_id
+        type: string
+      - description: 省代码
+        in: query
+        name: province_code
+        type: string
+      - description: 城市代码
+        in: query
+        name: city_code
+        type: string
+      - description: 区代码
+        in: query
+        name: district_code
+        type: string
+      - description: 街道代码
+        in: query
+        name: street_code
+        type: string
+      - description: 面积范围ID
+        in: query
+        name: area_type_id
+        type: string
+      - description: 租金范围ID
+        in: query
+        name: rent_type_id
+        type: string
+      - description: 最小面积
+        in: query
+        name: min_area
+        type: string
+      - description: 最大面积
+        in: query
+        name: max_area
+        type: string
+      - description: 最小租金
+        in: query
+        name: min_rent
+        type: string
+      - description: 最大租金
+        in: query
+        name: max_rent
+        type: string
+      - description: 模型类型 0-转让 ｜ 1-出售 ｜ 3-出租 | 4-求租 ｜ 5-求购
+        in: query
+        name: model_type
+        required: true
+        type: string
+      - description: 业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库
+        in: query
+        name: bus_type
+        type: string
+      - description: 排序 area-面积 ｜ rent-租金 ｜ created_at-发布时间（默认）
+        in: query
+        name: sort_condition
+        type: string
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 根据条件获取物业信息
+      tags:
+      - 物业信息
+  /api/v1/propertyInfo/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 物业信息ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查看物业详情
+      tags:
+      - 物业信息
   /api/v1/user:
     get:
       consumes:
@@ -722,7 +787,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 查看用户信息
@@ -738,7 +802,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.EditUser'
-          type: object
       produces:
       - application/json
       responses:
@@ -746,7 +809,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 修改用户信息
@@ -763,7 +825,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.EditUserPass'
-          type: object
       produces:
       - application/json
       responses:
@@ -771,7 +832,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 修改用户密码
@@ -788,7 +848,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.UserFindStoreRequest'
-          type: object
       produces:
       - application/json
       responses:
@@ -796,7 +855,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 我要找铺
@@ -812,7 +870,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.UserFindStoreRequest'
-          type: object
       produces:
       - application/json
       responses:
@@ -820,7 +877,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 修改我要找铺信息
@@ -837,7 +893,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.UserLogin'
-          type: object
       produces:
       - application/json
       responses:
@@ -845,7 +900,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 用户登录
       tags:
       - 用户
@@ -860,7 +914,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 查看用户已发布物业信息
@@ -877,7 +930,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/entity.UserRegister'
-          type: object
       produces:
       - application/json
       responses:
@@ -885,7 +937,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       summary: 注册
       tags:
       - 用户
@@ -982,7 +1033,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 店铺转让
@@ -1085,7 +1135,6 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-            type: object
       security:
       - ApiKeyAuth: []
       summary: 修改店铺转让信息

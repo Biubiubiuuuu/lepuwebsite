@@ -696,3 +696,14 @@ func QueryPropertyInfoByID(id int64) (res entity.ResponseData) {
 }
 
 // 精准匹配
+func SearchPropertyInfo(pageSize int, page int, args map[string]interface{}) (res entity.ResponseData) {
+	pros, count := model.QueryPropertyInfo(pageSize, page, args)
+	data := map[string]interface{}{
+		"propertyInfos": pros,
+		"count":         count,
+	}
+	res.Data = data
+	res.Message = "查询成功"
+	res.Status = true
+	return
+}

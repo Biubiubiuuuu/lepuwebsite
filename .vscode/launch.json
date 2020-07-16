@@ -8,11 +8,13 @@
             "name": "Launch",
             "type": "go",
             "request": "launch",
-            "mode": "auto",
-            "program": "${fileDirname}",
-            "env": {},
+            "mode": "debug",
+            "program": "${workspaceFolder}",
+            "env": {
+                "GOPATH":"/Users/gaochao/gopath"
+            },
             "args": [],
-            "debugServer": 4711
+            "showLog": true,
         }
     ]
 }

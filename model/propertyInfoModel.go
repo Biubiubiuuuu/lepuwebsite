@@ -17,7 +17,7 @@ type PropertyInfo struct {
 	Image          string          `gorm:"size:200;" json:"image"`                                                     // 图片
 	Video          string          `json:"video"`                                                                      // 视频（后台录入）
 	BusType        string          `gorm:"size:1;" json:"bus_type"`                                                    // 业务类型（后台录入）0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库
-	ModelType      string          `gorm:"size:1;" json:"model_type"`                                                  // 模型类型（后台录入）0-转让 ｜ 1-出售 ｜ 3-出租 | 4-求租 ｜ 5-求购
+	ModelType      string          `gorm:"size:1;" json:"model_type"`                                                  // 模型类型（后台录入）0-转让 ｜ 1-出售 ｜ 2-出租 | 3-求租 ｜ 4-求购
 	ProvinceCode   string          `gorm:"not null;size:10;" json:"province_code"`                                     // 省代码
 	CityCode       string          `gorm:"not null;size:10;" json:"city_code"`                                         // 城市代码
 	DistrictCode   string          `gorm:"not null;size:10;" json:"district_code"`                                     // 区代码
@@ -140,10 +140,10 @@ func (p *PropertyInfo) EditPropertyInfoByID(args map[string]interface{}) error {
 	return db.Model(&p).Update(args).Error
 }
 
-// 查看物业信息
-func (p *PropertyInfo) QueryPropertyInfo(pageSize int, page int, args map[string]interface{}) (propertyInfoScans []PropertyInfoScan, count int) {
+// 根据条件查看物业信息
+func QueryPropertyInfo(pageSize int, page int, args map[string]interface{}) (propertyInfoScans []PropertyInfoScan, count int) {
 	db := mysql.GetMysqlDB()
-	query := db.Table("property_info").Preload("IndustryRanges")
+	query := db.Table("property_info").Preload("IndustryRanges").Preload("Lots").Preload("Pictures")
 	query = query.Select("property_info.*,industry.name AS industry_name,province.name AS province_name,city.name AS city_name,district.name AS district_name,street.name AS street_name,store_type.name AS store_type_name,CONCAT( area_type.min_area, '~', area_type.max_area ) AS area_type_name,CONCAT( rent_type.min_rent, '~', rent_type.max_rent ) AS rent_type_name,user.nickname AS audit_name,user.nickname AS source_name")
 	query = query.Joins("LEFT JOIN industry ON industry.id = property_info.industry_id")
 	query = query.Joins("LEFT JOIN province ON province.code = property_info.province_code")
@@ -154,6 +154,7 @@ func (p *PropertyInfo) QueryPropertyInfo(pageSize int, page int, args map[string
 	query = query.Joins("LEFT JOIN area_type ON area_type.id = property_info.area_type_id")
 	query = query.Joins("LEFT JOIN rent_type ON rent_type.id = property_info.rent_type_id")
 	query = query.Joins("LEFT JOIN user ON user.id = property_info.audit_id AND property_info.source_id = user.id")
+	query = query.Joins("LEFT JOIN lot ON lot.property_info_id = property_info.id")
 	if v, ok := args["telephone"]; ok && v.(string) != "" {
 		var buf strings.Builder
 		buf.WriteString("%")
@@ -173,9 +174,6 @@ func (p *PropertyInfo) QueryPropertyInfo(pageSize int, page int, args map[string
 	}
 	if v, ok := args["city_code"]; ok && v.(string) != "" {
 		query = query.Where("city.code = ?", v.(string))
-	}
-	if v, ok := args["district_code"]; ok && v.(string) != "" {
-		query = query.Where("district.code = ?", v.(string))
 	}
 	if v, ok := args["street_code"]; ok && v.(string) != "" {
 		query = query.Where("street.code = ?", v.(string))
@@ -213,7 +211,26 @@ func (p *PropertyInfo) QueryPropertyInfo(pageSize int, page int, args map[string
 	} else if ok4 && v4.(string) != "" {
 		query = query.Where("property_info.rent <= ?", v4.(string))
 	}
+	if v, ok := args["store_type_id"]; ok && v.(string) != "" {
+		query = query.Where("property_info.store_type_id = ?", v.(string))
+	}
+	if v, ok := args["bus_type"]; ok && v.(string) != "" {
+		query = query.Where("property_info.bus_type = ?", v.(string))
+	}
+	if v, ok := args["model_type"]; ok && v.(string) != "" {
+		query = query.Where("property_info.model_type = ?", v.(string))
+		if v2, ok2 := args["district_code"]; ok2 && v2.(string) != "" && (v.(string) == "3" || v.(string) == "4") {
+			query = query.Where("lot.district_code = ?", v2.(string))
+		} else {
+			if v3, ok3 := args["district_code"]; ok3 && v3.(string) != "" {
+				query = query.Where("district.code = ?", v3.(string))
+			}
+		}
+	}
 	query.Count(&count)
+	if v, ok := args["sort_condition"]; ok && v.(string) != "" {
+		query = query.Order("property_info." + v.(string))
+	}
 	query.Limit(pageSize).Offset((page - 1) * pageSize).Find(&propertyInfoScans)
 	return
 }

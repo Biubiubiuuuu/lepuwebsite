@@ -40,11 +40,19 @@ func Init() *gin.Engine {
 	InitCommon(router)
 	InitBasic(router)
 	InitAdmin(router)
+	InitPropertyInfo(router)
 	//gin swaager
 	router.GET("/swagger/*any", ginswagger.WrapHandler(swaggerFiles.Handler))
 	//404
 	router.NoRoute(errorMiddleware.NotFound)
 	return router
+}
+
+// 物业信息接口
+func InitPropertyInfo(router *gin.Engine) {
+	api := router.Group("api/v1/propertyInfo")
+	api.GET("", userController.SearchPropertyInfo)
+	api.GET(":id", userController.QueryPropertyInfoByID)
 }
 
 // 用户

@@ -1,14 +1,9 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "{{.Description}}",
-        "title": "{{.Title}}",
         "contact": {},
-        "license": {},
-        "version": "{{.Version}}"
+        "license": {}
     },
-    "host": "{{.Host}}",
-    "basePath": "{{.BasePath}}",
     "paths": {
         "/api/v1/admin/areaType": {
             "post": {
@@ -34,7 +29,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.AreaTypeRequest"
                         }
                     }
@@ -43,7 +37,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -80,7 +73,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -118,7 +110,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.AreaTypeRequest"
                         }
                     }
@@ -127,7 +118,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -158,7 +148,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.IndustryRequest"
                         }
                     }
@@ -167,7 +156,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -204,7 +192,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -242,7 +229,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.IndustryRequest"
                         }
                     }
@@ -251,7 +237,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -277,7 +262,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.UserLogin"
                         }
                     }
@@ -286,7 +270,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -317,7 +300,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.RentTypeRequest"
                         }
                     }
@@ -326,7 +308,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -363,7 +344,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -401,7 +381,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.RentTypeRequest"
                         }
                     }
@@ -410,7 +389,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -441,7 +419,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.StoreTypeRequest"
                         }
                     }
@@ -450,7 +427,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -487,7 +463,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -525,7 +500,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.StoreTypeRequest"
                         }
                     }
@@ -534,7 +508,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -557,7 +530,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -589,7 +561,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -621,7 +592,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -644,7 +614,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -667,7 +636,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -690,7 +658,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -713,14 +680,13 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
                 }
             }
         },
-        "/api/v1/basic/industryRange": {
+        "/api/v1/basic/industryParent": {
             "get": {
                 "consumes": [
                     "application/x-www-form-urlencoded"
@@ -731,12 +697,11 @@
                 "tags": [
                     "基础数据"
                 ],
-                "summary": "查询适合经营范围",
+                "summary": "查询已启用最上级行业",
                 "responses": {
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -759,7 +724,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -782,7 +746,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -805,7 +768,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -837,7 +799,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -869,7 +830,164 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/propertyInfo": {
+            "get": {
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "物业信息"
+                ],
+                "summary": "根据条件获取物业信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "行业ID",
+                        "name": "industry_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "店铺类型ID",
+                        "name": "store_type_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "省代码",
+                        "name": "province_code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "城市代码",
+                        "name": "city_code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "区代码",
+                        "name": "district_code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "街道代码",
+                        "name": "street_code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "面积范围ID",
+                        "name": "area_type_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "租金范围ID",
+                        "name": "rent_type_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "最小面积",
+                        "name": "min_area",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "最大面积",
+                        "name": "max_area",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "最小租金",
+                        "name": "min_rent",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "最大租金",
+                        "name": "max_rent",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "模型类型 0-转让 ｜ 1-出售 ｜ 3-出租 | 4-求租 ｜ 5-求购",
+                        "name": "model_type",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库",
+                        "name": "bus_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序 area-面积 ｜ rent-租金 ｜ created_at-发布时间（默认）",
+                        "name": "sort_condition",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页大小 （默认30）",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "跳转页码",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/propertyInfo/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "物业信息"
+                ],
+                "summary": "查看物业详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "物业信息ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -897,7 +1015,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -926,7 +1043,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.EditUser"
                         }
                     }
@@ -935,7 +1051,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -966,7 +1081,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.EditUserPass"
                         }
                     }
@@ -975,7 +1089,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -1006,7 +1119,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.UserFindStoreRequest"
                         }
                     }
@@ -1015,7 +1127,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -1044,7 +1155,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.UserFindStoreRequest"
                         }
                     }
@@ -1053,7 +1163,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -1079,7 +1188,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.UserLogin"
                         }
                     }
@@ -1088,7 +1196,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -1116,7 +1223,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -1142,7 +1248,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.UserRegister"
                         }
                     }
@@ -1151,7 +1256,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -1303,7 +1407,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -1446,7 +1549,6 @@
                     "200": {
                         "description": "desc",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/entity.ResponseData"
                         }
                     }
@@ -1553,7 +1655,8 @@
             "properties": {
                 "data": {
                     "description": "返回数据",
-                    "type": "object"
+                    "type": "object",
+                    "additionalProperties": true
                 },
                 "message": {
                     "description": "提示信息",

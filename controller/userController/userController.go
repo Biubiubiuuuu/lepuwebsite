@@ -403,3 +403,63 @@ func EditUserFindStore(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, res)
 }
+
+// @Summary 根据条件获取物业信息
+// @tags 物业信息
+// @Accept application/x-www-form-urlencoded
+// @Produce  json
+// @Param industry_id query string false "行业ID"
+// @Param store_type_id query string false "店铺类型ID"
+// @Param province_code query string false "省代码"
+// @Param city_code query string false "城市代码"
+// @Param district_code query string false "区代码"
+// @Param street_code query string false "街道代码"
+// @Param area_type_id query string false "面积范围ID"
+// @Param rent_type_id query string false "租金范围ID"
+// @Param min_area query string false "最小面积"
+// @Param max_area query string false "最大面积"
+// @Param min_rent query string false "最小租金"
+// @Param max_rent query string false "最大租金"
+// @Param model_type query string true "模型类型 0-转让 ｜ 1-出售 ｜ 3-出租 | 4-求租 ｜ 5-求购"
+// @Param bus_type query string false "业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库"
+// @Param sort_condition query string false "排序 area-面积 ｜ rent-租金 ｜ created_at-发布时间（默认）"
+// @Param pageSize query string false "页大小 （默认30）"
+// @Param page query string false "跳转页码"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/propertyInfo [GET]
+func SearchPropertyInfo(c *gin.Context) {
+	args := map[string]interface{}{
+		"store_type_id":  c.Query("store_type_id"),
+		"industry_id":    c.Query("industry_id"),
+		"province_code":  c.Query("province_code"),
+		"city_code":      c.Query("city_code"),
+		"district_code":  c.Query("district_code"),
+		"street_code":    c.Query("street_code"),
+		"area_type_id":   c.Query("area_type_id"),
+		"min_area":       c.Query("min_area"),
+		"max_area":       c.Query("max_area"),
+		"min_rent":       c.Query("min_rent"),
+		"max_rent":       c.Query("max_rent"),
+		"rent_type_id":   c.Query("rent_type_id"),
+		"model_type":     c.Query("model_type"),
+		"bus_type":       c.Query("bus_type"),
+		"sort_condition": c.DefaultQuery("sort_condition", "created_at"),
+	}
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "30"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	res := userService.SearchPropertyInfo(pageSize, page, args)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查看物业详情
+// @tags 物业信息
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "物业信息ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/propertyInfo/{id} [GET]
+func QueryPropertyInfoByID(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := userService.QueryPropertyInfoByID(id)
+	c.JSON(http.StatusOK, res)
+}
