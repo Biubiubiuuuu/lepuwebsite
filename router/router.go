@@ -100,7 +100,7 @@ func InitBasic(router *gin.Engine) {
 func InitAdmin(router *gin.Engine) {
 	api := router.Group("api/v1/admin")
 	api.POST("login", adminController.Login)
-	api.Use(jwtMiddleware.JWT(), adminMiddleware.UserTypeIsAdmin())
+	api.Use(adminMiddleware.JWTAndAdmin())
 	{
 		api.POST("areaType", adminController.CreateAreaType)
 		api.PUT("areaType/:id", adminController.EditAreaType)
@@ -114,5 +114,8 @@ func InitAdmin(router *gin.Engine) {
 		api.POST("storeType", adminController.AddStoreType)
 		api.PUT("storeType/:id", adminController.EditStoreType)
 		api.DELETE("storeType/:ids", adminController.DelStoreType)
+		api.POST("department", adminController.AddDepartment)
+		api.POST("post", adminController.AddPost)
+		api.POST("role", adminController.AddRole)
 	}
 }

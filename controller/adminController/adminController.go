@@ -267,3 +267,60 @@ func DelStoreType(c *gin.Context) {
 	res := adminService.DelStoreType(ids)
 	c.JSON(http.StatusOK, res)
 }
+
+// @Summary 添加部门
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param body body entity.DepartmentRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/department [POST]
+// @Security ApiKeyAuth
+func AddDepartment(c *gin.Context) {
+	res := entity.ResponseData{}
+	req := entity.DepartmentRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		res = adminService.AddDepartment(req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 添加岗位
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param body body entity.PostRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/post [POST]
+// @Security ApiKeyAuth
+func AddPost(c *gin.Context) {
+	res := entity.ResponseData{}
+	req := entity.PostRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		res = adminService.AddPost(req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 添加角色
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param body body entity.RoleRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/role [POST]
+// @Security ApiKeyAuth
+func AddRole(c *gin.Context) {
+	res := entity.ResponseData{}
+	req := entity.RoleRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		res = adminService.AddRole(req)
+	}
+	c.JSON(http.StatusOK, res)
+}

@@ -116,3 +116,36 @@ type StoreTypeRequest struct {
 	Sort     int64  `json:"sort"`      // 类型排序 越大越靠前
 	IsEnable bool   `json:"is_enable"` // 是否启用
 }
+
+// 部门请求参数
+type DepartmentRequest struct {
+	Name     string `json:"name"`      // 部门名称
+	Sort     int64  `json:"sort"`      // 显示排序
+	Leading  string `json:"leading"`   // 负责人
+	Phone    string `json:"phone"`     // 联系电话
+	Email    string `json:"email"`     // 邮箱
+	Enable   bool   `json:"enable"`    // 是否启用
+	ParentID int64  `json:"parent_id"` // 上级ID 0为最顶级
+}
+
+// 岗位请求
+type PostRequest struct {
+	Name   string `gorm:"size:50;unique" json:"name"` // 岗位名称
+	Code   string `gorm:"size:50;unique" json:"code"` // 岗位编码
+	Sort   int64  `json:"sort"`                       // 显示排序
+	Enable bool   `json:"enable"`                     // 是否启用
+}
+
+// 角色请求
+type RoleRequest struct {
+	Name       string                 `json:"name"`        // 角色名称
+	Sort       int64                  `json:"sort"`        // 显示排序
+	Enable     bool                   `json:"enable"`      // 是否启用
+	MenuPowers []RoleRequestMenuPower `json:"menu_powers"` // 菜单权限
+}
+
+// 角色菜单权限
+type RoleRequestMenuPower struct {
+	MenuID    int64  `json:"menu_id"`    // 菜单ID
+	MenuTitle string `json:"menu_title"` // 菜单标题
+}

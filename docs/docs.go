@@ -144,6 +144,44 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/admin/department": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "添加部门",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.DepartmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/industry": {
             "post": {
                 "security": [
@@ -296,6 +334,44 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/admin/post": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "添加岗位",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.PostRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/rentType": {
             "post": {
                 "security": [
@@ -402,6 +478,44 @@ var doc = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/entity.RentTypeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/role": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "添加角色",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.RoleRequest"
                         }
                     }
                 ],
@@ -1590,6 +1704,39 @@ var doc = `{
                 }
             }
         },
+        "entity.DepartmentRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "邮箱",
+                    "type": "string"
+                },
+                "enable": {
+                    "description": "是否启用",
+                    "type": "boolean"
+                },
+                "leading": {
+                    "description": "负责人",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "部门名称",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "上级ID 0为最顶级",
+                    "type": "integer"
+                },
+                "phone": {
+                    "description": "联系电话",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "显示排序",
+                    "type": "integer"
+                }
+            }
+        },
         "entity.EditUser": {
             "type": "object",
             "properties": {
@@ -1657,6 +1804,27 @@ var doc = `{
                 }
             }
         },
+        "entity.PostRequest": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "岗位编码",
+                    "type": "string"
+                },
+                "enable": {
+                    "description": "是否启用",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "岗位名称",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "显示排序",
+                    "type": "integer"
+                }
+            }
+        },
         "entity.RentTypeRequest": {
             "type": "object",
             "properties": {
@@ -1685,6 +1853,43 @@ var doc = `{
                 "status": {
                     "description": "成功失败标志；true：成功 、false：失败",
                     "type": "boolean"
+                }
+            }
+        },
+        "entity.RoleRequest": {
+            "type": "object",
+            "properties": {
+                "enable": {
+                    "description": "是否启用",
+                    "type": "boolean"
+                },
+                "menu_powers": {
+                    "description": "菜单权限",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.RoleRequestMenuPower"
+                    }
+                },
+                "name": {
+                    "description": "角色名称",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "显示排序",
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.RoleRequestMenuPower": {
+            "type": "object",
+            "properties": {
+                "menu_id": {
+                    "description": "菜单ID",
+                    "type": "integer"
+                },
+                "menu_title": {
+                    "description": "菜单标题",
+                    "type": "string"
                 }
             }
         },

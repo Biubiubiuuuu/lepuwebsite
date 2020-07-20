@@ -379,3 +379,244 @@ func DelStoreType(ids []int64) (res entity.ResponseData) {
 	res.Message = fmt.Sprintf("成功删除%v条，失败%v条", count, int64(len(ids))-count)
 	return
 }
+
+// 添加部门
+func AddDepartment(req entity.DepartmentRequest) (res entity.ResponseData) {
+	if req.Name == "" {
+		res.Message = "部门名称不能为空"
+		return
+	}
+	dep := model.Department{}
+	dep.ID = req.ParentID
+	if err := dep.QueryDepartmentByID(); err != nil {
+		res.Message = "上级部门不存在"
+		return
+	}
+	department := model.Department{
+		Name:     req.Name,
+		ParentID: req.ParentID,
+	}
+	if err := department.QueryDepartmentByNameAndParentID(); err == nil {
+		res.Message = "部门名称已存在"
+		return
+	}
+	department = model.Department{
+		Name:     req.Name,
+		ParentID: req.ParentID,
+		Sort:     req.Sort,
+		Enable:   req.Enable,
+		Leading:  req.Leading,
+		Email:    req.Email,
+		Phone:    req.Phone,
+	}
+	if err := department.AddDepartment(); err != nil {
+		res.Message = "添加失败"
+		return
+	}
+	res.Status = true
+	res.Message = "添加成功"
+	return
+}
+
+// 修改部门信息
+func EditDepartment(id int64, req entity.DepartmentRequest) (res entity.ResponseData) {
+	if req.Name == "" {
+		res.Message = "部门名称不能为空"
+		return
+	}
+	dep := model.Department{}
+	dep.ID = req.ParentID
+	if err := dep.QueryDepartmentByID(); err != nil {
+		res.Message = "上级部门不存在"
+		return
+	}
+	department := model.Department{}
+	department.ID = id
+	if err := department.QueryDepartmentByID(); err != nil {
+		res.Message = "修改部门不存在"
+		return
+	}
+	args := map[string]interface{}{
+		"name":      req.Name,
+		"sort":      req.Sort,
+		"leading":   req.Leading,
+		"parent_id": req.ParentID,
+		"email":     req.Email,
+		"phone":     req.Phone,
+		"enable":    req.Enable,
+	}
+	dep2 := model.Department{
+		Name:     req.Name,
+		ParentID: req.ParentID,
+	}
+	if err := dep2.QueryDepartmentByNameAndParentID(); err != nil {
+		if err2 := department.EditDepartmentByID(args); err2 != nil {
+			res.Message = "修改失败"
+			return
+		}
+		res.Message = "修改成功"
+		res.Status = true
+		return
+	}
+	if department.Name != req.Name {
+		res.Message = "部门名称已存在"
+		return
+	}
+	if err2 := department.EditDepartmentByID(args); err2 != nil {
+		res.Message = "修改失败"
+		return
+	}
+	res.Message = "修改成功"
+	res.Status = true
+	return
+}
+
+// 批量删除部门
+func DelDepartment(ids []int64) (res entity.ResponseData) {
+	if model.QueryUserByDepartmentID(ids) {
+		res.Message = "用户已关联此部门信息，请直接修改"
+		return
+	}
+	count := model.DelDepartments(ids)
+	if count == 0 {
+		res.Message = "删除失败"
+		return
+	}
+	res.Status = true
+	res.Message = fmt.Sprintf("成功删除%v条，失败%v条", count, int64(len(ids))-count)
+	return
+}
+
+// 添加岗位
+func AddPost(req entity.PostRequest) (res entity.ResponseData) {
+	if req.Name == "" {
+		res.Message = "岗位名称不能为空"
+		return
+	}
+	if req.Code == "" {
+		res.Message = "岗位编码不能为空"
+		return
+	}
+	post := model.Post{
+		Code: req.Code,
+	}
+	if err := post.QueryPostByCode(); err == nil {
+		res.Message = "岗位编码已存在"
+		return
+	}
+	post = model.Post{
+		Name: req.Name,
+	}
+	if err := post.QueryPostByName(); err == nil {
+		res.Message = "岗位名称已存在"
+		return
+	}
+	post = model.Post{
+		Name:   req.Name,
+		Code:   req.Code,
+		Enable: req.Enable,
+		Sort:   req.Sort,
+	}
+	if err := post.AddPost(); err != nil {
+		res.Message = "添加失败"
+		return
+	}
+	res.Message = "添加成功"
+	res.Status = true
+	return
+}
+
+// 修改岗位
+func EditPost(id int64, req entity.PostRequest) (res entity.ResponseData) {
+	if req.Name == "" {
+		res.Message = "岗位名称不能为空"
+		return
+	}
+	if req.Code == "" {
+		res.Message = "岗位编码不能为空"
+		return
+	}
+	post := model.Post{}
+	post.ID = id
+	if err := post.QueryPostByID(); err != nil {
+		res.Message = "岗位信息不存在"
+		return
+	}
+	post2 := model.Post{
+		Code: req.Code,
+		Name: req.Name,
+	}
+	if err := post2.QueryPostByCode(); err == nil && post2.Code != post.Code {
+		res.Message = "岗位编码已存在"
+		return
+	}
+	if err := post.QueryPostByName(); err == nil && post2.Name != post.Name {
+		res.Message = "岗位名称已存在"
+		return
+	}
+	args := map[string]interface{}{
+		"name":   req.Name,
+		"sort":   req.Sort,
+		"code":   req.Code,
+		"enable": req.Enable,
+	}
+	if err := post.EditPost(args); err != nil {
+		res.Message = "修改失败"
+		return
+	}
+	res.Status = true
+	res.Message = "修改失败"
+	return
+}
+
+// 批量删除岗位
+func DelPost(ids []int64) (res entity.ResponseData) {
+	if model.QueryUserByPostID(ids) {
+		res.Message = "用户已关联此岗位信息，请直接修改"
+		return
+	}
+	count := model.DelPosts(ids)
+	if count == 0 {
+		res.Message = "删除失败"
+		return
+	}
+	res.Status = true
+	res.Message = fmt.Sprintf("成功删除%v条，失败%v条", count, int64(len(ids))-count)
+	return
+}
+
+// 添加角色
+func AddRole(req entity.RoleRequest) (res entity.ResponseData) {
+	if req.Name == "" {
+		res.Message = "角色名称不能为空"
+		return
+	}
+	role := model.Role{
+		Name: req.Name,
+	}
+	if err := role.QueryRoleByName(); err == nil {
+		res.Message = "角色名称已存在"
+		return
+	}
+	var menuPowers []model.MenuPower
+	for _, item := range req.MenuPowers {
+		menuPower := model.MenuPower{
+			MenuID:    item.MenuID,
+			MenuTitle: item.MenuTitle,
+		}
+		menuPowers = append(menuPowers, menuPower)
+	}
+	role = model.Role{
+		Name:       req.Name,
+		Sort:       req.Sort,
+		Enable:     req.Enable,
+		MenuPowers: menuPowers,
+	}
+	if err := role.AddRole(); err != nil {
+		res.Message = "添加失败"
+		return
+	}
+	res.Message = "添加成功"
+	res.Status = true
+	return
+}
