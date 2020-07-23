@@ -50,7 +50,7 @@ func QueryPosts(pageSize int, page int, args map[string]interface{}) (count int,
 	if v, ok := args["name"]; ok && v.(string) != "" {
 		query = query.Where("name = %?%", v.(string))
 	}
-	if v, ok := args["enable"]; ok {
+	if v, ok := args["enable"]; ok && v.(string) != "" {
 		query = query.Where("enable = ?", v.(string))
 	}
 	if v, ok := args["code"]; ok && v.(string) != "" {

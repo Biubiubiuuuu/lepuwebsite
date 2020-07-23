@@ -75,6 +75,13 @@ func (u *User) QueryByPhone() error {
 	return db.Where("telephone = ?", u.Telephone).First(&u).Error
 }
 
+// 查询员工信息 by id
+//  param telephone
+func (u *User) QueryEmployeeById() error {
+	db := mysql.GetMysqlDB()
+	return db.Where("type = ?", 1).Related("UserInfo").First(&u).Error
+}
+
 // 查询用户信息 by id
 //  param telephone
 func (u *User) QueryUserByID() error {
@@ -134,7 +141,7 @@ func DelEmployee(ids []int64) int64 {
 // 查询员工信息
 func QueryUser(pageSize int, page int, args map[string]interface{}) (count int, users []User) {
 	db := mysql.GetMysqlDB()
-	query := db.Table("user").Preload("user_info")
+	query := db.Table("user").Preload("UserInfo")
 	if v, ok := args["username"]; ok && v.(string) != "" {
 		var buf strings.Builder
 		buf.WriteString("%")

@@ -70,7 +70,7 @@ func QueryRole(pageSize int, page int, name string, enable string) (count int, r
 		buf.WriteString("%")
 		buf.WriteString(name)
 		buf.WriteString("%")
-		query = query.Where("name = ?", buf.String())
+		query = query.Where("name like ?", buf.String())
 	}
 	if enable != "" {
 		boo, _ := strconv.ParseBool(enable)

@@ -421,7 +421,7 @@ func EditUserFindStore(c *gin.Context) {
 // @Param max_area query string false "最大面积"
 // @Param min_rent query string false "最小租金"
 // @Param max_rent query string false "最大租金"
-// @Param model_type query string true "模型类型 0-转让 ｜ 1-出售 ｜ 3-出租 | 4-求租 ｜ 5-求购"
+// @Param model_type query string true "模型类型 0-转让 ｜ 1-出售 ｜ 3-出租 | 4-求租 ｜ 5-求购 多个用，隔开"
 // @Param bus_type query string false "业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库"
 // @Param sort_condition query string false "排序 area-面积 ｜ rent-租金 ｜ created_at-发布时间（默认）"
 // @Param pageSize query string false "页大小 （默认30）"
@@ -544,5 +544,87 @@ func DelPrictures(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, res)
 		return
 	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 留言
+// @tags 用户
+// @Accept  application/json
+// @Produce  json
+// @Param body body entity.LeaveMessageRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/other/leaveMessage [POST]
+func AddLeaveMessage(c *gin.Context) {
+	req := entity.LeaveMessageRequest{}
+	res := entity.ResponseData{}
+	if c.ShouldBindJSON(&req) != nil {
+		res.Message = "请求参数json错误"
+	} else {
+		res = userService.AddLeaveMessage(req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 举报
+// @tags 用户
+// @Accept  application/json
+// @Produce  json
+// @Param pro_id path string true "物业信息ID"
+// @Param body body entity.ReportRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/other/propertyInfo/{pro_id}/report [POST]
+// @Security ApiKeyAuth
+func AddReport(c *gin.Context) {
+	req := entity.ReportRequest{}
+	res := entity.ResponseData{}
+	var token string
+	if token, res = commonController.GetToken(c); res.Status {
+		if c.ShouldBindJSON(&req) != nil {
+			res.Message = "请求参数json错误"
+		} else {
+			pro_id, _ := strconv.ParseInt(c.Param("pro_id"), 10, 64)
+			res = userService.AddReport(token, pro_id, req)
+		}
+	} else {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, res)
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 首页轮播
+// @tags 用户
+// @Accept  application/json
+// @Produce  json
+// @Param pageSize query string false "页大小 （默认30）"
+// @Param page query string false "跳转页码"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/other/carouse [GET]
+func QueryCarouse(c *gin.Context) {
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "30"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	res := userService.QueryCarouse(pageSize, page)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 广告查询
+// @tags 用户
+// @Accept  application/json
+// @Produce  json
+// @Param hot query bool false "首页最热推广"
+// @Param floor query bool false "F楼"
+// @Param type query string false "信息列表推广 1-一栏四分之一图片广告 | 2-二栏四分之一图片广告 | 3-三栏重点推荐 | 4-五栏框架广告"
+// @Param pageSize query string false "页大小 （默认30）"
+// @Param page query string false "跳转页码"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/other/advert [GET]
+func QueryAdvert(c *gin.Context) {
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "30"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	res := userService.QueryAdvert(pageSize, page, map[string]interface{}{
+		"hot":   c.Query("hot"),
+		"floor": c.Query("floor"),
+		"type":  c.Query("type"),
+	})
 	c.JSON(http.StatusOK, res)
 }

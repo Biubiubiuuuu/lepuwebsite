@@ -225,32 +225,63 @@ type AddProLog struct {
 
 // 添加物业信息
 type AddPropertyInfoRequest struct {
-	IndustryID     int64   `form:"industry_id"`     // 经营业态ID
-	Title          string  `form:"title"`           // 标题
-	Nickname       string  `form:"nickname"`        // 联系人
-	Telephone      string  `form:"telephone"`       // 联系手机
-	Image          string  `form:"image"`           // 图片
-	ProvinceCode   string  `form:"province_code"`   // 省代码
-	CityCode       string  `form:"city_code"`       // 城市代码
-	DistrictCode   string  `form:"district_code"`   // 区代码
-	StreetCode     string  `form:"street_code"`     // 街道代码
-	Address        string  `form:"address"`         // 详细地址
-	StoreTypeID    int64   `form:"store_type_id"`   // 店铺类型ID
-	Idling         bool    `form:"idling"`          // 可否空转
-	InOperation    string  `form:"in_operation"`    // 是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中
-	Area           float64 `form:"area"`            // 面积（单位：平方米）
-	Rent           float64 `form:"rent"`            // 租金（单位：元/月）
-	TransferFee    float64 `form:"transfer_fee"`    // 转让费用（单位：万元 不录入则前台显示为面议）
-	IndustryRanges []int64 `form:"industry_ranges"` // 适合经营范围id
-	Description    string  `form:"description"`     // 详细描述
-	ShopName       string  `form:"shop_name"`       // 店名
-	Video          string  `form:"video"`           // 视频
-	BusType        string  `form:"bus_type"`        // 业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库
-	ModelType      string  `form:"model_type"`      // 模型类型 0-转让 ｜ 1-出售 ｜ 2-出租 | 3-求租 ｜ 4-求购
-	ExplicitTel    bool    `form:"explicit_tel"`    // 是否外显号码 true：客户号码 ｜ false：发布者号码
-	Tel1           string  `form:"tel1"`            // 外显号码1
-	Tel2           string  `form:"tel2"`            // 外显号码2
-	Protect        bool    `form:"protect"`         // 是否保护
-	QuotedPrice    float64 `form:"quoted_price"`    // 报价
-	Remake         string  `form:"remake"`          // 跟进备注
+	IndustryID     int64  `form:"industry_id"`     // 经营业态ID
+	Title          string `form:"title"`           // 标题
+	Nickname       string `form:"nickname"`        // 联系人
+	Telephone      string `form:"telephone"`       // 联系手机
+	Image          string `form:"image"`           // 图片
+	ProvinceCode   string `form:"province_code"`   // 省代码
+	CityCode       string `form:"city_code"`       // 城市代码
+	DistrictCode   string `form:"district_code"`   // 区代码
+	StreetCode     string `form:"street_code"`     // 街道代码
+	Address        string `form:"address"`         // 详细地址
+	StoreTypeID    int64  `form:"store_type_id"`   // 店铺类型ID
+	Idling         bool   `form:"idling"`          // 可否空转
+	InOperation    string `form:"in_operation"`    // 是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中
+	Area           string `form:"area"`            // 面积（单位：平方米）
+	Rent           string `form:"rent"`            // 租金（单位：元/月）
+	TransferFee    string `form:"transfer_fee"`    // 转让费用（单位：万元 不录入则前台显示为面议）
+	IndustryRanges string `form:"industry_ranges"` // 适合经营范围id , 多个用,分割
+	Description    string `form:"description"`     // 详细描述
+	ShopName       string `form:"shop_name"`       // 店名
+	Video          string `form:"video"`           // 视频
+	BusType        string `form:"bus_type"`        // 业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库
+	ModelType      string `form:"model_type"`      // 模型类型 0-转让 ｜ 1-出售 ｜ 2-出租 | 3-求租 ｜ 4-求购
+	ExplicitTel    bool   `form:"explicit_tel"`    // 是否外显号码 true：客户号码 ｜ false：发布者号码
+	Tel1           string `form:"tel1"`            // 外显号码1
+	Tel2           string `form:"tel2"`            // 外显号码2
+	Protect        bool   `form:"protect"`         // 是否保护
+	QuotedPrice    string `form:"quoted_price"`    // 报价
+	Remake         string `form:"remake"`          // 跟进备注
+}
+
+//  留言
+type LeaveMessageRequest struct {
+	Content   string `gorm:"size:200;" json:"content"`  // 留言内容
+	Address   string `gorm:"size:100;" json:"address"`  // 详细地址
+	Telephone string `gorm:"size:20;" json:"telephone"` // 联系手机
+	Nickname  string `gorm:"size:20;" json:"nickname"`  // 联系人
+}
+
+// 举报信息
+type ReportRequest struct {
+	Content string `json:"content"` // 举报内容
+}
+
+// 广告请求
+type AdvertRequest struct {
+	Sort           int64  `json:"sort"`                // 显示排序
+	StartTime      string `json:"start_time"`          // 展示开始时间
+	EndTime        string `json:"end_time"`            // 展示结束时间
+	Hot            bool   `json:"hot"`                 // 首页最热推广
+	Floor          bool   `json:"floor"`               // F楼
+	Type           string `gorm:"size:1;" json:"type"` // 信息列表推广 1-一栏四分之一图片广告 | 2-二栏四分之一图片广告 | 3-三栏重点推荐 | 4-五栏框架广告
+	PropertyInfoID int64  `json:"property_info_id"`    // 物业ID
+}
+
+// 轮播图
+type CarouselRequest struct {
+	Url  string `json:"url"`  // 图片地址
+	Link string `json:"link"` // 调整连接
+	Sort int64  `json:"sort"` // 排序 越大越靠前
 }

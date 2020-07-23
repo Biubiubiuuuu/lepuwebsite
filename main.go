@@ -40,6 +40,9 @@ func main() {
 		&model.Post{},
 		&model.MenuPower{},
 		&model.UserInfo{},
+		&model.Report{},
+		&model.Advert{},
+		&model.Carousel{},
 	)
 	// 添加默认管理员 username:Admin,password:123456
 	uuid, _ := uuid.NewUUID()

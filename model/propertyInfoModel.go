@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/Biubiubiuuuu/yuepuwebsite/db/mysql"
@@ -11,7 +12,7 @@ import (
 type PropertyInfo struct {
 	Model
 	IndustryID     int64           `json:"industry_id"`                                                                          // 经营业态ID
-	Title          string          `gorm:"not null;size:60;" json:"title"`                                                       // 标题
+	Title          string          `gorm:"not null;size:255;" json:"title"`                                                      // 标题
 	Nickname       string          `gorm:"size:50;" json:"nickname"`                                                             // 联系人
 	Telephone      string          `gorm:"not null;size:30;" json:"telephone"`                                                   // 联系手机
 	ShopName       string          `gorm:"size:100;" json:"shop_name"`                                                           // 店名（后台录入）
@@ -51,6 +52,7 @@ type PropertyInfo struct {
 	SourceID       int64           `json:"source_id"`                                                                            // 来源ID
 	SourceInfo     string          `gorm:"size:200" json:"source_info"`                                                          // 来源描述
 	Remake         string          `gorm:"size:200" json:"remake"`                                                               // 跟进备注
+	Views          int64           `json:"views"`                                                                                // 浏览次数
 }
 
 // PropertyInfoScan 物业信息详细
@@ -180,6 +182,9 @@ func QueryPropertyInfo(pageSize int, page int, args map[string]interface{}) (pro
 	if v, ok := args["province_code"]; ok && v.(string) != "" {
 		query = query.Where("province.code = ?", v.(string))
 	}
+	if v, ok := args["district_code"]; ok && v.(string) != "" {
+		query = query.Where("district.code = ?", v.(string))
+	}
 	if v, ok := args["city_code"]; ok && v.(string) != "" {
 		query = query.Where("city.code = ?", v.(string))
 	}
@@ -223,7 +228,13 @@ func QueryPropertyInfo(pageSize int, page int, args map[string]interface{}) (pro
 		query = query.Where("property_info.bus_type = ?", v.(string))
 	}
 	if v, ok := args["model_type"]; ok && v.(string) != "" {
-		query = query.Where("property_info.model_type = ?", v.(string))
+		var arr []int64
+		strArr := strings.Split(v.(string), ",")
+		for _, item := range strArr {
+			id, _ := strconv.ParseInt(item, 10, 64)
+			arr = append(arr, id)
+		}
+		query = query.Where("property_info.model_type in (?)", arr)
 		if v2, ok2 := args["district_code"]; ok2 && v2.(string) != "" && (v.(string) == "3" || v.(string) == "4") {
 			query = query.Where("lot.district_code = ?", v2.(string))
 		} else {
@@ -232,14 +243,18 @@ func QueryPropertyInfo(pageSize int, page int, args map[string]interface{}) (pro
 			}
 		}
 	}
-	if v, ok := args["source_id"]; ok && v.(string) != "" {
-		query = query.Where("property_info.source_id = ?", v.(string))
+	if v, ok := args["source_id"]; ok && v.(int64) > 0 {
+		query = query.Where("property_info.source_id = ?", v.(int64))
 	}
 	if v, ok := args["status"]; ok && v.(string) != "" {
 		query = query.Where("property_info.status = ?", v.(string))
 	}
 	if v, ok := args["protect"]; ok && v.(string) != "" {
 		query = query.Where("property_info.protect = ?", v.(string))
+	}
+	if v, ok := args["id"]; ok {
+		ids, _ := v.([]int64)
+		query = query.Where("property_info.id in (?)", ids)
 	}
 	query.Count(&count)
 	if v, ok := args["sort_condition"]; ok && v.(string) != "" {

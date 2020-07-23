@@ -56,7 +56,7 @@ func QueryStoreType(pageSize int, page int, name string, enable string) (count i
 		buf.WriteString("%")
 		buf.WriteString(name)
 		buf.WriteString("%")
-		query = query.Where("name = ?", buf.String())
+		query = query.Where("name like ?", buf.String())
 	}
 	if enable != "" {
 		boo, _ := strconv.ParseBool(enable)

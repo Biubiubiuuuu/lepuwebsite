@@ -57,11 +57,11 @@ func QueryIndustry(pageSize int, page int, name string, enable string) (count in
 		buf.WriteString("%")
 		buf.WriteString(name)
 		buf.WriteString("%")
-		query = query.Where("name = ?", buf.String())
+		query = query.Where("name like ?", buf.String())
 	}
 	if enable != "" {
 		boo, _ := strconv.ParseBool(enable)
-		query = query.Where("enable = ?", boo)
+		query = query.Where("is_enable = ?", boo)
 	}
 	query.Count(&count)
 	query.Limit(pageSize).Offset((page - 1) * pageSize).Order("sort desc").Find(&industrys)

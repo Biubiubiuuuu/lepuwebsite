@@ -20,15 +20,15 @@ func (l *LeaveMessage) AddLeaveMessage() error {
 }
 
 // 查看留言
-func (l *LeaveMessage) QueryLeaveMessage(pageSize int, page int) (leaveMessages []LeaveMessage) {
+func QueryLeaveMessage(pageSize int, page int) (count int, leaveMessages []LeaveMessage) {
 	db := mysql.GetMysqlDB()
+	db.Table("leave_message").Count(&count)
 	db.Limit(pageSize).Offset((page - 1) * pageSize).Find(&leaveMessages)
 	return
 }
 
-// 查看留言总记录数
-func (l *LeaveMessage) QueryLeaveMessageCount() (count int) {
+// 查看留言详情
+func (l *LeaveMessage) QueryLeaveMessageByID() error {
 	db := mysql.GetMysqlDB()
-	db.Model(&LeaveMessage{}).Count(&count)
-	return
+	return db.First(&l).Error
 }

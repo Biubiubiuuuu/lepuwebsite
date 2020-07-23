@@ -73,6 +73,11 @@ func InitUser(router *gin.Engine) {
 		api.POST("propertyInfo/:id/picture", userController.AddPictures)
 		api.DELETE("propertyInfo/:pro_id/picture/:pri_id", userController.DelPrictures)
 	}
+	api2 := router.Group("api/v1/other")
+	api2.POST("leaveMessage", userController.AddLeaveMessage)
+	api2.POST("propertyInfo/:pro_id/report", userController.AddReport)
+	api2.GET("carouse", userController.QueryCarouse)
+	api2.GET("advert", userController.QueryAdvert)
 }
 
 // 公共接口
@@ -103,6 +108,7 @@ func InitAdmin(router *gin.Engine) {
 	api.Use(adminMiddleware.JWTAndAdmin())
 	{
 		api.GET("", adminController.QueryUser)
+		api.POST("edituserpass", userController.EditUserPass)
 
 		api.GET("industry/:id", adminController.QueryIndustryByID)
 		api.GET("industry", adminController.QueryIndustry)
@@ -122,8 +128,8 @@ func InitAdmin(router *gin.Engine) {
 		api.PUT("areaType/:id", adminController.EditAreaType)
 		api.DELETE("areaType/:ids", adminController.DelAreaType)
 
-		api.GET("renttype/:id", adminController.QueryRentTypeInfoById)
-		api.GET("renttype", adminController.QueryRentType)
+		api.GET("rentType/:id", adminController.QueryRentTypeInfoById)
+		api.GET("rentType", adminController.QueryRentType)
 		api.POST("rentType", adminController.CreateRentType)
 		api.PUT("rentType/:id", adminController.EditRentType)
 		api.DELETE("rentType/:ids", adminController.DelRentType)
@@ -166,5 +172,11 @@ func InitAdmin(router *gin.Engine) {
 		api.DELETE("propertyInfos/:pro_id/picture/:pri_id", adminController.DelPrictures)
 
 		api.POST("new/propertyInfo", adminController.AddProInfo)
+
+		api.GET("leaveMessage/:id", adminController.QueryLeaveMessageByID)
+		api.GET("leaveMessage", adminController.QueryLeaveMessage)
+
+		api.GET("report/:id", adminController.QueryReportByID)
+		api.GET("report", adminController.QueryReport)
 	}
 }

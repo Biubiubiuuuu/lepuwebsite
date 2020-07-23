@@ -53,6 +53,31 @@ var doc = `{
             }
         },
         "/api/v1/admin/areaType": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询面积分类",
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -195,28 +220,6 @@ var doc = `{
                         }
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": "desc",
-                        "schema": {
-                            "$ref": "#/definitions/entity.ResponseData"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/admin/areatype": {
-            "get": {
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "后台"
-                ],
-                "summary": "查询面积分类",
                 "responses": {
                     "200": {
                         "description": "desc",
@@ -510,6 +513,18 @@ var doc = `{
                         "description": "电话号码",
                         "name": "telephone",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页大小 （默认30）",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "跳转页码",
+                        "name": "page",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -610,11 +625,11 @@ var doc = `{
                 "tags": [
                     "后台"
                 ],
-                "summary": "获取用户信息 by id",
+                "summary": "获取员工详情",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "用户D",
+                        "description": "员工ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -647,6 +662,13 @@ var doc = `{
                 "summary": "修改员工信息",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "员工ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "body",
                         "name": "body",
                         "in": "body",
@@ -668,6 +690,11 @@ var doc = `{
         },
         "/api/v1/admin/industry": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -853,6 +880,82 @@ var doc = `{
                         "schema": {
                             "$ref": "#/definitions/entity.IndustryRequest"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/leaveMessage": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "留言列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "页大小 （默认30）",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "跳转页码",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/leaveMessage/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "留言详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "留言ID",
+                        "name": "id",
+                        "in": "path"
                     }
                 ],
                 "responses": {
@@ -1175,15 +1278,15 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "经营业态ID",
                         "name": "industry_id",
                         "in": "formData",
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "店铺类型",
+                        "type": "integer",
+                        "description": "店铺类型ID",
                         "name": "store_type_id",
                         "in": "formData",
                         "required": true
@@ -1266,7 +1369,7 @@ var doc = `{
                         "in": "formData"
                     },
                     {
-                        "type": "string",
+                        "type": "boolean",
                         "description": "是否保护",
                         "name": "protect",
                         "in": "formData"
@@ -1284,6 +1387,11 @@ var doc = `{
         },
         "/api/v1/admin/post": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -1714,6 +1822,11 @@ var doc = `{
         },
         "/api/v1/admin/propertyInfo/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -2015,6 +2128,31 @@ var doc = `{
             }
         },
         "/api/v1/admin/rentType": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询租金分类",
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -2167,8 +2305,13 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/admin/renttype": {
+        "/api/v1/admin/report": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -2178,7 +2321,56 @@ var doc = `{
                 "tags": [
                     "后台"
                 ],
-                "summary": "查询租金分类",
+                "summary": "举报列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "页大小 （默认30）",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "跳转页码",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/report/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "举报详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "举报ID",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "desc",
@@ -2191,6 +2383,11 @@ var doc = `{
         },
         "/api/v1/admin/role": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -2390,6 +2587,11 @@ var doc = `{
         },
         "/api/v1/admin/storeType": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -2865,6 +3067,174 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/other/advert": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户"
+                ],
+                "summary": "广告查询",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "首页最热推广",
+                        "name": "hot",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "F楼",
+                        "name": "floor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "信息列表推广 1-一栏四分之一图片广告 | 2-二栏四分之一图片广告 | 3-三栏重点推荐 | 4-五栏框架广告",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页大小 （默认30）",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "跳转页码",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/other/carouse": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户"
+                ],
+                "summary": "首页轮播",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "页大小 （默认30）",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "跳转页码",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/other/leaveMessage": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户"
+                ],
+                "summary": "留言",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.LeaveMessageRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/other/propertyInfo/{pro_id}/report": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户"
+                ],
+                "summary": "举报",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "物业信息ID",
+                        "name": "pro_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.ReportRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/propertyInfo": {
             "get": {
                 "consumes": [
@@ -2952,7 +3322,7 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "模型类型 0-转让 ｜ 1-出售 ｜ 3-出租 | 4-求租 ｜ 5-求购",
+                        "description": "模型类型 0-转让 ｜ 1-出售 ｜ 3-出租 | 4-求租 ｜ 5-求购 多个用，隔开",
                         "name": "model_type",
                         "in": "query",
                         "required": true
@@ -3687,7 +4057,7 @@ var doc = `{
                     "type": "string"
                 },
                 "enable": {
-                    "description": "是否启用",
+                    "description": "是否禁用",
                     "type": "boolean"
                 },
                 "nickname": {
@@ -3899,6 +4269,27 @@ var doc = `{
                 }
             }
         },
+        "entity.LeaveMessageRequest": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "description": "详细地址",
+                    "type": "string"
+                },
+                "content": {
+                    "description": "留言内容",
+                    "type": "string"
+                },
+                "nickname": {
+                    "description": "联系人",
+                    "type": "string"
+                },
+                "telephone": {
+                    "description": "联系手机",
+                    "type": "string"
+                }
+            }
+        },
         "entity.MenuRequest": {
             "type": "object",
             "properties": {
@@ -3963,6 +4354,15 @@ var doc = `{
                 "min_rent": {
                     "description": "最低租金（单位：元/月）",
                     "type": "number"
+                }
+            }
+        },
+        "entity.ReportRequest": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "举报内容",
+                    "type": "string"
                 }
             }
         },

@@ -11,7 +11,7 @@ definitions:
         description: 邮箱
         type: string
       enable:
-        description: 是否启用
+        description: 是否禁用
         type: boolean
       nickname:
         description: 用户昵称
@@ -164,6 +164,21 @@ definitions:
         description: 行业排序 越大越靠前
         type: integer
     type: object
+  entity.LeaveMessageRequest:
+    properties:
+      address:
+        description: 详细地址
+        type: string
+      content:
+        description: 留言内容
+        type: string
+      nickname:
+        description: 联系人
+        type: string
+      telephone:
+        description: 联系手机
+        type: string
+    type: object
   entity.MenuRequest:
     properties:
       enable:
@@ -211,6 +226,12 @@ definitions:
       min_rent:
         description: 最低租金（单位：元/月）
         type: number
+    type: object
+  entity.ReportRequest:
+    properties:
+      content:
+        description: 举报内容
+        type: string
     type: object
   entity.ResponseData:
     properties:
@@ -340,6 +361,21 @@ paths:
       tags:
       - 后台
   /api/v1/admin/areaType:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查询面积分类
+      tags:
+      - 后台
     post:
       consumes:
       - application/json
@@ -431,20 +467,6 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 删除面积分类
-      tags:
-      - 后台
-  /api/v1/admin/areatype:
-    get:
-      consumes:
-      - application/x-www-form-urlencoded
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: desc
-          schema:
-            $ref: '#/definitions/entity.ResponseData'
-      summary: 查询面积分类
       tags:
       - 后台
   /api/v1/admin/department:
@@ -617,6 +639,14 @@ paths:
         in: query
         name: telephone
         type: string
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
       produces:
       - application/json
       responses:
@@ -656,7 +686,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: 用户D
+      - description: 员工ID
         in: path
         name: id
         required: true
@@ -670,13 +700,18 @@ paths:
             $ref: '#/definitions/entity.ResponseData'
       security:
       - ApiKeyAuth: []
-      summary: 获取用户信息 by id
+      summary: 获取员工详情
       tags:
       - 后台
     put:
       consumes:
       - application/json
       parameters:
+      - description: 员工ID
+        in: path
+        name: id
+        required: true
+        type: string
       - description: body
         in: body
         name: body
@@ -745,6 +780,8 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
       summary: 查询行业类型
       tags:
       - 后台
@@ -839,6 +876,52 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 删除经营业态
+      tags:
+      - 后台
+  /api/v1/admin/leaveMessage:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 留言列表
+      tags:
+      - 后台
+  /api/v1/admin/leaveMessage/{id}:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 留言ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 留言详情
       tags:
       - 后台
   /api/v1/admin/login:
@@ -1036,12 +1119,12 @@ paths:
         in: formData
         name: industry_id
         required: true
-        type: string
-      - description: 店铺类型
+        type: integer
+      - description: 店铺类型ID
         in: formData
         name: store_type_id
         required: true
-        type: string
+        type: integer
       - description: 可否空转
         in: formData
         name: idling
@@ -1098,7 +1181,7 @@ paths:
       - description: 是否保护
         in: formData
         name: protect
-        type: string
+        type: boolean
       produces:
       - application/json
       responses:
@@ -1143,6 +1226,8 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
       summary: 查询所有岗位
       tags:
       - 后台
@@ -1350,6 +1435,8 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
       summary: 查看物业详情
       tags:
       - 后台
@@ -1584,6 +1671,21 @@ paths:
       tags:
       - 后台
   /api/v1/admin/rentType:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查询租金分类
+      tags:
+      - 后台
     post:
       consumes:
       - application/json
@@ -1677,10 +1779,19 @@ paths:
       summary: 删除租金分类
       tags:
       - 后台
-  /api/v1/admin/renttype:
+  /api/v1/admin/report:
     get:
       consumes:
       - application/x-www-form-urlencoded
+      parameters:
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
       produces:
       - application/json
       responses:
@@ -1688,7 +1799,30 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
-      summary: 查询租金分类
+      security:
+      - ApiKeyAuth: []
+      summary: 举报列表
+      tags:
+      - 后台
+  /api/v1/admin/report/{id}:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 举报ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 举报详情
       tags:
       - 后台
   /api/v1/admin/role:
@@ -1719,6 +1853,8 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
       summary: 查询角色
       tags:
       - 后台
@@ -1843,6 +1979,8 @@ paths:
           description: desc
           schema:
             $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
       summary: 查询店铺类型
       tags:
       - 后台
@@ -2117,6 +2255,113 @@ paths:
       summary: 获取验证码
       tags:
       - 公共接口
+  /api/v1/other/advert:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 首页最热推广
+        in: query
+        name: hot
+        type: boolean
+      - description: F楼
+        in: query
+        name: floor
+        type: boolean
+      - description: 信息列表推广 1-一栏四分之一图片广告 | 2-二栏四分之一图片广告 | 3-三栏重点推荐 | 4-五栏框架广告
+        in: query
+        name: type
+        type: string
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 广告查询
+      tags:
+      - 用户
+  /api/v1/other/carouse:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 首页轮播
+      tags:
+      - 用户
+  /api/v1/other/leaveMessage:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.LeaveMessageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 留言
+      tags:
+      - 用户
+  /api/v1/other/propertyInfo/{pro_id}/report:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 物业信息ID
+        in: path
+        name: pro_id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.ReportRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 举报
+      tags:
+      - 用户
   /api/v1/propertyInfo:
     get:
       consumes:
@@ -2170,7 +2415,7 @@ paths:
         in: query
         name: max_rent
         type: string
-      - description: 模型类型 0-转让 ｜ 1-出售 ｜ 3-出租 | 4-求租 ｜ 5-求购
+      - description: 模型类型 0-转让 ｜ 1-出售 ｜ 3-出租 | 4-求租 ｜ 5-求购 多个用，隔开
         in: query
         name: model_type
         required: true

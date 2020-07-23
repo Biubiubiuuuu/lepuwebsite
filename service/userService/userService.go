@@ -708,6 +708,10 @@ func QueryPropertyInfoByID(id int64) (res entity.ResponseData) {
 		res.Message = "物业信息不存在"
 		return
 	}
+	args := map[string]interface{}{
+		"views": pro.Views + 1,
+	}
+	pro.EditPropertyInfoByID(args)
 	data := map[string]interface{}{
 		"propertyInfo": pro,
 	}
@@ -809,5 +813,93 @@ func DelPrictures(token string, pro_id int64, pri_id int64) (res entity.Response
 	}
 	res.Status = true
 	res.Message = "删除成功"
+	return
+}
+
+// 留言
+func AddLeaveMessage(req entity.LeaveMessageRequest) (res entity.ResponseData) {
+	mes := model.LeaveMessage{
+		Content:   req.Content,
+		Telephone: req.Telephone,
+		Address:   req.Address,
+		Nickname:  req.Nickname,
+	}
+	if err := mes.AddLeaveMessage(); err != nil {
+		res.Message = "留言失败"
+		return
+	}
+	res.Message = "留言成功"
+	res.Status = true
+	return
+}
+
+// 举报
+func AddReport(token string, id int64, req entity.ReportRequest) (res entity.ResponseData) {
+	user := model.User{
+		Token: token,
+	}
+	if err := user.QueryByToken(); err != nil {
+		res.Message = "token错误"
+		return
+	}
+	pro := model.PropertyInfoScan{}
+	pro.ID = id
+	if err := pro.QueryPropertyInfoByID(); err != nil {
+		res.Message = "物业信息不存在"
+		return
+	}
+	if req.Content == "" {
+		res.Message = "举报内容不能为空"
+		return
+	}
+	report := model.Report{
+		Content:      req.Content,
+		UserID:       user.ID,
+		Nickname:     user.Nickname,
+		ProInfoID:    id,
+		ProInfoTitle: pro.Title,
+	}
+	if err := report.AddReport(); err != nil {
+		res.Message = "举报失败"
+		return
+	}
+	res.Message = "举报成功"
+	res.Status = true
+	return
+}
+
+// 首页轮播
+func QueryCarouse(pageSize int, page int) (res entity.ResponseData) {
+	count, carouses := model.QueryCarouse(pageSize, page)
+	res.Status = true
+	res.Message = "获取成功"
+	res.Data = map[string]interface{}{
+		"carouses": carouses,
+		"count":    count,
+	}
+	return
+}
+
+// 广告查询
+func QueryAdvert(pageSize int, page int, args map[string]interface{}) (res entity.ResponseData) {
+	_, adverts := model.QueryAdvert(pageSize, page, args)
+	if len(adverts) == 0 {
+		res.Message = "获取失败"
+		return
+	}
+	var ids []int64
+	for _, item := range adverts {
+		ids = append(ids, item.PropertyInfoID)
+	}
+	args2 := map[string]interface{}{
+		"id": ids,
+	}
+	pro, count2 := model.QueryPropertyInfo(pageSize, page, args2)
+	res.Status = true
+	res.Message = "获取成功"
+	res.Data = map[string]interface{}{
+		"propertyInfo": pro,
+		"count":        count2,
+	}
 	return
 }
