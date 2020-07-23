@@ -66,10 +66,12 @@ func InitUser(router *gin.Engine) {
 		api.POST("", userController.EditUser)
 		api.POST("edituserpass", userController.EditUserPass)
 		api.POST("storetransfer", userController.Storetransfer)
-		api.POST("findStore", userController.FindStore)
 		api.PUT("storetransfer", userController.EditUserStoretransfer)
+		api.POST("findStore", userController.FindStore)
 		api.PUT("findStore", userController.EditUserFindStore)
 		api.GET("propertyInfo", userController.QueryUserPropertyInfo)
+		api.POST("propertyInfo/:id/picture", userController.AddPictures)
+		api.DELETE("propertyInfo/:pro_id/picture/:pri_id", userController.DelPrictures)
 	}
 }
 
@@ -90,10 +92,8 @@ func InitBasic(router *gin.Engine) {
 	api.GET("areatype", basicController.QueryAreaType)
 	api.GET("renttype", basicController.QueryRentType)
 	api.GET("enableStoreType", basicController.QueryEnableStoreType)
-	api.GET("storeType", basicController.QueryStoreType)
 	api.GET("enableIndustry", basicController.QueryEnableIndustry)
-	api.GET("industry", basicController.QueryIndustry)
-	api.GET("industryRange", basicController.QueryEnableIndustryByParentID)
+	api.GET("industryParent", basicController.QueryEnableIndustryByParentID)
 }
 
 // 后台
@@ -102,20 +102,69 @@ func InitAdmin(router *gin.Engine) {
 	api.POST("login", adminController.Login)
 	api.Use(adminMiddleware.JWTAndAdmin())
 	{
-		api.POST("areaType", adminController.CreateAreaType)
-		api.PUT("areaType/:id", adminController.EditAreaType)
-		api.DELETE("areaType/:ids", adminController.DelAreaType)
-		api.POST("rentType", adminController.CreateRentType)
-		api.PUT("rentType/:id", adminController.EditRentType)
-		api.DELETE("rentType/:ids", adminController.DelRentType)
+		api.GET("", adminController.QueryUser)
+
+		api.GET("industry/:id", adminController.QueryIndustryByID)
+		api.GET("industry", adminController.QueryIndustry)
 		api.POST("industry", adminController.AddIndustry)
 		api.PUT("industry/:id", adminController.EditIndustry)
 		api.DELETE("industry/:ids", adminController.DelIndustry)
+
+		api.GET("storeType/:id", adminController.QueryStoreTypeByID)
+		api.GET("storeType", adminController.QueryStoreType)
 		api.POST("storeType", adminController.AddStoreType)
 		api.PUT("storeType/:id", adminController.EditStoreType)
 		api.DELETE("storeType/:ids", adminController.DelStoreType)
+
+		api.GET("areaType/:id", adminController.QueryAreaTypeInfoById)
+		api.GET("areaType", adminController.QueryAreaType)
+		api.POST("areaType", adminController.CreateAreaType)
+		api.PUT("areaType/:id", adminController.EditAreaType)
+		api.DELETE("areaType/:ids", adminController.DelAreaType)
+
+		api.GET("renttype/:id", adminController.QueryRentTypeInfoById)
+		api.GET("renttype", adminController.QueryRentType)
+		api.POST("rentType", adminController.CreateRentType)
+		api.PUT("rentType/:id", adminController.EditRentType)
+		api.DELETE("rentType/:ids", adminController.DelRentType)
+
+		api.GET("department/:id", adminController.QueryDepartmentByID)
+		api.GET("department", adminController.QueryDepartment)
 		api.POST("department", adminController.AddDepartment)
+		api.PUT("department/:id", adminController.EditDepartment)
+		api.DELETE("department/:ids", adminController.DelDepartment)
+
+		api.GET("post/:id", adminController.QueryPostByID)
+		api.GET("post", adminController.QueryPost)
 		api.POST("post", adminController.AddPost)
+		api.PUT("post/:id", adminController.EditPost)
+		api.DELETE("post/:ids", adminController.DelPost)
+
+		api.GET("role/:id", adminController.QueryRoleByID)
+		api.GET("role", adminController.QueryRole)
 		api.POST("role", adminController.AddRole)
+		api.PUT("role/:id", adminController.EditRole)
+		api.DELETE("role/:ids", adminController.DelRole)
+
+		api.GET("menu/:id", adminController.QueryMenuByID)
+		api.GET("menu", adminController.QueryMenu)
+		api.POST("menu", adminController.AddMenu)
+		api.PUT("menu/:id", adminController.Editmenu)
+		api.DELETE("menu/:ids", adminController.DelMenu)
+
+		api.GET("employee/:id", adminController.QueryEmployeeById)
+		api.GET("employee", adminController.GetEmployee)
+		api.POST("employee", adminController.AddEmployee)
+		api.PUT("employee/:id", adminController.EditDepartment)
+		api.DELETE("employee/:ids", adminController.DelEmployee)
+
+		api.GET("propertyInfo/:id", adminController.QueryPropertyInfoByID)
+		api.GET("propertyInfo", adminController.SearchPropertyInfo)
+		api.PUT("propertyInfo/:id", adminController.EditUserStoretransfer)
+		api.POST("propertyInfo/protect/:id", adminController.EditProtectionProInfo)
+		api.POST("propertyInfos/:id/picture", adminController.AddPictures)
+		api.DELETE("propertyInfos/:pro_id/picture/:pri_id", adminController.DelPrictures)
+
+		api.POST("new/propertyInfo", adminController.AddProInfo)
 	}
 }

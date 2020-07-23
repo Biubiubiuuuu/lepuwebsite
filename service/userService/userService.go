@@ -126,10 +126,7 @@ func EditUser(token string, req entity.EditUser) (res entity.ResponseData) {
 	if user, res = commonService.QueryUserByToken(token); !res.Status {
 		return
 	}
-	u := model.User{
-		Telephone: req.Telephone,
-		Username:  req.Username,
-	}
+
 	if !(req.Sex == "0" || req.Sex == "1" || req.Sex == "3") {
 		req.Sex = "0"
 	}
@@ -142,20 +139,17 @@ func EditUser(token string, req entity.EditUser) (res entity.ResponseData) {
 		"nickname":       req.Nickname,
 		"QQ":             req.QQ,
 	}
-	if err := u.QueryByUsernameOrPhone(); err != nil {
-		if err := user.Edit(args); err != nil {
-			res.Message = "修改失败"
-			return
-		}
-		res.Status = true
-		res.Message = "修改成功"
-		return
+	u := model.User{
+		Username: req.Username,
 	}
-	if u.Username != user.Username {
+	if err := u.QueryByUsername(); err == nil && u.Username != user.Username {
 		res.Message = "修改失败，该用户名已注册"
 		return
 	}
-	if u.Telephone != user.Telephone {
+	u = model.User{
+		Telephone: req.Telephone,
+	}
+	if err := u.QueryByPhone(); err == nil && u.Telephone != user.Telephone {
 		res.Message = "修改失败，该手机号已注册"
 		return
 	}
@@ -254,18 +248,31 @@ func UserStoretransfer(token string, req entity.UserStoretransferRequest) (res e
 		return
 	}
 	city := model.City{
-		Code: req.CityCode,
+		Code:         req.CityCode,
+		ProvinceCode: req.ProvinceCode,
 	}
-	if err := city.QueryCitysByCode(); err != nil {
-		res.Message = "城市不存在"
+	if err := city.QueryCitysByCodeAndPro(); err != nil {
+		res.Message = "该省份下城市不存在"
 		return
 	}
 	district := model.District{
-		Code: req.DistrictCode,
+		Code:     req.DistrictCode,
+		CityCode: req.CityCode,
 	}
-	if err := district.QueryDistrictByCode(); err != nil {
-		res.Message = "区不存在"
+	if err := district.QueryDistrictByCodeAndCity(); err != nil {
+		res.Message = "该城市下区不存在"
 		return
+	}
+	street := model.Street{
+		Code:         req.StreetCode,
+		DistrictCode: req.Description,
+	}
+	if err := street.QueryStreetByCodeAndDist(); err != nil {
+		street.Code = req.Description
+		if arr := street.QueryStreetByDistrictCode(); len(arr) > 0 {
+			res.Message = "该区下街道不存在"
+			return
+		}
 	}
 	if strings.Trim(req.Address, " ") == "" {
 		res.Message = "详细地址不能为空"
@@ -473,6 +480,8 @@ func EditUserStoretransfer(token string, req entity.UserStoretransferRequest) (r
 	if pros := store.QueryPropertyInfoByUserID(); len(pros) == 0 {
 		res.Message = "暂未发布物业信息，请先提交在修改"
 		return
+	} else {
+		store.ID = pros[0].ID
 	}
 	industry := model.Industry{}
 	industry.ID = req.IndustryID
@@ -500,18 +509,31 @@ func EditUserStoretransfer(token string, req entity.UserStoretransferRequest) (r
 		return
 	}
 	city := model.City{
-		Code: req.CityCode,
+		Code:         req.CityCode,
+		ProvinceCode: req.ProvinceCode,
 	}
-	if err := city.QueryCitysByCode(); err != nil {
-		res.Message = "城市不存在"
+	if err := city.QueryCitysByCodeAndPro(); err != nil {
+		res.Message = "该省份下城市不存在"
 		return
 	}
 	district := model.District{
-		Code: req.DistrictCode,
+		Code:     req.DistrictCode,
+		CityCode: req.CityCode,
 	}
-	if err := district.QueryDistrictByCode(); err != nil {
-		res.Message = "区不存在"
+	if err := district.QueryDistrictByCodeAndCity(); err != nil {
+		res.Message = "该城市下区不存在"
 		return
+	}
+	street := model.Street{
+		Code:         req.StreetCode,
+		DistrictCode: req.Description,
+	}
+	if err := street.QueryStreetByCodeAndDist(); err != nil {
+		street.Code = req.Description
+		if arr := street.QueryStreetByDistrictCode(); len(arr) > 0 {
+			res.Message = "该区下街道不存在"
+			return
+		}
 	}
 	if strings.Trim(req.Address, " ") == "" {
 		res.Message = "详细地址不能为空"
@@ -582,7 +604,7 @@ func EditUserStoretransfer(token string, req entity.UserStoretransferRequest) (r
 		"transfer_fee":    req.TransferFee,
 		"source_id":       user.ID,
 		"industry_ranges": industryRangeArr,
-		"storeType_id":    req.StoreTypeID,
+		"store_type_id":   req.StoreTypeID,
 	}
 	if err := store.EditPropertyInfoByID(args); err != nil {
 		res.Message = "修改失败"
@@ -705,5 +727,87 @@ func SearchPropertyInfo(pageSize int, page int, args map[string]interface{}) (re
 	res.Data = data
 	res.Message = "查询成功"
 	res.Status = true
+	return
+}
+
+// 用户店铺转让上传图集
+func AddPictures(token string, id int64, url string) (res entity.ResponseData) {
+	user := model.User{
+		Token: token,
+	}
+	if err := user.QueryByToken(); err != nil {
+		res.Message = "token错误"
+		return
+	}
+	store := model.PropertyInfo{
+		SourceID: user.ID,
+	}
+	is := false
+	if pros := store.QueryPropertyInfoByUserID(); len(pros) == 0 {
+		res.Message = "暂未发布物业信息，请先提交在修改"
+		return
+	} else {
+		for _, item := range pros {
+			if item.ID == id {
+				is = true
+				break
+			}
+		}
+	}
+	if !is {
+		res.Message = "不存在该物业信息"
+		return
+	}
+	picture := model.Picture{
+		PropertyInfoID: id,
+		Url:            url,
+	}
+	if err := picture.AddPicture(); err != nil {
+		res.Message = "图片上传失败"
+		return
+	}
+	res.Status = true
+	res.Message = "上传成功"
+	return
+}
+
+// 物业图集图片删除
+func DelPrictures(token string, pro_id int64, pri_id int64) (res entity.ResponseData) {
+	user := model.User{
+		Token: token,
+	}
+	if err := user.QueryByToken(); err != nil {
+		res.Message = "token错误"
+		return
+	}
+	store := model.PropertyInfo{
+		SourceID: user.ID,
+	}
+	is := false
+	if pros := store.QueryPropertyInfoByUserID(); len(pros) == 0 {
+		res.Message = "暂未发布物业信息，请先提交在修改"
+		return
+	} else {
+		for _, item := range pros {
+			if item.ID == pro_id {
+				is = true
+				break
+			}
+		}
+	}
+	if !is {
+		res.Message = "不存在该物业信息"
+		return
+	}
+	pri := model.Picture{
+		PropertyInfoID: pro_id,
+	}
+	pri.ID = pri_id
+	if err := pri.DelPicturre(); err != nil {
+		res.Message = "删除失败"
+		return
+	}
+	res.Status = true
+	res.Message = "删除成功"
 	return
 }

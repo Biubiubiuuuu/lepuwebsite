@@ -37,6 +37,12 @@ func (a *AreaType) QueryAreaType() (AreaTypes []AreaType) {
 	return
 }
 
+// 查询面积分类详情
+func (a *AreaType) QueryAreaTypeByID() error {
+	db := mysql.GetMysqlDB()
+	return db.First(&a).Error
+}
+
 // 查询已添加面积范围最大值
 func (a *AreaType) QueryMaxArea() error {
 	db := mysql.GetMysqlDB()

@@ -5,9 +5,14 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/Biubiubiuuuu/yuepuwebsite/controller/commonController"
 	"github.com/Biubiubiuuuu/yuepuwebsite/entity"
+	"github.com/Biubiubiuuuu/yuepuwebsite/helper/configHelper"
+	"github.com/Biubiubiuuuu/yuepuwebsite/helper/fileHelper"
 	"github.com/Biubiubiuuuu/yuepuwebsite/service/adminService"
+	"github.com/Biubiubiuuuu/yuepuwebsite/service/userService"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 // @Summary 用户登录
@@ -25,6 +30,20 @@ func Login(c *gin.Context) {
 	} else {
 		res = adminService.Login(req, c.ClientIP())
 	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查询面积分类详情
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "面积分类ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/areaType/{id} [GET]
+// @Security ApiKeyAuth
+func QueryAreaTypeInfoById(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryAreaTypeInfoById(id)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -85,6 +104,20 @@ func DelAreaType(c *gin.Context) {
 		ids = append(ids, item)
 	}
 	res := adminService.DelAreaType(ids)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查询租金分类详情
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "租金分类ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/rentType/{id} [GET]
+// @Security ApiKeyAuth
+func QueryRentTypeInfoById(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryRentTypeInfoById(id)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -268,6 +301,24 @@ func DelStoreType(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+// @Summary 查询部门
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param name query string false "部门名称"
+// @Param enable query string false "是否启用"
+// @Param pageSize query string false "页大小 （默认30）"
+// @Param page query string false "跳转页码"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/department [GET]
+// @Security ApiKeyAuth
+func QueryDepartment(c *gin.Context) {
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "30"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	res := adminService.QueryDepartment(pageSize, page, c.Query("name"), c.Query("enable"))
+	c.JSON(http.StatusOK, res)
+}
+
 // @Summary 添加部门
 // @tags 后台
 // @Accept  application/json
@@ -284,6 +335,47 @@ func AddDepartment(c *gin.Context) {
 	} else {
 		res = adminService.AddDepartment(req)
 	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 修改部门
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "部门ID"
+// @Param body body entity.DepartmentRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/department/{id} [PUT]
+// @Security ApiKeyAuth
+func EditDepartment(c *gin.Context) {
+	req := entity.DepartmentRequest{}
+	res := entity.ResponseData{}
+	if c.ShouldBindJSON(&req) != nil {
+		res.Message = "请求参数json错误"
+	} else {
+		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+		res = adminService.EditDepartment(id, req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 删除部门
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param ids path string true "部门ID 多个用,分开"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/department/{ids} [DELETE]
+// @Security ApiKeyAuth
+func DelDepartment(c *gin.Context) {
+	id := c.Param("ids")
+	idArr := strings.Split(id, ",")
+	var ids []int64
+	for _, v := range idArr {
+		item, _ := strconv.ParseInt(v, 10, 64)
+		ids = append(ids, item)
+	}
+	res := adminService.DelDepartment(ids)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -306,6 +398,47 @@ func AddPost(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+// @Summary 修改岗位
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "岗位ID"
+// @Param body body entity.PostRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/post/{id} [PUT]
+// @Security ApiKeyAuth
+func EditPost(c *gin.Context) {
+	req := entity.PostRequest{}
+	res := entity.ResponseData{}
+	if c.ShouldBindJSON(&req) != nil {
+		res.Message = "请求参数json错误"
+	} else {
+		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+		res = adminService.EditPost(id, req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 删除岗位
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param ids path string true "岗位ID 多个用,分开"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/post/{ids} [DELETE]
+// @Security ApiKeyAuth
+func DelPost(c *gin.Context) {
+	id := c.Param("ids")
+	idArr := strings.Split(id, ",")
+	var ids []int64
+	for _, v := range idArr {
+		item, _ := strconv.ParseInt(v, 10, 64)
+		ids = append(ids, item)
+	}
+	res := adminService.DelPost(ids)
+	c.JSON(http.StatusOK, res)
+}
+
 // @Summary 添加角色
 // @tags 后台
 // @Accept  application/json
@@ -321,6 +454,782 @@ func AddRole(c *gin.Context) {
 		res.Message = "请求参数JSON错误"
 	} else {
 		res = adminService.AddRole(req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 修改角色
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "角色ID"
+// @Param body body entity.RoleRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/role/{id} [PUT]
+// @Security ApiKeyAuth
+func EditRole(c *gin.Context) {
+	req := entity.RoleRequest{}
+	res := entity.ResponseData{}
+	if c.ShouldBindJSON(&req) != nil {
+		res.Message = "请求参数json错误"
+	} else {
+		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+		res = adminService.EditRole(id, req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 删除角色
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param ids path string true "角色ID 多个用,分开"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/role/{ids} [DELETE]
+// @Security ApiKeyAuth
+func DelRole(c *gin.Context) {
+	id := c.Param("ids")
+	idArr := strings.Split(id, ",")
+	var ids []int64
+	for _, v := range idArr {
+		item, _ := strconv.ParseInt(v, 10, 64)
+		ids = append(ids, item)
+	}
+	res := adminService.DelRole(ids)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查询店铺类型详情
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "店铺类型ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/storeType/{id} [GET]
+// @Security ApiKeyAuth
+func QueryStoreTypeByID(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryStoreTypeByID(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查询岗位详情
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "岗位ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/post/{id} [GET]
+// @Security ApiKeyAuth
+func QueryPostByID(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryPostByID(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查询部门详情
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "部门ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/department/{id} [GET]
+// @Security ApiKeyAuth
+func QueryDepartmentByID(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryDepartmentByID(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查询所有岗位
+// @tags 后台
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Param name query string false "岗位名称"
+// @Param code query string false "岗位编码"
+// @Param enable query string false "是否启用"
+// @Param pageSize query string false "页大小 （默认30）"
+// @Param page query string false "跳转页码"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/post [GET]
+func QueryPost(c *gin.Context) {
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "30"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	res := adminService.QueryPost(pageSize, page, c.Query("name"), c.Query("code"), c.Query("enable"))
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查询店铺类型
+// @tags 后台
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Param name query string false "店铺类型名称"
+// @Param enable query string false "是否启用"
+// @Param pageSize query string false "页大小 （默认30）"
+// @Param page query string false "跳转页码"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/storeType [GET]
+func QueryStoreType(c *gin.Context) {
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "30"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	res := adminService.QueryStoreType(pageSize, page, c.Query("name"), c.Query("enable"))
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查询行业分类详情
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "行业分类ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/industry/{id} [GET]
+// @Security ApiKeyAuth
+func QueryIndustryByID(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryIndustryByID(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查询行业类型
+// @tags 后台
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Param name query string false "行业名称"
+// @Param enable query string false "是否启用"
+// @Param pageSize query string false "页大小 （默认30）"
+// @Param page query string false "跳转页码"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/industry [GET]
+func QueryIndustry(c *gin.Context) {
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "30"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	res := adminService.QueryIndustry(pageSize, page, c.Query("name"), c.Query("enable"))
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查询面积分类
+// @tags 后台
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/areatype [GET]
+func QueryAreaType(c *gin.Context) {
+	res := adminService.QueryAreaType()
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查询租金分类
+// @tags 后台
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/renttype [GET]
+func QueryRentType(c *gin.Context) {
+	res := adminService.QueryRentType()
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查询角色
+// @tags 后台
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Param name query string false "角色名称"
+// @Param enable query string false "是否启用"
+// @Param pageSize query string false "页大小 （默认30）"
+// @Param page query string false "跳转页码"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/role [GET]
+func QueryRole(c *gin.Context) {
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "30"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	res := adminService.QueryRole(pageSize, page, c.Query("name"), c.Query("enable"))
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查询角色详情
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "角色ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/role/{id} [GET]
+// @Security ApiKeyAuth
+func QueryRoleByID(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryRoleByID(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 添加菜单
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param body body entity.MenuRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/menu [POST]
+// @Security ApiKeyAuth
+func AddMenu(c *gin.Context) {
+	res := entity.ResponseData{}
+	req := entity.MenuRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		res = adminService.AddMenu(req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 修改菜单
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "菜单ID"
+// @Param body body entity.MenuRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/menu/{id} [PUT]
+// @Security ApiKeyAuth
+func Editmenu(c *gin.Context) {
+	req := entity.MenuRequest{}
+	res := entity.ResponseData{}
+	if c.ShouldBindJSON(&req) != nil {
+		res.Message = "请求参数json错误"
+	} else {
+		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+		res = adminService.EditMenu(id, req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 删除菜单
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param ids path string true "菜单ID 多个用,分开"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/menu/{ids} [DELETE]
+// @Security ApiKeyAuth
+func DelMenu(c *gin.Context) {
+	id := c.Param("ids")
+	idArr := strings.Split(id, ",")
+	var ids []int64
+	for _, v := range idArr {
+		item, _ := strconv.ParseInt(v, 10, 64)
+		ids = append(ids, item)
+	}
+	res := adminService.DelMenus(ids)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查看菜单详情
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "菜单ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/menu/{id} [GET]
+// @Security ApiKeyAuth
+func QueryMenuByID(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryMenuByID(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查看菜单
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/menu [GET]
+// @Security ApiKeyAuth
+func QueryMenu(c *gin.Context) {
+	res := adminService.QueryMenu()
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 获取用户信息 by id
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "用户D"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/employee/{id} [GET]
+// @Security ApiKeyAuth
+func QueryEmployeeById(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryEmployeeById(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 修改员工信息
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param body body entity.EditEmployeeRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/employee/{id} [PUT]
+// @Security ApiKeyAuth
+func EditUser(c *gin.Context) {
+	req := entity.EditEmployeeRequest{}
+	res := entity.ResponseData{}
+	if c.ShouldBindJSON(&req) != nil {
+		res.Message = "请求参数json错误"
+	} else {
+		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+		res = adminService.EditAdminToUser(id, req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 修改用户密码
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param body body entity.EditUserPass true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/edituserpass [POST]
+// @Security ApiKeyAuth
+func EditUserPass(c *gin.Context) {
+	req := entity.EditUserPass{}
+	res := entity.ResponseData{}
+	if c.ShouldBindJSON(&req) != nil {
+		res.Message = "请求参数json错误"
+	} else {
+		var token string
+		if token, res = commonController.GetToken(c); res.Status {
+			res = userService.EditUserPass(token, req)
+		} else {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, res)
+			return
+		}
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查看用户信息
+// @tags 后台
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin [GET]
+// @Security ApiKeyAuth
+func QueryUser(c *gin.Context) {
+	res := entity.ResponseData{}
+	var token string
+	if token, res = commonController.GetToken(c); res.Status {
+		res = userService.QueryUserByToken(token)
+	} else {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, res)
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 添加员工
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param body body entity.AddEmployeeRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/employee [POST]
+// @Security ApiKeyAuth
+func AddEmployee(c *gin.Context) {
+	res := entity.ResponseData{}
+	req := entity.AddEmployeeRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		res = adminService.AddEmployee(req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 删除员工
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param ids path string true "用户ID 多个用,分开"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/employee/{ids} [DELETE]
+// @Security ApiKeyAuth
+func DelEmployee(c *gin.Context) {
+	id := c.Param("ids")
+	idArr := strings.Split(id, ",")
+	var ids []int64
+	for _, v := range idArr {
+		item, _ := strconv.ParseInt(v, 10, 64)
+		ids = append(ids, item)
+	}
+	res := adminService.DelEmployee(ids)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 获取员工列表
+// @tags 后台
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Param nickname query string false "用户昵称"
+// @Param username query string false "用户名"
+// @Param enable query string false "是否启用"
+// @Param telephone query string false "电话号码"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/employee [GET]
+// @Security ApiKeyAuth
+func GetEmployee(c *gin.Context) {
+	args := map[string]interface{}{
+		"nickname":  c.Query("nickname"),
+		"username":  c.Query("username"),
+		"enable":    c.Query("enable"),
+		"telephone": c.Query("telephone"),
+	}
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "30"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	res := adminService.QueryAllUser(pageSize, page, args)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查询我的已发布物业信息
+// @tags 后台
+// @Accept application/x-www-form-urlencoded
+// @Produce  json
+// @Param industry_id query string false "行业ID"
+// @Param store_type_id query string false "店铺类型ID"
+// @Param province_code query string false "省代码"
+// @Param city_code query string false "城市代码"
+// @Param district_code query string false "区代码"
+// @Param street_code query string false "街道代码"
+// @Param area_type_id query string false "面积范围ID"
+// @Param rent_type_id query string false "租金范围ID"
+// @Param min_area query string false "最小面积"
+// @Param max_area query string false "最大面积"
+// @Param min_rent query string false "最小租金"
+// @Param max_rent query string false "最大租金"
+// @Param model_type query string true "模型类型 0-转让 ｜ 1-出售 ｜ 3-出租 | 4-求租 ｜ 5-求购"
+// @Param bus_type query string false "业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库"
+// @Param sort_condition query string false "排序 area-面积 ｜ rent-租金 ｜ created_at-发布时间（默认）"
+// @Param status query string false "是否成功 查询我的已成功信息传true；查询我的历史重点信息true"
+// @Param protect query string false "是否保护 查询我的重点信息传true；查询我的历史重点信息true"
+// @Param pageSize query string false "页大小 （默认30）"
+// @Param page query string false "跳转页码"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/propertyInfo [GET]
+// @Security ApiKeyAuth
+func SearchPropertyInfo(c *gin.Context) {
+	args := map[string]interface{}{
+		"store_type_id":  c.Query("store_type_id"),
+		"industry_id":    c.Query("industry_id"),
+		"province_code":  c.Query("province_code"),
+		"city_code":      c.Query("city_code"),
+		"district_code":  c.Query("district_code"),
+		"street_code":    c.Query("street_code"),
+		"area_type_id":   c.Query("area_type_id"),
+		"min_area":       c.Query("min_area"),
+		"max_area":       c.Query("max_area"),
+		"min_rent":       c.Query("min_rent"),
+		"max_rent":       c.Query("max_rent"),
+		"rent_type_id":   c.Query("rent_type_id"),
+		"model_type":     c.Query("model_type"),
+		"bus_type":       c.Query("bus_type"),
+		"sort_condition": c.DefaultQuery("sort_condition", "created_at"),
+	}
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "30"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	var token string
+	res := entity.ResponseData{}
+	if token, res = commonController.GetToken(c); res.Status {
+		res = adminService.SearchPropertyInfo(token, pageSize, page, args)
+	} else {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, res)
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 查看物业详情
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "物业信息ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/propertyInfo/{id} [GET]
+func QueryPropertyInfoByID(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := userService.QueryPropertyInfoByID(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 修改物业信息
+// @tags 后台
+// @Accept  multipart/form-data
+// @Produce  json
+// @Param id path string true "物业信息ID"
+// @Param industry_id formData string true "经营业态ID"
+// @Param title formData string true "标题"
+// @Param nickname formData string true "联系人"
+// @Param telephone formData string true "联系手机"
+// @Param image formData file false "图片"
+// @Param province_code formData string true "省代码""
+// @Param city_code formData string true "城市代码"
+// @Param district_code formData string true "区代码"
+// @Param street_code formData string false "街道代码"
+// @Param address formData string true "详细地址"
+// @Param store_type_id formData string true "店铺类型ID"
+// @Param idling formData bool true "可否空转"
+// @Param area formData string true "面积（单位：平方米）"
+// @Param in_operation formData string true "是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中"
+// @Param rent formData string true "租金（单位：元/月）"
+// @Param transfer_fee formData string false "转让费用（单位：万元 不录入则显示为面议）"
+// @Param industry_ranges formData string true "适合经营范围id，多个用，拼接"
+// @Param description formData string false "详细描述""
+// @Param explicit_tel formData bool false "是否外显号码"
+// @Param tel1 formData string false "外显号码1"
+// @Param tel2 formData string false "外显号码2"
+// @Param quoted_price formData string false "报价"
+// @Param remake formData string false "跟进备注"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/propertyInfo/{id} [PUT]
+// @Security ApiKeyAuth
+func EditUserStoretransfer(c *gin.Context) {
+	res := entity.ResponseData{}
+	industryID, _ := strconv.ParseInt(c.PostForm("industry_id"), 10, 64)
+	storeTypeID, _ := strconv.ParseInt(c.PostForm("store_type_id"), 10, 64)
+	idling, _ := strconv.ParseBool(c.PostForm("idling"))
+	area, _ := strconv.ParseFloat(c.PostForm("area"), 64)
+	rent, _ := strconv.ParseFloat(c.PostForm("rent"), 64)
+	transferFee, _ := strconv.ParseFloat(c.PostForm("transfer_fee"), 64)
+	industryRangesArr := strings.Split(c.PostForm("industry_ranges"), ",")
+	var industryRanges []int64
+	for _, item := range industryRangesArr {
+		id, _ := strconv.ParseInt(item, 10, 64)
+		industryRanges = append(industryRanges, id)
+	}
+	// 获取主机头
+	r := c.Request
+	host := r.Host
+	if strings.HasPrefix(host, "http://") == false {
+		host = "http://" + host
+	}
+
+	var image string
+	if file, err := c.FormFile("image"); err == nil {
+		// 文件名 避免重复取uuid
+		var filename string
+		uuid, _ := uuid.NewUUID()
+		arr := strings.Split(file.Filename, ".")
+		if strings.EqualFold(arr[len(arr)-1], "png") {
+			filename = uuid.String() + ".png"
+		} else if strings.EqualFold(arr[len(arr)-1], "jpg") {
+			filename = uuid.String() + ".jpg"
+		} else {
+			res.Message = "图片格式只支持png、jpg"
+			c.JSON(http.StatusOK, res)
+			return
+		}
+		pathFile := configHelper.ImageDir
+		if !fileHelper.IsExist(pathFile) {
+			fileHelper.CreateDir(pathFile)
+		}
+		pathFile = pathFile + filename
+		if err := c.SaveUploadedFile(file, pathFile); err == nil {
+			image = host + "/" + pathFile
+		}
+	}
+	if image == "" {
+		pathFile := configHelper.ImageDir
+		if !fileHelper.IsExist(pathFile) {
+			fileHelper.CreateDir(pathFile)
+		}
+		pathFile = pathFile + "default-store.7e8792da.jpg"
+		image = host + "/" + pathFile
+	}
+	quoted_price, _ := strconv.ParseFloat(c.PostForm("quoted_price"), 64)
+
+	explicit_tel, _ := strconv.ParseBool(c.PostForm("explicit_tel"))
+	req := entity.AdminStoretransferRequest{
+		IndustryID:     industryID,
+		Title:          c.PostForm("title"),
+		Nickname:       c.PostForm("nickname"),
+		Telephone:      c.PostForm("telephone"),
+		Image:          image,
+		ProvinceCode:   c.PostForm("province_code"),
+		CityCode:       c.PostForm("city_code"),
+		DistrictCode:   c.PostForm("district_code"),
+		StreetCode:     c.PostForm("stree_code"),
+		Address:        c.PostForm("address"),
+		StoreTypeID:    storeTypeID,
+		Idling:         idling,
+		Area:           area,
+		Rent:           rent,
+		TransferFee:    transferFee,
+		IndustryRanges: industryRanges,
+		Description:    c.PostForm("description"),
+		InOperation:    c.PostForm("in_operation"),
+		ExplicitTel:    explicit_tel,
+		Tel1:           c.PostForm("tel1"),
+		Tel2:           c.PostForm("tel2"),
+		QuotedPrice:    quoted_price,
+		Remake:         c.PostForm("remake"),
+	}
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res = adminService.EditUserStoretransfer(id, req)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 保护
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "物业信息ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/propertyInfo/protect/{id} [POST]
+// @Security ApiKeyAuth
+func EditProtectionProInfo(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.EditProtectionProInfo(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 上传图集图片（单张）
+// @tags 后台
+// @Accept  multipart/form-data
+// @Produce  json
+// @Param id path string true "物业信息ID"
+// @Param image formData file false "图片"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/propertyInfo/{id}/picture [POST]
+// @Security ApiKeyAuth
+func AddPictures(c *gin.Context) {
+	res := entity.ResponseData{}
+	// 获取主机头
+	r := c.Request
+	host := r.Host
+	if strings.HasPrefix(host, "http://") == false {
+		host = "http://" + host
+	}
+	var image string
+	if file, err := c.FormFile("image"); err == nil {
+		// 文件名 避免重复取uuid
+		var filename string
+		uuid, _ := uuid.NewUUID()
+		arr := strings.Split(file.Filename, ".")
+		if strings.EqualFold(arr[len(arr)-1], "png") {
+			filename = uuid.String() + ".png"
+		} else if strings.EqualFold(arr[len(arr)-1], "jpg") {
+			filename = uuid.String() + ".jpg"
+		} else if strings.EqualFold(arr[len(arr)-1], "jpeg") {
+			filename = uuid.String() + ".jpeg"
+		} else {
+			res.Message = "图片格式只支持png、jpg、jpeg"
+			c.JSON(http.StatusOK, res)
+			return
+		}
+		pathFile := configHelper.ImageDir
+		if !fileHelper.IsExist(pathFile) {
+			fileHelper.CreateDir(pathFile)
+		}
+		pathFile = pathFile + filename
+		if err := c.SaveUploadedFile(file, pathFile); err == nil {
+			image = host + "/" + pathFile
+		}
+	}
+	if image == "" {
+		res.Message = "图片下载失败"
+	} else {
+		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+		res = adminService.AddPictures(id, image)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 删除图片（单张）
+// @tags 后台
+// @Accept application/x-www-form-urlencoded
+// @Produce  json
+// @Param pro_id path string true "物业信息ID"
+// @Param pri_id path string true "图片ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/propertyInfo/{pro_id}/picture/{pri_id} [DELETE]
+// @Security ApiKeyAuth
+func DelPrictures(c *gin.Context) {
+	pro_id, _ := strconv.ParseInt(c.Param("pro_id"), 10, 64)
+	pri_id, _ := strconv.ParseInt(c.Param("pri_id"), 10, 64)
+	res := adminService.DelPrictures(pro_id, pri_id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 物业添加跟单记录
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Param pro_id path string true "物业信息ID"
+// @Param body body entity.AddProLog true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/propertyInfo/log/:id [POST]
+// @Security ApiKeyAuth
+func AddProInfoLog(c *gin.Context) {
+	var token string
+	res := entity.ResponseData{}
+	req := entity.AddProLog{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		if token, res = commonController.GetToken(c); res.Status {
+			id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+			res = adminService.AddProInfoLog(token, id, req)
+		} else {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, res)
+			return
+		}
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 发布物业信息
+// @tags 后台
+// @Accept  multipart/form-data
+// @Produce  json
+// @Param title formData string true "标题"
+// @Param nickname formData string true "客户姓名"
+// @Param telephone formData string true "联系手机"
+// @Param store_name formData string true "店名"
+// @Param image formData file false "图片"
+// @Param bus_type formData string false "业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库"
+// @Param model_type formData string false "模型类型 0-转让 ｜ 1-出售 ｜ 2-出租"
+// @Param province_code formData string true "省代码""
+// @Param city_code formData string true "城市代码"
+// @Param district_code formData string true "区代码"
+// @Param street_code formData string false "街道代码"
+// @Param address formData string true "详细地址"
+// @Param industry_id formData string true "经营业态ID"
+// @Param store_type_id formData string true "店铺类型"
+// @Param idling formData bool true "可否空转"
+// @Param in_operation formData string true "是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中"
+// @Param area formData string true "面积（单位：平方米）"
+// @Param rent formData string true "租金（单位：元/月）"
+// @Param transfer_fee formData string false "转让费用（单位：万元 不录入则显示为面议）"
+// @Param industry_ranges formData string true "适合经营范围id，多个用，拼接"
+// @Param description formData string false "详细描述"
+// @Param explicit_tel formData bool false "是否外显号码"
+// @Param tel1 formData string false "外显号码1"
+// @Param tel2 formData string false "外显号码2"
+// @Param quoted_price formData string false "报价"
+// @Param remake formData string false "跟进备注"
+// @Param protect formData string false "是否保护"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/new/propertyInfo [POST]
+// @Security ApiKeyAuth
+func AddProInfo(c *gin.Context) {
+	var token string
+	res := entity.ResponseData{}
+	req := entity.AddPropertyInfoRequest{}
+	if err := c.ShouldBind(&req); err != nil {
+		res.Message = "请求参数格式错误"
+	} else {
+		if token, res = commonController.GetToken(c); res.Status {
+			res = adminService.AddProInfo(token, req)
+		} else {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, res)
+			return
+		}
 	}
 	c.JSON(http.StatusOK, res)
 }

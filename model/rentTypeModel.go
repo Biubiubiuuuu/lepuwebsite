@@ -37,6 +37,12 @@ func (r *RentType) QueryRentType() (rentTypes []RentType) {
 	return
 }
 
+// 查询租金分类 by id
+func (r *RentType) QueryRentTypeInfoById() error {
+	db := mysql.GetMysqlDB()
+	return db.First(&r).Error
+}
+
 // 删除面积分类，返回受影响行数
 func DelRentType(ids []int64) int64 {
 	db := mysql.GetMysqlDB()

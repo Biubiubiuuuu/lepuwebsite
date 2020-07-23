@@ -25,6 +25,33 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/admin": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查看用户信息",
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/areaType": {
             "post": {
                 "security": [
@@ -100,6 +127,40 @@ var doc = `{
             }
         },
         "/api/v1/admin/areaType/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询面积分类详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "面积分类ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -144,7 +205,80 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/admin/areatype": {
+            "get": {
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询面积分类",
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/department": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询部门",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "部门名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否启用",
+                        "name": "enable",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页大小 （默认30）",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "跳转页码",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -182,7 +316,403 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/admin/department/{ids}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "删除部门",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "部门ID 多个用,分开",
+                        "name": "ids",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/department/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询部门详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "部门ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "修改部门",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "部门ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.DepartmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/edituserpass": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "修改用户密码",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.EditUserPass"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/employee": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "获取员工列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户昵称",
+                        "name": "nickname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "username",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否启用",
+                        "name": "enable",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "电话号码",
+                        "name": "telephone",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "添加员工",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.AddEmployeeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/employee/{ids}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "删除员工",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID 多个用,分开",
+                        "name": "ids",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/employee/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "获取用户信息 by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户D",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "修改员工信息",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.EditEmployeeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/industry": {
+            "get": {
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询行业类型",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "行业名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否启用",
+                        "name": "enable",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页大小 （默认30）",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "跳转页码",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -257,6 +787,40 @@ var doc = `{
             }
         },
         "/api/v1/admin/industry/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询行业分类详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "行业分类ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -334,7 +898,443 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/admin/menu": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查看菜单",
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "添加菜单",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.MenuRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/menu/{ids}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "删除菜单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "菜单ID 多个用,分开",
+                        "name": "ids",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/menu/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查看菜单详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "菜单ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "修改菜单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "菜单ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.MenuRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/new/propertyInfo": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "发布物业信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "标题",
+                        "name": "title",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "客户姓名",
+                        "name": "nickname",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "联系手机",
+                        "name": "telephone",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "店名",
+                        "name": "store_name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "图片",
+                        "name": "image",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库",
+                        "name": "bus_type",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "模型类型 0-转让 ｜ 1-出售 ｜ 2-出租",
+                        "name": "model_type",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "省代码",
+                        "name": "province_code",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "城市代码",
+                        "name": "city_code",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "区代码",
+                        "name": "district_code",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "街道代码",
+                        "name": "street_code",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "详细地址",
+                        "name": "address",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "经营业态ID",
+                        "name": "industry_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "店铺类型",
+                        "name": "store_type_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "可否空转",
+                        "name": "idling",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中",
+                        "name": "in_operation",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "面积（单位：平方米）",
+                        "name": "area",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "租金（单位：元/月）",
+                        "name": "rent",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "转让费用（单位：万元 不录入则显示为面议）",
+                        "name": "transfer_fee",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "适合经营范围id，多个用，拼接",
+                        "name": "industry_ranges",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "详细描述",
+                        "name": "description",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否外显号码",
+                        "name": "explicit_tel",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "外显号码1",
+                        "name": "tel1",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "外显号码2",
+                        "name": "tel2",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "报价",
+                        "name": "quoted_price",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "跟进备注",
+                        "name": "remake",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否保护",
+                        "name": "protect",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/post": {
+            "get": {
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询所有岗位",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "岗位名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "岗位编码",
+                        "name": "code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否启用",
+                        "name": "enable",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页大小 （默认30）",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "跳转页码",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -360,6 +1360,648 @@ var doc = `{
                         "schema": {
                             "$ref": "#/definitions/entity.PostRequest"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/post/{ids}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "删除岗位",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "岗位ID 多个用,分开",
+                        "name": "ids",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/post/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询岗位详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "岗位ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "修改岗位",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "岗位ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.PostRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/propertyInfo": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询我的已发布物业信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "行业ID",
+                        "name": "industry_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "店铺类型ID",
+                        "name": "store_type_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "省代码",
+                        "name": "province_code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "城市代码",
+                        "name": "city_code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "区代码",
+                        "name": "district_code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "街道代码",
+                        "name": "street_code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "面积范围ID",
+                        "name": "area_type_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "租金范围ID",
+                        "name": "rent_type_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "最小面积",
+                        "name": "min_area",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "最大面积",
+                        "name": "max_area",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "最小租金",
+                        "name": "min_rent",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "最大租金",
+                        "name": "max_rent",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "模型类型 0-转让 ｜ 1-出售 ｜ 3-出租 | 4-求租 ｜ 5-求购",
+                        "name": "model_type",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库",
+                        "name": "bus_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序 area-面积 ｜ rent-租金 ｜ created_at-发布时间（默认）",
+                        "name": "sort_condition",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否成功 查询我的已成功信息传true；查询我的历史重点信息true",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否保护 查询我的重点信息传true；查询我的历史重点信息true",
+                        "name": "protect",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页大小 （默认30）",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "跳转页码",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/propertyInfo/log/:id": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "物业添加跟单记录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "物业信息ID",
+                        "name": "pro_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.AddProLog"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/propertyInfo/protect/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "保护",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "物业信息ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/propertyInfo/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查看物业详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "物业信息ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "修改物业信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "物业信息ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "经营业态ID",
+                        "name": "industry_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "标题",
+                        "name": "title",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "联系人",
+                        "name": "nickname",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "联系手机",
+                        "name": "telephone",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "图片",
+                        "name": "image",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "省代码",
+                        "name": "province_code",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "城市代码",
+                        "name": "city_code",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "区代码",
+                        "name": "district_code",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "街道代码",
+                        "name": "street_code",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "详细地址",
+                        "name": "address",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "店铺类型ID",
+                        "name": "store_type_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "可否空转",
+                        "name": "idling",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "面积（单位：平方米）",
+                        "name": "area",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中",
+                        "name": "in_operation",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "租金（单位：元/月）",
+                        "name": "rent",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "转让费用（单位：万元 不录入则显示为面议）",
+                        "name": "transfer_fee",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "适合经营范围id，多个用，拼接",
+                        "name": "industry_ranges",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "详细描述",
+                        "name": "description",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否外显号码",
+                        "name": "explicit_tel",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "外显号码1",
+                        "name": "tel1",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "外显号码2",
+                        "name": "tel2",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "报价",
+                        "name": "quoted_price",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "跟进备注",
+                        "name": "remake",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/propertyInfo/{id}/picture": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "上传图集图片（单张）",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "物业信息ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "图片",
+                        "name": "image",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/propertyInfo/{pro_id}/picture/{pri_id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "删除图片（单张）",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "物业信息ID",
+                        "name": "pro_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "图片ID",
+                        "name": "pri_id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -447,6 +2089,40 @@ var doc = `{
             }
         },
         "/api/v1/admin/rentType/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询租金分类详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "租金分类ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -491,7 +2167,75 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/admin/renttype": {
+            "get": {
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询租金分类",
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/role": {
+            "get": {
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询角色",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否启用",
+                        "name": "enable",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页大小 （默认30）",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "跳转页码",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -529,7 +2273,168 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/admin/role/{ids}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "删除角色",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色ID 多个用,分开",
+                        "name": "ids",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/role/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询角色详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "修改角色",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.RoleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/storeType": {
+            "get": {
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询店铺类型",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "店铺类型名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否启用",
+                        "name": "enable",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "页大小 （默认30）",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "跳转页码",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -604,6 +2509,40 @@ var doc = `{
             }
         },
         "/api/v1/admin/storeType/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "查询店铺类型详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "店铺类型ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -798,28 +2737,6 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/basic/industry": {
-            "get": {
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "基础数据"
-                ],
-                "summary": "查询行业类型",
-                "responses": {
-                    "200": {
-                        "description": "desc",
-                        "schema": {
-                            "$ref": "#/definitions/entity.ResponseData"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/basic/industryParent": {
             "get": {
                 "consumes": [
@@ -876,28 +2793,6 @@ var doc = `{
                     "基础数据"
                 ],
                 "summary": "查询租金分类",
-                "responses": {
-                    "200": {
-                        "description": "desc",
-                        "schema": {
-                            "$ref": "#/definitions/entity.ResponseData"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/basic/storeType": {
-            "get": {
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "基础数据"
-                ],
-                "summary": "查询店铺类型",
                 "responses": {
                     "200": {
                         "description": "desc",
@@ -1363,6 +3258,91 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/user/propertyInfo/{id}/picture": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户"
+                ],
+                "summary": "上传图集图片（单张）",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "物业信息ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "图片",
+                        "name": "image",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/propertyInfo/{pro_id}/picture/{pri_id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户"
+                ],
+                "summary": "删除图片（单张）",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "物业信息ID",
+                        "name": "pro_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "图片ID",
+                        "name": "pri_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user/register": {
             "post": {
                 "consumes": [
@@ -1691,6 +3671,76 @@ var doc = `{
         }
     },
     "definitions": {
+        "entity.AddEmployeeRequest": {
+            "type": "object",
+            "properties": {
+                "QQ": {
+                    "description": "QQ",
+                    "type": "string"
+                },
+                "department_id": {
+                    "description": "归属部门ID",
+                    "type": "integer"
+                },
+                "email": {
+                    "description": "邮箱",
+                    "type": "string"
+                },
+                "enable": {
+                    "description": "是否启用",
+                    "type": "boolean"
+                },
+                "nickname": {
+                    "description": "用户昵称",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "手机号码（登录）",
+                    "type": "string"
+                },
+                "post_id": {
+                    "description": "岗位ID",
+                    "type": "integer"
+                },
+                "role_id": {
+                    "description": "角色ID",
+                    "type": "integer"
+                },
+                "sex": {
+                    "description": "性别 0:未知 ｜ 1:男 ｜ 2:女 （空或其他默认未知）",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "用户名称（登录）",
+                    "type": "string"
+                }
+            }
+        },
+        "entity.AddProLog": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "description": "跟单内容",
+                    "type": "string"
+                },
+                "shop_transfer_id": {
+                    "description": "店铺转让ID",
+                    "type": "integer"
+                },
+                "with_id": {
+                    "description": "跟单人ID",
+                    "type": "integer"
+                },
+                "with_name": {
+                    "description": "跟单人姓名",
+                    "type": "string"
+                }
+            }
+        },
         "entity.AreaTypeRequest": {
             "type": "object",
             "properties": {
@@ -1734,6 +3784,51 @@ var doc = `{
                 "sort": {
                     "description": "显示排序",
                     "type": "integer"
+                }
+            }
+        },
+        "entity.EditEmployeeRequest": {
+            "type": "object",
+            "properties": {
+                "QQ": {
+                    "description": "QQ",
+                    "type": "string"
+                },
+                "department_id": {
+                    "description": "归属部门ID",
+                    "type": "integer"
+                },
+                "email": {
+                    "description": "邮箱",
+                    "type": "string"
+                },
+                "enable": {
+                    "description": "是否启用",
+                    "type": "boolean"
+                },
+                "nickname": {
+                    "description": "用户昵称",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "手机号码（登录）",
+                    "type": "string"
+                },
+                "post_id": {
+                    "description": "岗位ID",
+                    "type": "integer"
+                },
+                "role_id": {
+                    "description": "角色ID",
+                    "type": "integer"
+                },
+                "sex": {
+                    "description": "性别 0:未知 ｜ 1:男 ｜ 2:女 （空或其他默认未知）",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "用户名称（登录）",
+                    "type": "string"
                 }
             }
         },
@@ -1801,6 +3896,39 @@ var doc = `{
                 "sort": {
                     "description": "行业排序 越大越靠前",
                     "type": "integer"
+                }
+            }
+        },
+        "entity.MenuRequest": {
+            "type": "object",
+            "properties": {
+                "enable": {
+                    "description": "是否启用",
+                    "type": "boolean"
+                },
+                "icon": {
+                    "description": "菜单图标",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "上级ID 0为最顶级",
+                    "type": "integer"
+                },
+                "router_name": {
+                    "description": "路由名称",
+                    "type": "string"
+                },
+                "router_url": {
+                    "description": "路由地址",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "显示排序",
+                    "type": "integer"
+                },
+                "title": {
+                    "description": "菜单标题",
+                    "type": "string"
                 }
             }
         },
@@ -1886,10 +4014,6 @@ var doc = `{
                 "menu_id": {
                     "description": "菜单ID",
                     "type": "integer"
-                },
-                "menu_title": {
-                    "description": "菜单标题",
-                    "type": "string"
                 }
             }
         },

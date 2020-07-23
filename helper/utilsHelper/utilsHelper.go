@@ -22,7 +22,7 @@ func CheckTelFormat(tel string) bool {
 
 // 验证密码格式(密码可包含数字、英文、!@#$&*.,字符，长度6-20)
 //  param password
-//  return boll
+//  return bool
 func CheckPasswordFormat(password string) bool {
 	fmt.Println(password)
 	str := `^([a-zA-Z0-9]|[!@#$&*.,]){6,20}$`

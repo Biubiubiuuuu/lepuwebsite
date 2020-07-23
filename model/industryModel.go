@@ -1,6 +1,9 @@
 package model
 
 import (
+	"strconv"
+	"strings"
+
 	"github.com/Biubiubiuuuu/yuepuwebsite/db/mysql"
 )
 
@@ -29,7 +32,7 @@ func (i *Industry) EditIndustry(args map[string]interface{}) error {
 // 查询行业 by id
 func (i *Industry) QueryIndustryByID() error {
 	db := mysql.GetMysqlDB()
-	return db.First(&i, i.ID).Error
+	return db.First(&i).Error
 }
 
 // 查询行业 by name
@@ -46,9 +49,22 @@ func (i *Industry) QueryEnableIndustry() (industrys []Industry) {
 }
 
 // 查询所有行业类型
-func (i *Industry) QueryIndustry() (industrys []Industry) {
+func QueryIndustry(pageSize int, page int, name string, enable string) (count int, industrys []Industry) {
 	db := mysql.GetMysqlDB()
-	db.Order("sort desc").Find(&industrys)
+	query := db.Table("industry").Select("industry.*")
+	if name != "" {
+		var buf strings.Builder
+		buf.WriteString("%")
+		buf.WriteString(name)
+		buf.WriteString("%")
+		query = query.Where("name = ?", buf.String())
+	}
+	if enable != "" {
+		boo, _ := strconv.ParseBool(enable)
+		query = query.Where("enable = ?", boo)
+	}
+	query.Count(&count)
+	query.Limit(pageSize).Offset((page - 1) * pageSize).Order("sort desc").Find(&industrys)
 	return
 }
 

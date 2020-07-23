@@ -1,6 +1,7 @@
 package userController
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -461,5 +462,87 @@ func SearchPropertyInfo(c *gin.Context) {
 func QueryPropertyInfoByID(c *gin.Context) {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	res := userService.QueryPropertyInfoByID(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 上传图集图片（单张）
+// @tags 用户
+// @Accept  multipart/form-data
+// @Produce  json
+// @Param id path string true "物业信息ID"
+// @Param image formData file false "图片"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/user/propertyInfo/{id}/picture [POST]
+// @Security ApiKeyAuth
+func AddPictures(c *gin.Context) {
+	res := entity.ResponseData{}
+	var token string
+	if token, res = commonController.GetToken(c); res.Status {
+		// 获取主机头
+		r := c.Request
+		host := r.Host
+		if strings.HasPrefix(host, "http://") == false {
+			host = "http://" + host
+		}
+		var image string
+		if file, err := c.FormFile("image"); err == nil {
+			// 文件名 避免重复取uuid
+			var filename string
+			uuid, _ := uuid.NewUUID()
+			arr := strings.Split(file.Filename, ".")
+			if strings.EqualFold(arr[len(arr)-1], "png") {
+				filename = uuid.String() + ".png"
+			} else if strings.EqualFold(arr[len(arr)-1], "jpg") {
+				filename = uuid.String() + ".jpg"
+			} else if strings.EqualFold(arr[len(arr)-1], "jpeg") {
+				filename = uuid.String() + ".jpeg"
+			} else {
+				res.Message = "图片格式只支持png、jpg、jpeg"
+				c.JSON(http.StatusOK, res)
+				return
+			}
+			fmt.Println(filename)
+			pathFile := configHelper.ImageDir
+			if !fileHelper.IsExist(pathFile) {
+				fileHelper.CreateDir(pathFile)
+			}
+			pathFile = pathFile + filename
+			if err := c.SaveUploadedFile(file, pathFile); err == nil {
+				image = host + "/" + pathFile
+			}
+		}
+		if image == "" {
+			res.Message = "图片下载失败"
+		} else {
+			id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+			res = userService.AddPictures(token, id, image)
+		}
+	} else {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, res)
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 删除图片（单张）
+// @tags 用户
+// @Accept application/x-www-form-urlencoded
+// @Produce  json
+// @Param pro_id path string true "物业信息ID"
+// @Param pri_id path string true "图片ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/user/propertyInfo/{pro_id}/picture/{pri_id} [DELETE]
+// @Security ApiKeyAuth
+func DelPrictures(c *gin.Context) {
+	res := entity.ResponseData{}
+	var token string
+	if token, res = commonController.GetToken(c); res.Status {
+		pro_id, _ := strconv.ParseInt(c.Param("pro_id"), 10, 64)
+		pri_id, _ := strconv.ParseInt(c.Param("pri_id"), 10, 64)
+		res = userService.DelPrictures(token, pro_id, pri_id)
+	} else {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, res)
+		return
+	}
 	c.JSON(http.StatusOK, res)
 }

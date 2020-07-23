@@ -1,6 +1,11 @@
 package model
 
-import "github.com/Biubiubiuuuu/yuepuwebsite/db/mysql"
+import (
+	"strconv"
+	"strings"
+
+	"github.com/Biubiubiuuuu/yuepuwebsite/db/mysql"
+)
 
 // 部门
 type Department struct {
@@ -17,7 +22,7 @@ type Department struct {
 // 添加部门
 func (d *Department) AddDepartment() error {
 	db := mysql.GetMysqlDB()
-	return db.Create(*d).Error
+	return db.Create(&d).Error
 }
 
 // 修改部门 by ID
@@ -29,7 +34,7 @@ func (d *Department) EditDepartmentByID(args map[string]interface{}) error {
 // 查看部门详情 by id
 func (d *Department) QueryDepartmentByID() error {
 	db := mysql.GetMysqlDB()
-	return db.First(*d, d.ID).Error
+	return db.First(&d).Error
 }
 
 // 查询上级部门下的部门详情 by name and parent_id
@@ -38,10 +43,30 @@ func (d *Department) QueryDepartmentByNameAndParentID() error {
 	return db.Where("name = ? AND parent_id = ?", d.Name, d.ParentID).First(&d).Error
 }
 
-// 查询所有部门
-func QueryAllDepartments() (departments []Department) {
+// 查询已启用部门
+func QueryEnableDepartments() (departments []Department) {
 	db := mysql.GetMysqlDB()
-	db.Find(&departments)
+	db.Where("enable = ?", true).Find(&departments)
+	return
+}
+
+// 查询所有部门
+func QueryDepartments(pageSize int, page int, name string, enable string) (count int, departments []Department) {
+	db := mysql.GetMysqlDB()
+	query := db.Table("department").Select("department.*")
+	if name != "" {
+		var buf strings.Builder
+		buf.WriteString("%")
+		buf.WriteString(name)
+		buf.WriteString("%")
+		query = query.Where("name = ?", buf.String())
+	}
+	if enable != "" {
+		boo, _ := strconv.ParseBool(enable)
+		query = query.Where("enable = ?", boo)
+	}
+	query.Count(&count)
+	query.Limit(pageSize).Offset((page - 1) * pageSize).Order("sort desc").Find(&departments)
 	return
 }
 

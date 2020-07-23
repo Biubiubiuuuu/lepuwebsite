@@ -6,6 +6,7 @@ import (
 	"github.com/Biubiubiuuuu/yuepuwebsite/helper/encryptHelper"
 	"github.com/Biubiubiuuuu/yuepuwebsite/model"
 	"github.com/Biubiubiuuuu/yuepuwebsite/router"
+	"github.com/google/uuid"
 )
 
 // @securityDefinitions.apikey ApiKeyAuth
@@ -38,11 +39,11 @@ func main() {
 		&model.News{},
 		&model.Post{},
 		&model.MenuPower{},
-		&model.UserRole{},
 		&model.UserInfo{},
 	)
 	// 添加默认管理员 username:Admin,password:123456
-	u := model.User{Username: "admin", Password: encryptHelper.EncryptMD5To32Bit("123456"), Type: "1"}
+	uuid, _ := uuid.NewUUID()
+	u := model.User{Username: "admin", Password: encryptHelper.EncryptMD5To32Bit("123456"), Type: "1", UUID: uuid}
 	if err := u.QueryByUsernameOrPhone(); err != nil {
 		u.Register()
 	}

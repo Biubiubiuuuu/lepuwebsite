@@ -1,6 +1,9 @@
 package model
 
 import (
+	"strconv"
+	"strings"
+
 	"github.com/Biubiubiuuuu/yuepuwebsite/db/mysql"
 )
 
@@ -28,7 +31,7 @@ func (s *StoreType) EditStoreType(args map[string]interface{}) error {
 // 查询店铺 by id
 func (s *StoreType) QueryStoreTypeByID() error {
 	db := mysql.GetMysqlDB()
-	return db.Model(&s).First(&s).Error
+	return db.First(&s).Error
 }
 
 // 查询店铺 by name
@@ -45,9 +48,22 @@ func (s *StoreType) QueryEnableStoreType() (storeTypes []StoreType) {
 }
 
 // 查询所有店铺类型
-func (s *StoreType) QueryStoreType() (storeTypes []StoreType) {
+func QueryStoreType(pageSize int, page int, name string, enable string) (count int, storeTypes []StoreType) {
 	db := mysql.GetMysqlDB()
-	db.Order("sort desc").Find(&storeTypes)
+	query := db.Table("store_type").Select("store_type.*")
+	if name != "" {
+		var buf strings.Builder
+		buf.WriteString("%")
+		buf.WriteString(name)
+		buf.WriteString("%")
+		query = query.Where("name = ?", buf.String())
+	}
+	if enable != "" {
+		boo, _ := strconv.ParseBool(enable)
+		query = query.Where("enable = ?", boo)
+	}
+	query.Count(&count)
+	query.Limit(pageSize).Offset((page - 1) * pageSize).Order("sort desc").Find(&storeTypes)
 	return
 }
 

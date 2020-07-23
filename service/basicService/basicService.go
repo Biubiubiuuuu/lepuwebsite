@@ -107,18 +107,6 @@ func QueryEnableStoreType() (res entity.ResponseData) {
 	return
 }
 
-// 查询所有店铺类型
-func QueryStoreType() (res entity.ResponseData) {
-	data := make(map[string]interface{})
-	s := model.StoreType{}
-	store_types := s.QueryStoreType()
-	data["store_types"] = store_types
-	res.Data = data
-	res.Status = true
-	res.Message = "获取成功"
-	return
-}
-
 // 查询已启用行业类型
 func QueryEnableIndustry() (res entity.ResponseData) {
 	data := make(map[string]interface{})
@@ -131,19 +119,7 @@ func QueryEnableIndustry() (res entity.ResponseData) {
 	return
 }
 
-// 查询所有行业类型
-func QueryIndustry() (res entity.ResponseData) {
-	data := make(map[string]interface{})
-	i := model.Industry{}
-	industrys := i.QueryIndustry()
-	data["industrys"] = industrys
-	res.Data = data
-	res.Status = true
-	res.Message = "获取成功"
-	return
-}
-
-// 查询已启用经营行业范围
+// 查询已启用上级行业
 func QueryEnableIndustryByParentID() (res entity.ResponseData) {
 	data := make(map[string]interface{})
 	industrys := model.QueryEnableIndustryByParentID()

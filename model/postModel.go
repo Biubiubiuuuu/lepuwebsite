@@ -44,19 +44,20 @@ func (p *Post) QueryPostByCode() error {
 }
 
 // 查询所有岗位
-func (p *Post) QueryPosts(pageSize int, page int, args map[string]interface{}) (posts []Post) {
+func QueryPosts(pageSize int, page int, args map[string]interface{}) (count int, posts []Post) {
 	db := mysql.GetMysqlDB()
 	query := db.Table("post").Select("post.*")
 	if v, ok := args["name"]; ok && v.(string) != "" {
 		query = query.Where("name = %?%", v.(string))
 	}
 	if v, ok := args["enable"]; ok {
-		query = query.Where("enable = ?", v.(bool))
+		query = query.Where("enable = ?", v.(string))
 	}
 	if v, ok := args["code"]; ok && v.(string) != "" {
 		query = query.Where("code = %?%", v.(string))
 	}
-	query.Limit(pageSize).Offset((page - 1) * pageSize).Find(&posts)
+	query.Count(&count)
+	query.Limit(pageSize).Offset((page - 1) * pageSize).Order("sort desc").Find(&posts)
 	return
 }
 

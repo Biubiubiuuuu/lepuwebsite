@@ -1,4 +1,55 @@
 definitions:
+  entity.AddEmployeeRequest:
+    properties:
+      QQ:
+        description: QQ
+        type: string
+      department_id:
+        description: 归属部门ID
+        type: integer
+      email:
+        description: 邮箱
+        type: string
+      enable:
+        description: 是否启用
+        type: boolean
+      nickname:
+        description: 用户昵称
+        type: string
+      password:
+        description: 密码
+        type: string
+      phone:
+        description: 手机号码（登录）
+        type: string
+      post_id:
+        description: 岗位ID
+        type: integer
+      role_id:
+        description: 角色ID
+        type: integer
+      sex:
+        description: 性别 0:未知 ｜ 1:男 ｜ 2:女 （空或其他默认未知）
+        type: string
+      username:
+        description: 用户名称（登录）
+        type: string
+    type: object
+  entity.AddProLog:
+    properties:
+      content:
+        description: 跟单内容
+        type: string
+      shop_transfer_id:
+        description: 店铺转让ID
+        type: integer
+      with_id:
+        description: 跟单人ID
+        type: integer
+      with_name:
+        description: 跟单人姓名
+        type: string
+    type: object
   entity.AreaTypeRequest:
     properties:
       max_area:
@@ -31,6 +82,39 @@ definitions:
       sort:
         description: 显示排序
         type: integer
+    type: object
+  entity.EditEmployeeRequest:
+    properties:
+      QQ:
+        description: QQ
+        type: string
+      department_id:
+        description: 归属部门ID
+        type: integer
+      email:
+        description: 邮箱
+        type: string
+      enable:
+        description: 是否启用
+        type: boolean
+      nickname:
+        description: 用户昵称
+        type: string
+      phone:
+        description: 手机号码（登录）
+        type: string
+      post_id:
+        description: 岗位ID
+        type: integer
+      role_id:
+        description: 角色ID
+        type: integer
+      sex:
+        description: 性别 0:未知 ｜ 1:男 ｜ 2:女 （空或其他默认未知）
+        type: string
+      username:
+        description: 用户名称（登录）
+        type: string
     type: object
   entity.EditUser:
     properties:
@@ -79,6 +163,30 @@ definitions:
       sort:
         description: 行业排序 越大越靠前
         type: integer
+    type: object
+  entity.MenuRequest:
+    properties:
+      enable:
+        description: 是否启用
+        type: boolean
+      icon:
+        description: 菜单图标
+        type: string
+      parent_id:
+        description: 上级ID 0为最顶级
+        type: integer
+      router_name:
+        description: 路由名称
+        type: string
+      router_url:
+        description: 路由地址
+        type: string
+      sort:
+        description: 显示排序
+        type: integer
+      title:
+        description: 菜单标题
+        type: string
     type: object
   entity.PostRequest:
     properties:
@@ -139,9 +247,6 @@ definitions:
       menu_id:
         description: 菜单ID
         type: integer
-      menu_title:
-        description: 菜单标题
-        type: string
     type: object
   entity.StoreTypeRequest:
     properties:
@@ -218,6 +323,22 @@ info:
   contact: {}
   license: {}
 paths:
+  /api/v1/admin:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查看用户信息
+      tags:
+      - 后台
   /api/v1/admin/areaType:
     post:
       consumes:
@@ -242,6 +363,27 @@ paths:
       tags:
       - 后台
   /api/v1/admin/areaType/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 面积分类ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查询面积分类详情
+      tags:
+      - 后台
     put:
       consumes:
       - application/json
@@ -291,7 +433,53 @@ paths:
       summary: 删除面积分类
       tags:
       - 后台
+  /api/v1/admin/areatype:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查询面积分类
+      tags:
+      - 后台
   /api/v1/admin/department:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 部门名称
+        in: query
+        name: name
+        type: string
+      - description: 是否启用
+        in: query
+        name: enable
+        type: string
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查询部门
+      tags:
+      - 后台
     post:
       consumes:
       - application/json
@@ -314,7 +502,252 @@ paths:
       summary: 添加部门
       tags:
       - 后台
+  /api/v1/admin/department/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 部门ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查询部门详情
+      tags:
+      - 后台
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 部门ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.DepartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改部门
+      tags:
+      - 后台
+  /api/v1/admin/department/{ids}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 部门ID 多个用,分开
+        in: path
+        name: ids
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除部门
+      tags:
+      - 后台
+  /api/v1/admin/edituserpass:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.EditUserPass'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改用户密码
+      tags:
+      - 后台
+  /api/v1/admin/employee:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 用户昵称
+        in: query
+        name: nickname
+        type: string
+      - description: 用户名
+        in: query
+        name: username
+        type: string
+      - description: 是否启用
+        in: query
+        name: enable
+        type: string
+      - description: 电话号码
+        in: query
+        name: telephone
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取员工列表
+      tags:
+      - 后台
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AddEmployeeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加员工
+      tags:
+      - 后台
+  /api/v1/admin/employee/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户D
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户信息 by id
+      tags:
+      - 后台
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.EditEmployeeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改员工信息
+      tags:
+      - 后台
+  /api/v1/admin/employee/{ids}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户ID 多个用,分开
+        in: path
+        name: ids
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除员工
+      tags:
+      - 后台
   /api/v1/admin/industry:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 行业名称
+        in: query
+        name: name
+        type: string
+      - description: 是否启用
+        in: query
+        name: enable
+        type: string
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查询行业类型
+      tags:
+      - 后台
     post:
       consumes:
       - application/json
@@ -338,6 +771,27 @@ paths:
       tags:
       - 后台
   /api/v1/admin/industry/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 行业分类ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查询行业分类详情
+      tags:
+      - 后台
     put:
       consumes:
       - application/json
@@ -408,7 +862,290 @@ paths:
       summary: 用户登录
       tags:
       - 后台
+  /api/v1/admin/menu:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查看菜单
+      tags:
+      - 后台
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.MenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加菜单
+      tags:
+      - 后台
+  /api/v1/admin/menu/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 菜单ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查看菜单详情
+      tags:
+      - 后台
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 菜单ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.MenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改菜单
+      tags:
+      - 后台
+  /api/v1/admin/menu/{ids}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 菜单ID 多个用,分开
+        in: path
+        name: ids
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除菜单
+      tags:
+      - 后台
+  /api/v1/admin/new/propertyInfo:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 标题
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: 客户姓名
+        in: formData
+        name: nickname
+        required: true
+        type: string
+      - description: 联系手机
+        in: formData
+        name: telephone
+        required: true
+        type: string
+      - description: 店名
+        in: formData
+        name: store_name
+        required: true
+        type: string
+      - description: 图片
+        in: formData
+        name: image
+        type: file
+      - description: 业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库
+        in: formData
+        name: bus_type
+        type: string
+      - description: 模型类型 0-转让 ｜ 1-出售 ｜ 2-出租
+        in: formData
+        name: model_type
+        type: string
+      - description: 省代码
+        in: formData
+        name: province_code
+        required: true
+        type: string
+      - description: 城市代码
+        in: formData
+        name: city_code
+        required: true
+        type: string
+      - description: 区代码
+        in: formData
+        name: district_code
+        required: true
+        type: string
+      - description: 街道代码
+        in: formData
+        name: street_code
+        type: string
+      - description: 详细地址
+        in: formData
+        name: address
+        required: true
+        type: string
+      - description: 经营业态ID
+        in: formData
+        name: industry_id
+        required: true
+        type: string
+      - description: 店铺类型
+        in: formData
+        name: store_type_id
+        required: true
+        type: string
+      - description: 可否空转
+        in: formData
+        name: idling
+        required: true
+        type: boolean
+      - description: 是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中
+        in: formData
+        name: in_operation
+        required: true
+        type: string
+      - description: 面积（单位：平方米）
+        in: formData
+        name: area
+        required: true
+        type: string
+      - description: 租金（单位：元/月）
+        in: formData
+        name: rent
+        required: true
+        type: string
+      - description: 转让费用（单位：万元 不录入则显示为面议）
+        in: formData
+        name: transfer_fee
+        type: string
+      - description: 适合经营范围id，多个用，拼接
+        in: formData
+        name: industry_ranges
+        required: true
+        type: string
+      - description: 详细描述
+        in: formData
+        name: description
+        type: string
+      - description: 是否外显号码
+        in: formData
+        name: explicit_tel
+        type: boolean
+      - description: 外显号码1
+        in: formData
+        name: tel1
+        type: string
+      - description: 外显号码2
+        in: formData
+        name: tel2
+        type: string
+      - description: 报价
+        in: formData
+        name: quoted_price
+        type: string
+      - description: 跟进备注
+        in: formData
+        name: remake
+        type: string
+      - description: 是否保护
+        in: formData
+        name: protect
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 发布物业信息
+      tags:
+      - 后台
   /api/v1/admin/post:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 岗位名称
+        in: query
+        name: name
+        type: string
+      - description: 岗位编码
+        in: query
+        name: code
+        type: string
+      - description: 是否启用
+        in: query
+        name: enable
+        type: string
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查询所有岗位
+      tags:
+      - 后台
     post:
       consumes:
       - application/json
@@ -429,6 +1166,421 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 添加岗位
+      tags:
+      - 后台
+  /api/v1/admin/post/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 岗位ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查询岗位详情
+      tags:
+      - 后台
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 岗位ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.PostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改岗位
+      tags:
+      - 后台
+  /api/v1/admin/post/{ids}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 岗位ID 多个用,分开
+        in: path
+        name: ids
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除岗位
+      tags:
+      - 后台
+  /api/v1/admin/propertyInfo:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 行业ID
+        in: query
+        name: industry_id
+        type: string
+      - description: 店铺类型ID
+        in: query
+        name: store_type_id
+        type: string
+      - description: 省代码
+        in: query
+        name: province_code
+        type: string
+      - description: 城市代码
+        in: query
+        name: city_code
+        type: string
+      - description: 区代码
+        in: query
+        name: district_code
+        type: string
+      - description: 街道代码
+        in: query
+        name: street_code
+        type: string
+      - description: 面积范围ID
+        in: query
+        name: area_type_id
+        type: string
+      - description: 租金范围ID
+        in: query
+        name: rent_type_id
+        type: string
+      - description: 最小面积
+        in: query
+        name: min_area
+        type: string
+      - description: 最大面积
+        in: query
+        name: max_area
+        type: string
+      - description: 最小租金
+        in: query
+        name: min_rent
+        type: string
+      - description: 最大租金
+        in: query
+        name: max_rent
+        type: string
+      - description: 模型类型 0-转让 ｜ 1-出售 ｜ 3-出租 | 4-求租 ｜ 5-求购
+        in: query
+        name: model_type
+        required: true
+        type: string
+      - description: 业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库
+        in: query
+        name: bus_type
+        type: string
+      - description: 排序 area-面积 ｜ rent-租金 ｜ created_at-发布时间（默认）
+        in: query
+        name: sort_condition
+        type: string
+      - description: 是否成功 查询我的已成功信息传true；查询我的历史重点信息true
+        in: query
+        name: status
+        type: string
+      - description: 是否保护 查询我的重点信息传true；查询我的历史重点信息true
+        in: query
+        name: protect
+        type: string
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查询我的已发布物业信息
+      tags:
+      - 后台
+  /api/v1/admin/propertyInfo/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 物业信息ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查看物业详情
+      tags:
+      - 后台
+    put:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 物业信息ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 经营业态ID
+        in: formData
+        name: industry_id
+        required: true
+        type: string
+      - description: 标题
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: 联系人
+        in: formData
+        name: nickname
+        required: true
+        type: string
+      - description: 联系手机
+        in: formData
+        name: telephone
+        required: true
+        type: string
+      - description: 图片
+        in: formData
+        name: image
+        type: file
+      - description: 省代码
+        in: formData
+        name: province_code
+        required: true
+        type: string
+      - description: 城市代码
+        in: formData
+        name: city_code
+        required: true
+        type: string
+      - description: 区代码
+        in: formData
+        name: district_code
+        required: true
+        type: string
+      - description: 街道代码
+        in: formData
+        name: street_code
+        type: string
+      - description: 详细地址
+        in: formData
+        name: address
+        required: true
+        type: string
+      - description: 店铺类型ID
+        in: formData
+        name: store_type_id
+        required: true
+        type: string
+      - description: 可否空转
+        in: formData
+        name: idling
+        required: true
+        type: boolean
+      - description: 面积（单位：平方米）
+        in: formData
+        name: area
+        required: true
+        type: string
+      - description: 是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中
+        in: formData
+        name: in_operation
+        required: true
+        type: string
+      - description: 租金（单位：元/月）
+        in: formData
+        name: rent
+        required: true
+        type: string
+      - description: 转让费用（单位：万元 不录入则显示为面议）
+        in: formData
+        name: transfer_fee
+        type: string
+      - description: 适合经营范围id，多个用，拼接
+        in: formData
+        name: industry_ranges
+        required: true
+        type: string
+      - description: 详细描述
+        in: formData
+        name: description
+        type: string
+      - description: 是否外显号码
+        in: formData
+        name: explicit_tel
+        type: boolean
+      - description: 外显号码1
+        in: formData
+        name: tel1
+        type: string
+      - description: 外显号码2
+        in: formData
+        name: tel2
+        type: string
+      - description: 报价
+        in: formData
+        name: quoted_price
+        type: string
+      - description: 跟进备注
+        in: formData
+        name: remake
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改物业信息
+      tags:
+      - 后台
+  /api/v1/admin/propertyInfo/{id}/picture:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 物业信息ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 图片
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 上传图集图片（单张）
+      tags:
+      - 后台
+  /api/v1/admin/propertyInfo/{pro_id}/picture/{pri_id}:
+    delete:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 物业信息ID
+        in: path
+        name: pro_id
+        required: true
+        type: string
+      - description: 图片ID
+        in: path
+        name: pri_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除图片（单张）
+      tags:
+      - 后台
+  /api/v1/admin/propertyInfo/log/:id:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 物业信息ID
+        in: path
+        name: pro_id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AddProLog'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 物业添加跟单记录
+      tags:
+      - 后台
+  /api/v1/admin/propertyInfo/protect/{id}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 物业信息ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 保护
       tags:
       - 后台
   /api/v1/admin/rentType:
@@ -455,6 +1607,27 @@ paths:
       tags:
       - 后台
   /api/v1/admin/rentType/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 租金分类ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查询租金分类详情
+      tags:
+      - 后台
     put:
       consumes:
       - application/json
@@ -504,7 +1677,51 @@ paths:
       summary: 删除租金分类
       tags:
       - 后台
+  /api/v1/admin/renttype:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查询租金分类
+      tags:
+      - 后台
   /api/v1/admin/role:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 角色名称
+        in: query
+        name: name
+        type: string
+      - description: 是否启用
+        in: query
+        name: enable
+        type: string
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查询角色
+      tags:
+      - 后台
     post:
       consumes:
       - application/json
@@ -527,7 +1744,108 @@ paths:
       summary: 添加角色
       tags:
       - 后台
+  /api/v1/admin/role/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查询角色详情
+      tags:
+      - 后台
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.RoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改角色
+      tags:
+      - 后台
+  /api/v1/admin/role/{ids}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色ID 多个用,分开
+        in: path
+        name: ids
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除角色
+      tags:
+      - 后台
   /api/v1/admin/storeType:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 店铺类型名称
+        in: query
+        name: name
+        type: string
+      - description: 是否启用
+        in: query
+        name: enable
+        type: string
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 查询店铺类型
+      tags:
+      - 后台
     post:
       consumes:
       - application/json
@@ -551,6 +1869,27 @@ paths:
       tags:
       - 后台
   /api/v1/admin/storeType/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 店铺类型ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 查询店铺类型详情
+      tags:
+      - 后台
     put:
       consumes:
       - application/json
@@ -696,20 +2035,6 @@ paths:
       summary: 查询已启用店铺类型
       tags:
       - 基础数据
-  /api/v1/basic/industry:
-    get:
-      consumes:
-      - application/x-www-form-urlencoded
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: desc
-          schema:
-            $ref: '#/definitions/entity.ResponseData'
-      summary: 查询行业类型
-      tags:
-      - 基础数据
   /api/v1/basic/industryParent:
     get:
       consumes:
@@ -750,20 +2075,6 @@ paths:
           schema:
             $ref: '#/definitions/entity.ResponseData'
       summary: 查询租金分类
-      tags:
-      - 基础数据
-  /api/v1/basic/storeType:
-    get:
-      consumes:
-      - application/x-www-form-urlencoded
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: desc
-          schema:
-            $ref: '#/definitions/entity.ResponseData'
-      summary: 查询店铺类型
       tags:
       - 基础数据
   /api/v1/basic/street:
@@ -1051,6 +2362,59 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 查看用户已发布物业信息
+      tags:
+      - 用户
+  /api/v1/user/propertyInfo/{id}/picture:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 物业信息ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 图片
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 上传图集图片（单张）
+      tags:
+      - 用户
+  /api/v1/user/propertyInfo/{pro_id}/picture/{pri_id}:
+    delete:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 物业信息ID
+        in: path
+        name: pro_id
+        required: true
+        type: string
+      - description: 图片ID
+        in: path
+        name: pri_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除图片（单张）
       tags:
       - 用户
   /api/v1/user/register:

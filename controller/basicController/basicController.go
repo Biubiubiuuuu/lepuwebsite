@@ -102,17 +102,6 @@ func QueryEnableStoreType(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// @Summary 查询店铺类型
-// @tags 基础数据
-// @Accept  application/x-www-form-urlencoded
-// @Produce  json
-// @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/basic/storeType [GET]
-func QueryStoreType(c *gin.Context) {
-	res := basicService.QueryStoreType()
-	c.JSON(http.StatusOK, res)
-}
-
 // @Summary 查询已启用行业类型
 // @tags 基础数据
 // @Accept  application/x-www-form-urlencoded
@@ -121,17 +110,6 @@ func QueryStoreType(c *gin.Context) {
 // @Router /api/v1/basic/enableIndustry [GET]
 func QueryEnableIndustry(c *gin.Context) {
 	res := basicService.QueryEnableIndustry()
-	c.JSON(http.StatusOK, res)
-}
-
-// @Summary 查询行业类型
-// @tags 基础数据
-// @Accept  application/x-www-form-urlencoded
-// @Produce  json
-// @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/basic/industry [GET]
-func QueryIndustry(c *gin.Context) {
-	res := basicService.QueryIndustry()
 	c.JSON(http.StatusOK, res)
 }
 

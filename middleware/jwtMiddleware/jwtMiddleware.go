@@ -36,6 +36,11 @@ func JWT() gin.HandlerFunc {
 		user := model.User{
 			Token: token,
 		}
+		if token == "" {
+			res.Message = "token不能为空"
+			c.AbortWithStatusJSON(http.StatusUnauthorized, res)
+			return
+		}
 		if err := user.QueryByToken(); err != nil {
 			res.Message = "token错误，请重新登录获取授权"
 			res.Status = false

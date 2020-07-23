@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/Biubiubiuuuu/yuepuwebsite/db/mysql"
@@ -9,47 +10,47 @@ import (
 // PropertyInfo 物业信息
 type PropertyInfo struct {
 	Model
-	IndustryID     int64           `json:"industry_id"`                                                                // 经营业态ID
-	Title          string          `gorm:"not null;size:60;" json:"title"`                                             // 标题
-	Nickname       string          `gorm:"size:50;" json:"nickname"`                                                   // 联系人
-	Telephone      string          `gorm:"not null;unique;size:30;" json:"telephone"`                                  // 联系手机
-	ShopName       string          `gorm:"size:100;" json:"shop_name"`                                                 // 店名（后台录入）
-	Image          string          `gorm:"size:200;" json:"image"`                                                     // 图片
-	Video          string          `json:"video"`                                                                      // 视频（后台录入）
-	BusType        string          `gorm:"size:1;" json:"bus_type"`                                                    // 业务类型（后台录入）0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库
-	ModelType      string          `gorm:"size:1;" json:"model_type"`                                                  // 模型类型（后台录入）0-转让 ｜ 1-出售 ｜ 2-出租 | 3-求租 ｜ 4-求购
-	ProvinceCode   string          `gorm:"not null;size:10;" json:"province_code"`                                     // 省代码
-	CityCode       string          `gorm:"not null;size:10;" json:"city_code"`                                         // 城市代码
-	DistrictCode   string          `gorm:"not null;size:10;" json:"district_code"`                                     // 区代码
-	StreetCode     string          `gorm:"not null;size:10;" json:"street_code"`                                       // 街道代码
-	Address        string          `json:"address"`                                                                    // 详细地址
-	StoreTypeID    int64           `json:"store_type_id"`                                                              // 店铺类型ID
-	AreaTypeID     int64           `json:"area_type_id"`                                                               // 面积分类ID （后台录入或者自动判断）
-	RentTypeID     int64           `json:"rent_type_id"`                                                               // 租金分类ID （后台录入或者自动判断）
-	MinArea        float64         `json:"min_area"`                                                                   // 最小面积（单位：平方米）
-	MaxArea        float64         `json:"max_area"`                                                                   // 最大面积（单位：平方米）
-	MinRent        float64         `json:"min_rent"`                                                                   // 最低租金（单位：元/月）
-	MaxRent        float64         `json:"max_rent"`                                                                   // 最高租金（单位：元/月）
-	Lots           []Lot           `gorm:"foreignkey:PropertyInfoID;association_foreignkey:ID" json:"lots"`            // 考虑地段
-	Idling         bool            `json:"idling"`                                                                     // 可否空转
-	InOperation    string          `gorm:"size:2;" json:"in_operation"`                                                // 是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中
-	Area           float64         `json:"area"`                                                                       // 面积（单位：平方米）
-	Rent           float64         `json:"rent"`                                                                       // 租金（单位：元/月）
-	TransferFee    float64         `json:"transfer_fee"`                                                               // 转让费用（单位：万元 不录入则前台显示为面议）
-	IndustryRanges []IndustryRange `gorm:"foreignkey:PropertyInfoID;association_foreignkey:ID" json:"industry_ranges"` // 适合经营范围
-	Description    string          `json:"description"`                                                                // 详细描述
-	ExplicitTel    bool            `json:"explicit_tel"`                                                               // 是否外显号码 true：客户号码 ｜ false：发布者号码
-	Tel1           string          `gorm:"size:30;" json:"tel1"`                                                       // 外显号码1
-	Tel2           string          `gorm:"size:30;" json:"tel2"`                                                       // 外显号码2
-	Audit          bool            `json:"audit"`                                                                      // 是否审核 true：已审核 ｜ false：待审核 （后台录入）
-	AuditID        int64           `json:"audit_id"`                                                                   // 审核人ID （后台录入）
-	Protect        bool            `json:"protect"`                                                                    // 是否保护 true：已保护 ｜ false：未保护 （后台录入）
-	QuotedPrice    float64         `json:"quoted_price"`                                                               // 报价（后台录入，保护时显示）
-	Pictures       []Picture       `gorm:"foreignkey:PropertyInfoID;association_foreignkey:ID" json:"pictures"`        // 店图集（后台录入）
-	Status         bool            `json:"status"`                                                                     // 是否成功 true：已成功 ｜ false：未成功 （后台录入）
-	SourceID       int64           `json:"source_id"`                                                                  // 来源ID
-	SourceInfo     string          `gorm:"size:200" json:"source_info"`                                                // 来源描述
-	Remake         string          `gorm:"size:200" json:"remake"`                                                     // 跟进备注
+	IndustryID     int64           `json:"industry_id"`                                                                          // 经营业态ID
+	Title          string          `gorm:"not null;size:60;" json:"title"`                                                       // 标题
+	Nickname       string          `gorm:"size:50;" json:"nickname"`                                                             // 联系人
+	Telephone      string          `gorm:"not null;size:30;" json:"telephone"`                                                   // 联系手机
+	ShopName       string          `gorm:"size:100;" json:"shop_name"`                                                           // 店名（后台录入）
+	Image          string          `gorm:"size:200;" json:"image"`                                                               // 图片
+	Video          string          `json:"video"`                                                                                // 视频（后台录入）
+	BusType        string          `gorm:"size:1;" json:"bus_type"`                                                              // 业务类型（后台录入）0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库
+	ModelType      string          `gorm:"size:1;" json:"model_type"`                                                            // 模型类型（后台录入）0-转让 ｜ 1-出售 ｜ 2-出租 | 3-求租 ｜ 4-求购
+	ProvinceCode   string          `gorm:"not null;size:10;" json:"province_code"`                                               // 省代码
+	CityCode       string          `gorm:"not null;size:10;" json:"city_code"`                                                   // 城市代码
+	DistrictCode   string          `gorm:"not null;size:10;" json:"district_code"`                                               // 区代码
+	StreetCode     string          `gorm:"not null;size:10;" json:"street_code"`                                                 // 街道代码
+	Address        string          `json:"address"`                                                                              // 详细地址
+	StoreTypeID    int64           `json:"store_type_id"`                                                                        // 店铺类型ID
+	AreaTypeID     int64           `json:"area_type_id"`                                                                         // 面积分类ID （后台录入或者自动判断）
+	RentTypeID     int64           `json:"rent_type_id"`                                                                         // 租金分类ID （后台录入或者自动判断）
+	MinArea        float64         `json:"min_area"`                                                                             // 最小面积（单位：平方米）
+	MaxArea        float64         `json:"max_area"`                                                                             // 最大面积（单位：平方米）
+	MinRent        float64         `json:"min_rent"`                                                                             // 最低租金（单位：元/月）
+	MaxRent        float64         `json:"max_rent"`                                                                             // 最高租金（单位：元/月）
+	Lots           []Lot           `gorm:"foreignkey:PropertyInfoID;association_foreignkey:ID" json:"lots,omitempty"`            // 考虑地段
+	Idling         bool            `json:"idling"`                                                                               // 可否空转
+	InOperation    string          `gorm:"size:2;" json:"in_operation"`                                                          // 是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中
+	Area           float64         `json:"area"`                                                                                 // 面积（单位：平方米）
+	Rent           float64         `json:"rent"`                                                                                 // 租金（单位：元/月）
+	TransferFee    float64         `json:"transfer_fee"`                                                                         // 转让费用（单位：万元 不录入则前台显示为面议）
+	IndustryRanges []IndustryRange `gorm:"foreignkey:PropertyInfoID;association_foreignkey:ID" json:"industry_ranges,omitempty"` // 适合经营范围
+	Description    string          `json:"description"`                                                                          // 详细描述
+	ExplicitTel    bool            `json:"explicit_tel"`                                                                         // 是否外显号码 true：客户号码 ｜ false：发布者号码
+	Tel1           string          `gorm:"size:30;" json:"tel1"`                                                                 // 外显号码1
+	Tel2           string          `gorm:"size:30;" json:"tel2"`                                                                 // 外显号码2
+	Audit          bool            `json:"audit"`                                                                                // 是否审核 true：已审核 ｜ false：待审核 （后台录入）
+	AuditID        int64           `json:"audit_id"`                                                                             // 审核人ID （后台录入）
+	Protect        bool            `json:"protect"`                                                                              // 是否保护 true：已保护 ｜ false：未保护 （后台录入）
+	QuotedPrice    float64         `json:"quoted_price"`                                                                         // 报价（后台录入，保护时显示）
+	Pictures       []Picture       `gorm:"foreignkey:PropertyInfoID;association_foreignkey:ID" json:"pictures,omitempty"`        // 店图集（后台录入）
+	Status         bool            `json:"status"`                                                                               // 是否成功 true：已成功 ｜ false：未成功 （后台录入）
+	SourceID       int64           `json:"source_id"`                                                                            // 来源ID
+	SourceInfo     string          `gorm:"size:200" json:"source_info"`                                                          // 来源描述
+	Remake         string          `gorm:"size:200" json:"remake"`                                                               // 跟进备注
 }
 
 // PropertyInfoScan 物业信息详细
@@ -70,23 +71,23 @@ type PropertyInfoScan struct {
 // IndustryRange 适合经营范围
 type IndustryRange struct {
 	ID             int64
-	IndustryID     int64  `json:"industry_id"`                   // 行业ID
-	IndustryName   string `json:"industry_name"`                 // 行业名称
-	PropertyInfoID int64  `gorm:"INDEX" json:"property_info_id"` // 物业信息ID
+	IndustryID     int64  `json:"industry_id"`    // 行业ID
+	IndustryName   string `json:"industry_name"`  // 行业名称
+	PropertyInfoID int64  `gorm:"INDEX" json:"-"` // 物业信息ID
 }
 
 // 图片
 type Picture struct {
 	ID             int64
-	Url            string `json:"url"`                           // 店铺图
-	PropertyInfoID int64  `gorm:"INDEX" json:"property_info_id"` // 物业信息ID
+	Url            string `json:"url"`            // 店铺图
+	PropertyInfoID int64  `gorm:"INDEX" json:"-"` // 物业信息ID
 }
 
 type Lot struct {
 	ID             int64
-	DistrictCode   string `json:"district_code"`                 // 区代码
-	DistrictName   string `json:"district_name"`                 // 区名
-	PropertyInfoID int64  `gorm:"INDEX" json:"property_info_id"` // 物业信息ID
+	DistrictCode   string `json:"district_code"`  // 区代码
+	DistrictName   string `json:"district_name"`  // 区名
+	PropertyInfoID int64  `gorm:"INDEX" json:"-"` // 物业信息ID
 }
 
 // 添加物业信息
@@ -134,9 +135,16 @@ func (p *PropertyInfo) QueryPropertyInfoByUserID() (propertyInfoScans []Property
 // 修改物业信息 by id
 func (p *PropertyInfo) EditPropertyInfoByID(args map[string]interface{}) error {
 	db := mysql.GetMysqlDB()
-	db.Model(&p).Association("IndustryRanges").Replace(p.IndustryRanges)
-	db.Association("Pictures").Replace(p.Pictures)
-	db.Association("Lots").Replace(p.Lots)
+	if _, ok := args["industry_ranges"]; ok {
+		db.Model(&p).Association("IndustryRanges").Replace(p.IndustryRanges)
+	}
+	if _, ok := args["pictures"]; ok {
+		db.Model(&p).Association("Pictures").Replace(p.Pictures)
+	}
+	if _, ok := args["lots"]; ok {
+		db.Model(&p).Association("Lots").Replace(p.Lots)
+	}
+	fmt.Println(p)
 	return db.Model(&p).Update(args).Error
 }
 
@@ -190,9 +198,6 @@ func QueryPropertyInfo(pageSize int, page int, args map[string]interface{}) (pro
 	if v, ok := args["rent_type_id"]; ok && v.(string) != "" {
 		query = query.Where("property_info.rent_type_id = ?", v.(string))
 	}
-	if v, ok := args["min_area"]; ok && v.(string) != "" {
-		query = query.Where("property_info.area BETWEEN ? AND ?", v.(string), v.(string))
-	}
 	v1, ok1 := args["min_area"]
 	v2, ok2 := args["max_area"]
 	if ok1 && ok2 && v1.(string) != "" && v2.(string) != "" {
@@ -227,9 +232,18 @@ func QueryPropertyInfo(pageSize int, page int, args map[string]interface{}) (pro
 			}
 		}
 	}
+	if v, ok := args["source_id"]; ok && v.(string) != "" {
+		query = query.Where("property_info.source_id = ?", v.(string))
+	}
+	if v, ok := args["status"]; ok && v.(string) != "" {
+		query = query.Where("property_info.status = ?", v.(string))
+	}
+	if v, ok := args["protect"]; ok && v.(string) != "" {
+		query = query.Where("property_info.protect = ?", v.(string))
+	}
 	query.Count(&count)
 	if v, ok := args["sort_condition"]; ok && v.(string) != "" {
-		query = query.Order("property_info." + v.(string))
+		query = query.Order("property_info." + v.(string) + " desc")
 	}
 	query.Limit(pageSize).Offset((page - 1) * pageSize).Find(&propertyInfoScans)
 	return
@@ -273,4 +287,16 @@ func QueryPropertyInfoRelationStoreTypeID(ids []int64) bool {
 		return true
 	}
 	return false
+}
+
+// 删除图集图片
+func (p *Picture) DelPicturre() error {
+	db := mysql.GetMysqlDB()
+	return db.Where("property_info_id = ?", p.PropertyInfoID).Unscoped().Delete(&p, p.ID).Error
+}
+
+// 上传图片
+func (p *Picture) AddPicture() error {
+	db := mysql.GetMysqlDB()
+	return db.Create(&p).Error
 }
