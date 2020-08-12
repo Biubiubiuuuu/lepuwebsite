@@ -33,22 +33,25 @@ func JWT() gin.HandlerFunc {
 		} else {
 			res.Status = true
 		}
-		user := model.User{
-			Token: token,
-		}
-		if token == "" {
-			res.Message = "token不能为空"
-			c.AbortWithStatusJSON(http.StatusUnauthorized, res)
-			return
-		}
-		if err := user.QueryByToken(); err != nil {
-			res.Message = "token错误，请重新登录获取授权"
-			res.Status = false
-		}
-		if user.IsEnable {
-			res.Message = "用户已禁用,无权访问任何信息"
-			c.AbortWithStatusJSON(http.StatusForbidden, res)
-			return
+		if res.Message == "" {
+			user := model.User{
+				Token: token,
+			}
+			if token == "" {
+				res.Message = "token不能为空"
+				c.AbortWithStatusJSON(http.StatusUnauthorized, res)
+				return
+			}
+			if err := user.QueryByToken(); err != nil {
+				res.Message = "token错误，请重新登录获取授权"
+				c.AbortWithStatusJSON(http.StatusForbidden, res)
+				return
+			}
+			if user.IsEnable {
+				res.Message = "用户已禁用,无权访问任何信息"
+				c.AbortWithStatusJSON(http.StatusForbidden, res)
+				return
+			}
 		}
 		if !res.Status {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, res)

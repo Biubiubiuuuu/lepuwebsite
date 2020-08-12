@@ -58,35 +58,40 @@ func (u *User) Edit(args map[string]interface{}) error {
 //  return user,error
 func (u *User) QueryByToken() error {
 	db := mysql.GetMysqlDB()
-	return db.Where("token = ? AND ISNULL(token)=0 AND LENGTH(trim(token))>0", u.Token).First(&u).Error
+	query := db.Table("user").Preload("UserInfo")
+	return query.Where("token = ? AND ISNULL(token)=0 AND LENGTH(trim(token))>0", u.Token).First(&u).Error
 }
 
 // 查询用户信息 by telephone or username
 //  param telephone or username
 func (u *User) QueryByUsernameOrPhone() error {
 	db := mysql.GetMysqlDB()
-	return db.Where("telephone = ? OR username = ?", u.Telephone, u.Username).First(&u).Error
+	query := db.Table("user").Preload("UserInfo")
+	return query.Where("telephone = ? OR username = ?", u.Telephone, u.Username).First(&u).Error
 }
 
 // 查询用户信息 by telephone
 //  param telephone
 func (u *User) QueryByPhone() error {
 	db := mysql.GetMysqlDB()
-	return db.Where("telephone = ?", u.Telephone).First(&u).Error
+	query := db.Table("user").Preload("UserInfo")
+	return query.Where("telephone = ?", u.Telephone).First(&u).Error
 }
 
 // 查询员工信息 by id
 //  param telephone
 func (u *User) QueryEmployeeById() error {
 	db := mysql.GetMysqlDB()
-	return db.Where("type = ?", 1).Related("UserInfo").First(&u).Error
+	query := db.Table("user").Preload("UserInfo")
+	return query.Where("type = 1").First(&u).Error
 }
 
 // 查询用户信息 by id
 //  param telephone
 func (u *User) QueryUserByID() error {
 	db := mysql.GetMysqlDB()
-	return db.First(&u).Error
+	query := db.Table("user").Preload("UserInfo")
+	return query.First(&u).Error
 }
 
 // 查询用户信息 by  username
@@ -99,7 +104,7 @@ func (u *User) QueryByUsername() error {
 // 查询用户信息是否关联部门
 func QueryUserByDepartmentID(ids []int64) bool {
 	db := mysql.GetMysqlDB()
-	query := db.Table("user").Preload("user_info").Preload("user_roles")
+	query := db.Table("user").Preload("user_info")
 	query = query.Joins("left user_info on user_info.user_id = user.id")
 	var users []User
 	if count := query.Where("user_info.department_id in (?)", ids).Find(&users).RowsAffected; count > 0 {
@@ -111,7 +116,7 @@ func QueryUserByDepartmentID(ids []int64) bool {
 // 查询用户信息是否关联岗位
 func QueryUserByPostID(ids []int64) bool {
 	db := mysql.GetMysqlDB()
-	query := db.Table("user").Preload("user_info").Preload("user_roles")
+	query := db.Table("user").Preload("user_info")
 	query = query.Joins("left user_info on user_info.user_id = user.id")
 	var users []User
 	if count := query.Where("user_info.post_id in (?)", ids).Find(&users).RowsAffected; count > 0 {
@@ -123,7 +128,7 @@ func QueryUserByPostID(ids []int64) bool {
 // 查询用户信息是否关联角色
 func QueryUserByRoleID(ids []int64) bool {
 	db := mysql.GetMysqlDB()
-	query := db.Table("user").Preload("user_info").Preload("user_roles")
+	query := db.Table("user").Preload("user_info")
 	query = query.Joins("left user_info on user_info.user_id = user.id")
 	var users []User
 	if count := query.Where("user_info.role_id in (?)", ids).Find(&users).RowsAffected; count > 0 {
@@ -167,7 +172,7 @@ func QueryUser(pageSize int, page int, args map[string]interface{}) (count int, 
 		buf.WriteString("%")
 		query = query.Where("user.telephone like ?", buf.String())
 	}
-	query = query.Where("type = ?", 1)
+	query = query.Where("type = 1")
 	query.Count(&count)
 	query.Limit(pageSize).Offset((page - 1) * pageSize).Find(&users)
 	return

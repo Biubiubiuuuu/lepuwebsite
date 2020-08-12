@@ -22,8 +22,9 @@ func (l *LeaveMessage) AddLeaveMessage() error {
 // 查看留言
 func QueryLeaveMessage(pageSize int, page int) (count int, leaveMessages []LeaveMessage) {
 	db := mysql.GetMysqlDB()
-	db.Table("leave_message").Count(&count)
-	db.Limit(pageSize).Offset((page - 1) * pageSize).Find(&leaveMessages)
+	query := db.Table("leave_message").Select("leave_message.*")
+	query.Count(&count)
+	query.Limit(pageSize).Offset((page - 1) * pageSize).Find(&leaveMessages)
 	return
 }
 

@@ -129,3 +129,49 @@ func QueryEnableIndustryByParentID() (res entity.ResponseData) {
 	res.Message = "获取成功"
 	return
 }
+
+// 获取所有街道
+func QueryStreet() (res entity.ResponseData) {
+	count, streets := model.QueryStreet()
+	res.Data = map[string]interface{}{"streets": streets, "count": count}
+	res.Status = true
+	res.Message = "获取成功"
+	return
+}
+
+// 根据上级行业查询子类
+func QueryIndustryByParentID(id int64) (res entity.ResponseData) {
+	ind := model.Industry{}
+	ind.ID = id
+	industrys := ind.QueryIndustryByParentID()
+	res.Data = map[string]interface{}{"industrys": industrys}
+	res.Status = true
+	res.Message = "获取成功"
+	return
+}
+
+// 最新动态
+func QueryProInfoDynamic() (res entity.ResponseData) {
+	cu1, cu2, cu3 := model.QueryProInfoDynamic()
+	res.Status = true
+	res.Data = map[string]interface{}{
+		"zzzp": cu2,
+		"zzzd": cu3,
+		"zcjl": cu1,
+	}
+	res.Message = "获取成功"
+	return
+}
+
+// 获取配置信息
+func QuerySystemConfigByDefault() (res entity.ResponseData) {
+	s := model.SystemConfig{}
+	if err := s.QuerySystemConfigByDefault(); err != nil {
+		res.Message = "获取失败"
+		return
+	}
+	res.Status = true
+	res.Data = map[string]interface{}{"systemConfig": s}
+	res.Message = "获取成功"
+	return
+}

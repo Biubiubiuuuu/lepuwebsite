@@ -126,6 +126,10 @@ func EditAreaType(id int64, req entity.AreaTypeRequest) (res entity.ResponseData
 	}
 	a := model.AreaType{}
 	a.ID = id
+	if err := a.QueryAreaTypeByID(); err != nil {
+		res.Message = "面积分类不存在"
+		return
+	}
 	if err := a.EditAreaType(args); err != nil {
 		res.Message = "修改失败"
 		return
@@ -215,11 +219,15 @@ func EditRentType(id int64, req entity.RentTypeRequest) (res entity.ResponseData
 		return
 	}
 	args := map[string]interface{}{
-		"min_area": req.MinRent,
-		"max_area": req.MaxRent,
+		"min_rent": req.MinRent,
+		"max_rent": req.MaxRent,
 	}
 	r := model.RentType{}
 	r.ID = id
+	if err := r.QueryRentTypeInfoById(); err != nil {
+		res.Message = "租金分类不存在"
+		return
+	}
 	if err := r.EditRentType(args); err != nil {
 		res.Message = "修改失败"
 		return
@@ -885,8 +893,8 @@ func QueryRole(pageSize int, page int, name string, enable string) (res entity.R
 	count, dep := model.QueryRole(pageSize, page, name, enable)
 	res.Status = true
 	data := map[string]interface{}{
-		"departments": dep,
-		"count":       count,
+		"roles": dep,
+		"count": count,
 	}
 	res.Data = data
 	res.Message = "查询成功"
@@ -977,6 +985,10 @@ func EditMenu(id int64, req entity.MenuRequest) (res entity.ResponseData) {
 
 // 批量删除菜单
 func DelMenus(ids []int64) (res entity.ResponseData) {
+	if ok := model.QueryRoleByMenuID(ids); ok {
+		res.Message = "角色已添加菜单信息，请直接修改"
+		return
+	}
 	count := model.DelMebus(ids)
 	if count == 0 {
 		res.Message = "删除失败"
@@ -1325,6 +1337,7 @@ func SearchPropertyInfo(token string, pageSize int, page int, args map[string]in
 		return
 	}
 	args["source_id"] = user.ID
+	args["show_status"] = true
 	pros, count := model.QueryPropertyInfo(pageSize, page, args)
 	data := map[string]interface{}{
 		"propertyInfos": pros,
@@ -1338,6 +1351,20 @@ func SearchPropertyInfo(token string, pageSize int, page int, args map[string]in
 
 // 修改店铺转让信息
 func EditUserStoretransfer(id int64, req entity.AdminStoretransferRequest) (res entity.ResponseData) {
+	store := model.PropertyInfoScan{}
+	store.ID = id
+	if err := store.QueryPropertyInfoByID(); err != nil {
+		res.Message = "物业信息不存在"
+		return
+	}
+	args := map[string]interface{}{
+		"telephone": req.Telephone,
+	}
+	first, count := model.QueryPropertyInfo(1, 0, args)
+	if count > 0 && first[0].Telephone != store.Telephone {
+		res.Message = "已存在该联系人物业信息"
+		return
+	}
 	industry := model.Industry{}
 	industry.ID = req.IndustryID
 	if err := industry.QueryIndustryByID(); err != nil {
@@ -1402,6 +1429,7 @@ func EditUserStoretransfer(id int64, req entity.AdminStoretransferRequest) (res 
 		res.Message = "联系手机格式不正确"
 		return
 	}
+
 	if len(req.IndustryRanges) == 0 {
 		res.Message = "适合经营至少选勾选一项"
 		return
@@ -1439,7 +1467,7 @@ func EditUserStoretransfer(id int64, req entity.AdminStoretransferRequest) (res 
 	if !(req.InOperation == "0" || req.InOperation == "1" || req.InOperation == "2") {
 		req.InOperation = "2"
 	}
-	args := map[string]interface{}{
+	args2 := map[string]interface{}{
 		"title":           req.Title,
 		"industry_id":     req.IndustryID,
 		"description":     req.Description,
@@ -1465,9 +1493,7 @@ func EditUserStoretransfer(id int64, req entity.AdminStoretransferRequest) (res 
 		"quoted_price":    req.QuotedPrice,
 		"remake":          req.Remake,
 	}
-	store := model.PropertyInfo{}
-	store.ID = id
-	if err := store.EditPropertyInfoByID(args); err != nil {
+	if err := store.EditPropertyInfoByID(args2); err != nil {
 		res.Message = "修改失败"
 		return
 	}
@@ -1489,6 +1515,22 @@ func EditProtectionProInfo(id int64) (res entity.ResponseData) {
 	}
 	res.Status = true
 	res.Message = "保护成功"
+	return
+}
+
+// 取消保护
+func EditNotProtectionProInfo(id int64) (res entity.ResponseData) {
+	store := model.PropertyInfo{}
+	store.ID = id
+	args := map[string]interface{}{
+		"protect": false,
+	}
+	if err := store.EditPropertyInfoByID(args); err != nil {
+		res.Message = "取消保护失败"
+		return
+	}
+	res.Status = true
+	res.Message = "取消成功"
 	return
 }
 
@@ -1549,18 +1591,33 @@ func AddProInfoLog(token string, id int64, req entity.AddProLog) (res entity.Res
 		res.Message = "物业信息不存在"
 		return
 	}
-	log := model.ShopTransferLog{
-		Content:        req.Content,
-		WithID:         user.ID,
-		WithName:       user.Nickname,
-		ShopTransferID: id,
+	log := model.ProInfoLog{
+		Content:   req.ContentText,
+		WithID:    user.ID,
+		WithName:  user.Nickname,
+		ProInfoID: id,
 	}
-	if err := log.AddShopTransferLog(); err != nil {
+	if err := log.AddProInfoLog(); err != nil {
 		res.Message = "添加失败"
 		return
 	}
 	res.Status = true
 	res.Message = "添加成功"
+	return
+}
+
+// 查看跟单记录
+func QueryByProInfoID(id int64) (res entity.ResponseData) {
+	pro := model.PropertyInfoScan{}
+	pro.ID = id
+	if err := pro.QueryPropertyInfoByID(); err != nil {
+		res.Message = "物业信息不存在"
+		return
+	}
+	log := model.QueryByProInfoID(id)
+	res.Message = "查询成功"
+	res.Data = map[string]interface{}{"log": log}
+	res.Status = true
 	return
 }
 
@@ -1644,7 +1701,7 @@ func AddProInfo(token string, req entity.AddPropertyInfoRequest) (res entity.Res
 		res.Message = "联系手机格式不正确"
 		return
 	}
-	if len(req.IndustryRanges) == 0 {
+	if req.IndustryRanges == "" {
 		res.Message = "适合经营至少选勾选一项"
 		return
 	}
@@ -1682,6 +1739,9 @@ func AddProInfo(token string, req entity.AddPropertyInfoRequest) (res entity.Res
 	}
 	transferFee, _ := strconv.ParseFloat(req.TransferFee, 64)
 	quotedPrice, _ := strconv.ParseFloat(req.QuotedPrice, 64)
+	BusType, _ := strconv.ParseInt(req.BusType, 10, 64)
+	ModelType, _ := strconv.ParseInt(req.ModelType, 10, 64)
+	InOperation, _ := strconv.ParseInt(req.InOperation, 10, 64)
 	pro := model.PropertyInfo{
 		IndustryID:     req.IndustryID,
 		Title:          req.Title,
@@ -1689,8 +1749,8 @@ func AddProInfo(token string, req entity.AddPropertyInfoRequest) (res entity.Res
 		Telephone:      req.Telephone,
 		ShopName:       req.ShopName,
 		Image:          req.Image,
-		BusType:        req.BusType,
-		ModelType:      req.ModelType,
+		BusType:        BusType,
+		ModelType:      ModelType,
 		ProvinceCode:   req.ProvinceCode,
 		CityCode:       req.CityCode,
 		DistrictCode:   req.DistrictCode,
@@ -1709,7 +1769,7 @@ func AddProInfo(token string, req entity.AddPropertyInfoRequest) (res entity.Res
 		ExplicitTel:    req.ExplicitTel,
 		Tel1:           req.Tel1,
 		Tel2:           req.Tel2,
-		InOperation:    req.InOperation,
+		InOperation:    InOperation,
 		Protect:        req.Protect,
 		StoreTypeID:    req.StoreTypeID,
 		QuotedPrice:    quotedPrice,
@@ -1805,7 +1865,7 @@ func AddCarousel(req entity.CarouselRequest) (res entity.ResponseData) {
 func EditCarousel(id int64, req entity.CarouselRequest) (res entity.ResponseData) {
 	carousel := model.Carousel{}
 	carousel.ID = id
-	if err := carousel.QueryCarouseByID(); err != nil {
+	if err := carousel.QueryCarouselByID(); err != nil {
 		res.Message = "未找到轮播信息"
 		return
 	}
@@ -1824,10 +1884,10 @@ func EditCarousel(id int64, req entity.CarouselRequest) (res entity.ResponseData
 }
 
 // 查询轮播详情
-func QueryCarouseByID(id int64) (res entity.ResponseData) {
+func QueryCarouselByID(id int64) (res entity.ResponseData) {
 	carousel := model.Carousel{}
 	carousel.ID = id
-	if err := carousel.QueryCarouseByID(); err != nil {
+	if err := carousel.QueryCarouselByID(); err != nil {
 		res.Message = "未找到轮播信息"
 		return
 	}
@@ -1838,11 +1898,23 @@ func QueryCarouseByID(id int64) (res entity.ResponseData) {
 }
 
 // 查询轮播
-func QueryCarouse(pageSize int, page int) (res entity.ResponseData) {
-	count, carousels := model.QueryCarouse(pageSize, page)
+func QueryCarousel(pageSize int, page int) (res entity.ResponseData) {
+	count, carousels := model.QueryCarousel(pageSize, page)
 	res.Status = true
 	res.Data = map[string]interface{}{"carousels": carousels, "count": count}
 	res.Message = "获取成功"
+	return
+}
+
+// 删除轮播
+func DelCarousel(ids []int64) (res entity.ResponseData) {
+	count := model.DelCarousel(ids)
+	if count == 0 {
+		res.Message = "删除失败"
+		return
+	}
+	res.Status = true
+	res.Message = fmt.Sprintf("成功删除%v条，失败%v条", count, int64(len(ids))-count)
 	return
 }
 
@@ -1854,10 +1926,17 @@ func AddAdvert(req entity.AdvertRequest) (res entity.ResponseData) {
 		res.Message = "物业信息不存在"
 		return
 	}
+	advertQue := model.Advert{
+		PropertyInfoID: req.PropertyInfoID,
+	}
+	if err := advertQue.QueryAdvertByProID(); err == nil {
+		res.Message = "此物业信息已添加广告，请直接修改"
+		return
+	}
 	advert := model.Advert{
 		PropertyInfoID: req.PropertyInfoID,
-		StartTime:      utilsHelper.StringToDTime(req.StartTime),
-		EndTime:        utilsHelper.StringToDTime(req.EndTime),
+		StartTime:      utilsHelper.StringToSTime(req.StartTime),
+		EndTime:        utilsHelper.StringToSTime(req.EndTime),
 		Hot:            req.Hot,
 		Floor:          req.Floor,
 		Type:           req.Type,
@@ -1869,5 +1948,821 @@ func AddAdvert(req entity.AdvertRequest) (res entity.ResponseData) {
 	}
 	res.Status = true
 	res.Message = "添加成功"
+	return
+}
+
+// 修改广告
+func EditAdvert(id int64, req entity.AdvertRequest) (res entity.ResponseData) {
+	advert := model.Advert{}
+	advert.ID = id
+	if err := advert.QueryAdvertByID(); err != nil {
+		res.Message = "广告不存在"
+		return
+	}
+	pro := model.PropertyInfoScan{}
+	pro.ID = req.PropertyInfoID
+	if err := pro.QueryPropertyInfoByID(); err != nil {
+		res.Message = "物业信息不存在"
+		return
+	}
+	advertQue := model.Advert{
+		PropertyInfoID: req.PropertyInfoID,
+	}
+	if err := advertQue.QueryAdvertByProID(); err == nil && advertQue.ID != id {
+		res.Message = "此物业信息已添加广告，请直接修改"
+		return
+	}
+	args := map[string]interface{}{
+		"sort":             req.Sort,
+		"type":             req.Type,
+		"floor":            req.Floor,
+		"hot":              req.Hot,
+		"end_time":         utilsHelper.StringToSTime(req.EndTime),
+		"start_time":       utilsHelper.StringToSTime(req.StartTime),
+		"property_info_id": req.PropertyInfoID,
+	}
+	if err := advert.EditAdvertByID(args); err != nil {
+		res.Message = "修改失败"
+		return
+	}
+	res.Message = "修改成功"
+	res.Status = true
+	return
+}
+
+// 查询广告
+func QueryAdvert(pageSize int, page int, args map[string]interface{}) (res entity.ResponseData) {
+	count, adverts := model.QueryAdvert(pageSize, page, args)
+	res.Status = true
+	res.Data = map[string]interface{}{"adverts": adverts, "count": count}
+	res.Message = "获取成功"
+	return
+}
+
+// 查询广告详情
+func QueryAdvertByID(id int64) (res entity.ResponseData) {
+	advert := model.Advert{}
+	advert.ID = id
+	if err := advert.QueryAdvertByID(); err != nil {
+		res.Message = "未找到广告信息"
+		return
+	}
+	res.Status = true
+	res.Data = map[string]interface{}{"advert": advert}
+	res.Message = "查询成功"
+	return
+}
+
+// 删除广告
+func DelAdvert(ids []int64) (res entity.ResponseData) {
+	count := model.DelAdvert(ids)
+	if count == 0 {
+		res.Message = "删除失败"
+		return
+	}
+	res.Status = true
+	res.Message = fmt.Sprintf("成功删除%v条，失败%v条", count, int64(len(ids))-count)
+	return
+}
+
+// 添加求租求购
+func AddQZQGProInfo(token string, req entity.AddQZQGPropertyInfoRequest) (res entity.ResponseData) {
+	user := model.User{
+		Token: token,
+	}
+	if err := user.QueryByToken(); err != nil {
+		res.Message = "用户不存在"
+		return
+	}
+	industry := model.Industry{}
+	industry.ID = req.IndustryID
+	if err := industry.QueryIndustryByID(); err != nil {
+		res.Message = "经营业态不存在"
+		return
+	}
+	if req.Title == "" {
+		res.Message = "标题不能为空"
+		return
+	}
+	if strings.Trim(req.Telephone, " ") == "" {
+		res.Message = "联系手机不能为空"
+		return
+	}
+	_, count := model.QueryPropertyInfo(30, 1, map[string]interface{}{"telephone": req.Telephone})
+	if count > 0 {
+		res.Message = "此联系人已存在物业信息，请勿重复添加"
+		return
+	}
+	if !utilsHelper.CheckTelFormat(req.Telephone) {
+		res.Message = "联系手机格式不正确"
+		return
+	}
+	city := model.City{
+		Code: req.CityCode,
+	}
+	if err := city.QueryCitysByCode(); err != nil {
+		res.Message = "城市代码不存在"
+	}
+	if !(req.BusType == "0" || req.BusType == "1" || req.BusType == "2") {
+		req.BusType = "0"
+	}
+	if !(req.ModelType == "4" || req.ModelType == "5") {
+		req.BusType = "4"
+	}
+	if req.MinArea <= 0 {
+		res.Message = "最小面积必须大于0"
+		return
+	}
+	if req.MaxArea <= 0 {
+		res.Message = "最小面积必须大于0"
+		return
+	}
+	if req.MinRent <= 0 {
+		res.Message = "最小租金必须大于0"
+		return
+	}
+	if req.MaxRent <= 0 {
+		res.Message = "最小租金必须大于0"
+		return
+	}
+	if req.MinArea > req.MaxArea {
+		res.Message = "最小面积必须不大于最大面积"
+		return
+	}
+	if req.MinRent > req.MaxRent {
+		res.Message = "最小租金必须不大于最大租金"
+		return
+	}
+	if req.Lots == "" {
+		res.Message = "考虑地段至少选择一个"
+		return
+	}
+	var lots []model.Lot
+	arr := strings.Split(req.Lots, ",")
+	for _, v := range arr {
+		dis := model.District{
+			Code: v,
+		}
+		if err := dis.QueryDistrictByCode(); err != nil {
+			res.Message = "考虑地段区域不存在"
+			return
+		}
+		lot := model.Lot{
+			DistrictCode: dis.Code,
+			DistrictName: dis.Name,
+		}
+		lots = append(lots, lot)
+	}
+	TransferFee, _ := strconv.ParseFloat(req.TransferFee, 64)
+	QuotedPrice, _ := strconv.ParseFloat(req.QuotedPrice, 64)
+	BusType, _ := strconv.ParseInt(req.BusType, 10, 64)
+	ModelType, _ := strconv.ParseInt(req.ModelType, 10, 64)
+	InOperation, _ := strconv.ParseInt(req.InOperation, 10, 64)
+	pro := model.PropertyInfo{
+		IndustryID:  req.IndustryID,
+		Title:       req.Title,
+		Nickname:    req.Nickname,
+		Telephone:   req.Telephone,
+		Image:       req.Image,
+		CityCode:    req.CityCode,
+		Idling:      req.Idling,
+		InOperation: InOperation,
+		TransferFee: TransferFee,
+		Description: req.Description,
+		ShopName:    req.ShopName,
+		BusType:     BusType,
+		ModelType:   ModelType,
+		ExplicitTel: req.ExplicitTel,
+		Tel1:        req.Tel1,
+		Tel2:        req.Tel2,
+		Protect:     req.Protect,
+		QuotedPrice: QuotedPrice,
+		Remake:      req.Remake,
+		SourceInfo:  req.SourceInfo,
+		MinArea:     req.MinArea,
+		MaxArea:     req.MaxArea,
+		MinRent:     req.MinRent,
+		MaxRent:     req.MaxRent,
+		Lots:        lots,
+	}
+	if err := pro.CreatePropertyInfo(); err != nil {
+		res.Message = "发布求租求购失败"
+		return
+	}
+	res.Status = true
+	res.Message = "发布成功"
+	return
+}
+
+// 修改求租求购
+func EditQZQGProInfo(id int64, req entity.AddQZQGPropertyInfoRequest) (res entity.ResponseData) {
+	proInfo := model.PropertyInfoScan{}
+	proInfo.ID = id
+	if err := proInfo.QueryPropertyInfoByID(); err != nil {
+		res.Message = "物业信息不存在"
+		return
+	}
+	industry := model.Industry{}
+	industry.ID = req.IndustryID
+	if err := industry.QueryIndustryByID(); err != nil {
+		res.Message = "经营业态不存在"
+		return
+	}
+	if req.Title == "" {
+		res.Message = "标题不能为空"
+		return
+	}
+	if strings.Trim(req.Telephone, " ") == "" {
+		res.Message = "联系手机不能为空"
+		return
+	}
+	proInfos, count := model.QueryPropertyInfo(1, 0, map[string]interface{}{"telephone": req.Telephone})
+	if count > 0 && proInfos[0].ID != id {
+		res.Message = "此联系人已存在物业信息，请勿重复添加"
+		return
+	}
+	if !utilsHelper.CheckTelFormat(req.Telephone) {
+		res.Message = "联系手机格式不正确"
+		return
+	}
+	city := model.City{
+		Code: req.CityCode,
+	}
+	if err := city.QueryCitysByCode(); err != nil {
+		res.Message = "城市代码不存在"
+	}
+	if !(req.BusType == "0" || req.BusType == "1" || req.BusType == "2") {
+		req.BusType = "0"
+	}
+	if !(req.ModelType == "4" || req.ModelType == "5") {
+		req.BusType = "4"
+	}
+	if req.MinArea <= 0 {
+		res.Message = "最小面积必须大于0"
+		return
+	}
+	if req.MaxArea <= 0 {
+		res.Message = "最小面积必须大于0"
+		return
+	}
+	if req.MinRent <= 0 {
+		res.Message = "最小租金必须大于0"
+		return
+	}
+	if req.MaxRent <= 0 {
+		res.Message = "最小租金必须大于0"
+		return
+	}
+	if req.MinArea > req.MaxArea {
+		res.Message = "最小面积必须不大于最大面积"
+		return
+	}
+	if req.MinRent > req.MaxRent {
+		res.Message = "最小租金必须不大于最大租金"
+		return
+	}
+	if req.Lots == "" {
+		res.Message = "考虑地段至少选择一个"
+		return
+	}
+	var lots []model.Lot
+	arr := strings.Split(req.Lots, ",")
+	for _, v := range arr {
+		dis := model.District{
+			Code: v,
+		}
+		if err := dis.QueryDistrictByCode(); err != nil {
+			res.Message = "考虑地段区域不存在"
+			return
+		}
+		lot := model.Lot{
+			DistrictCode: dis.Code,
+			DistrictName: dis.Name,
+		}
+		lots = append(lots, lot)
+	}
+	TransferFee, _ := strconv.ParseFloat(req.TransferFee, 64)
+	QuotedPrice, _ := strconv.ParseFloat(req.QuotedPrice, 64)
+	args := map[string]interface{}{
+		"industry_id":  req.IndustryID,
+		"title":        req.Title,
+		"ickname":      req.Nickname,
+		"relephone":    req.Telephone,
+		"image":        req.Image,
+		"city_code":    req.CityCode,
+		"idling":       req.Idling,
+		"in_operation": req.InOperation,
+		"transfer_fee": TransferFee,
+		"description":  req.Description,
+		"shop_name":    req.ShopName,
+		"bus_type":     req.BusType,
+		"model_type":   req.ModelType,
+		"explicit_tel": req.ExplicitTel,
+		"tel1":         req.Tel1,
+		"tel2":         req.Tel2,
+		"protect":      req.Protect,
+		"quoted_price": QuotedPrice,
+		"remake":       req.Remake,
+		"source_info":  req.SourceInfo,
+		"min_area":     req.MinArea,
+		"max_area":     req.MaxArea,
+		"min_rent":     req.MinRent,
+		"max_rent":     req.MaxRent,
+		"lots":         lots,
+	}
+	if err := proInfo.EditPropertyInfoByID(args); err != nil {
+		res.Message = "修改失败"
+		return
+	}
+	res.Status = true
+	res.Message = "修改成功"
+	return
+}
+
+// 修改物业信息
+func EditProInfo(id int64, req entity.AddPropertyInfoRequest) (res entity.ResponseData) {
+	info := model.PropertyInfoScan{}
+	info.ID = id
+	if err := info.QueryPropertyInfoByID(); err != nil {
+		res.Message = "物业信息不存在"
+		return
+	}
+	industry := model.Industry{}
+	industry.ID = req.IndustryID
+	if err := industry.QueryIndustryByID(); err != nil {
+		res.Message = "经营业态不存在"
+		return
+	}
+	if req.Title == "" {
+		res.Message = "标题不能为空"
+		return
+	}
+	areaFlo, _ := strconv.ParseFloat(req.Area, 64)
+	if areaFlo <= 0 {
+		res.Message = "面积必须大于0"
+		return
+	}
+	rentFlo, _ := strconv.ParseFloat(req.Rent, 64)
+	if rentFlo <= 0 {
+		res.Message = "租金必须大于0"
+		return
+	}
+	province := model.Province{
+		Code: req.ProvinceCode,
+	}
+	if err := province.QueryProvinceByCode(); err != nil {
+		res.Message = "省不存在"
+		return
+	}
+	city := model.City{
+		Code:         req.CityCode,
+		ProvinceCode: req.ProvinceCode,
+	}
+	if err := city.QueryCitysByCodeAndPro(); err != nil {
+		res.Message = "该省份下城市不存在"
+		return
+	}
+	district := model.District{
+		Code:     req.DistrictCode,
+		CityCode: req.CityCode,
+	}
+	if err := district.QueryDistrictByCodeAndCity(); err != nil {
+		res.Message = "该城市下区不存在"
+		return
+	}
+	street := model.Street{
+		Code:         req.StreetCode,
+		DistrictCode: req.Description,
+	}
+	if err := street.QueryStreetByCodeAndDist(); err != nil {
+		street.Code = req.Description
+		if arr := street.QueryStreetByDistrictCode(); len(arr) > 0 {
+			res.Message = "该区下街道不存在"
+			return
+		}
+	}
+	if strings.Trim(req.Address, " ") == "" {
+		res.Message = "详细地址不能为空"
+		return
+	}
+	if strings.Trim(req.Telephone, " ") == "" {
+		res.Message = "联系手机不能为空"
+		return
+	}
+	pros, count := model.QueryPropertyInfo(30, 1, map[string]interface{}{"telephone": req.Telephone})
+	if count > 0 && info.ID != pros[0].ID {
+		res.Message = "此联系人已存在物业信息，请勿重复添加"
+		return
+	}
+	if !utilsHelper.CheckTelFormat(req.Telephone) {
+		res.Message = "联系手机格式不正确"
+		return
+	}
+	if req.IndustryRanges == "" {
+		res.Message = "适合经营至少选勾选一项"
+		return
+	}
+	var industryRangeArr []model.IndustryRange
+	arr := strings.Split(req.IndustryRanges, ",")
+	for _, item := range arr {
+		ind := model.Industry{}
+		id, _ := strconv.ParseInt(item, 10, 64)
+		ind.ID = id
+		if err := ind.QueryIndustryByID(); err != nil {
+			res.Message = "经营业态不存在"
+			return
+		}
+		industryRange := model.IndustryRange{
+			IndustryID:   id,
+			IndustryName: ind.Name,
+		}
+		industryRangeArr = append(industryRangeArr, industryRange)
+	}
+	storeType := model.StoreType{}
+	storeType.ID = req.StoreTypeID
+	if err := storeType.QueryStoreTypeByID(); err != nil {
+		res.Message = "店铺类型不存在"
+		return
+	}
+	rent := model.RentType{}
+	if err := rent.QueryRentTypeByRent(rentFlo); err != nil {
+		res.Message = "租金类型不存在"
+		return
+	}
+	area := model.AreaType{}
+	if err := area.QueryAreaTypeByArea(areaFlo); err != nil {
+		res.Message = "面积类型不存在"
+		return
+	}
+	transferFee, _ := strconv.ParseFloat(req.TransferFee, 64)
+	quotedPrice, _ := strconv.ParseFloat(req.QuotedPrice, 64)
+	args := map[string]interface{}{
+		"industry_id":     req.IndustryID,
+		"title":           req.Title,
+		"nickname":        req.Nickname,
+		"telephone":       req.Telephone,
+		"shop_name":       req.ShopName,
+		"image":           req.Image,
+		"bus_type":        req.BusType,
+		"model_type":      req.ModelType,
+		"province_code":   req.ProvinceCode,
+		"city_code":       req.CityCode,
+		"district_code":   req.DistrictCode,
+		"street_code":     req.StreetCode,
+		"industry_ranges": industryRangeArr,
+		"area_type_id":    area.ID,
+		"rent_type_id":    rent.ID,
+		"area":            areaFlo,
+		"rent":            rentFlo,
+		"address":         req.Address,
+		"description":     req.Description,
+		"idling":          req.Idling,
+		"remake":          req.Remake,
+		"transfer_fee":    transferFee,
+		"explicit_tel":    req.ExplicitTel,
+		"tel1":            req.Tel1,
+		"tel2":            req.Tel2,
+		"in_operation":    req.InOperation,
+		"protect":         req.Protect,
+		"store_type_id":   req.StoreTypeID,
+		"quoted_price":    quotedPrice,
+	}
+	if err := info.EditPropertyInfoByID(args); err != nil {
+		res.Message = "修改失败"
+		return
+	}
+	res.Message = "修改成功"
+	res.Status = true
+	return
+}
+
+// 添加收款
+func AddPayInfo(req entity.PayInfoRequest) (res entity.ResponseData) {
+	info := model.PayInfo{
+		ProInfoID: req.ProInfoID,
+	}
+	if err := info.QueryPayInfoByProInfoID(); err == nil {
+		res.Message = "此物业已收款"
+		return
+	}
+	fmt.Println(req)
+	if req.Name == "" {
+		res.Message = "收款人姓名不能为空"
+		return
+	}
+	met := model.PayMethond{}
+	met.ID = req.PayMethondID
+	if err := met.QueryPayMethondByID(); err != nil {
+		res.Message = "付款方式不存在"
+		return
+	}
+	if req.PayTime == "" {
+		res.Message = "收款时间不能为空"
+		return
+	}
+	pro := model.PropertyInfoScan{}
+	pro.ID = req.ProInfoID
+	if err := pro.QueryPropertyInfoByID(); err != nil {
+		res.Message = "物业信息不存在"
+		return
+	}
+	user := model.User{}
+	user.ID = req.PayeeID
+	if err := user.QueryEmployeeById(); err != nil {
+		res.Message = "业绩归属用户不存在"
+		return
+	}
+	pay := model.PayInfo{
+		Name:             req.Name,
+		PayMethond:       met.Name,
+		PayMethondID:     met.ID,
+		PayStatus:        req.PayStatus,
+		Payee:            user.Nickname,
+		PayTime:          utilsHelper.StringToSTime(req.PayTime),
+		PayeeID:          met.ID,
+		ReceivableAmount: req.ReceivableAmount,
+		ActualAmount:     req.ActualAmount,
+		Invoice:          req.Invoice,
+		Remake:           req.Remake,
+		ProInfoID:        pro.ID,
+		ProInfoNickname:  pro.Nickname,
+		ProInfoTitle:     pro.Title,
+	}
+	if err := pay.AddPayInfo(); err != nil {
+		res.Message = "收款失败"
+		return
+	}
+	res.Status = true
+	res.Message = "收款成功"
+	return
+}
+
+// 修改收款
+func EditPayInfoByProInfo(id int64, req entity.PayInfoRequestByProInfo) (res entity.ResponseData) {
+	pro := model.PropertyInfoScan{}
+	pro.ID = id
+	if err := pro.QueryPropertyInfoByID(); err != nil {
+		res.Message = "物业信息不存在"
+		return
+	}
+	info := model.PayInfo{
+		ProInfoID: id,
+	}
+	if err := info.QueryPayInfoByProInfoID(); err != nil {
+		res.Message = "收款记录不存在，此物业暂未收款"
+		return
+	}
+	if req.Name == "" {
+		res.Message = "收款人姓名不能为空"
+		return
+	}
+	met := model.PayMethond{}
+	met.ID = req.PayMethondID
+	if err := met.QueryPayMethondByID(); err != nil {
+		res.Message = "付款方式不存在"
+		return
+	}
+	if req.PayTime == "" {
+		res.Message = "收款时间不能为空"
+		return
+	}
+	user := model.User{}
+	user.ID = req.PayeeID
+	if err := user.QueryEmployeeById(); err != nil {
+		res.Message = "业绩归属用户不存在"
+		return
+	}
+	args := map[string]interface{}{
+		"name":              req.Name,
+		"pay_methond":       met.Name,
+		"pay_methond_id":    met.ID,
+		"pay_status":        req.PayStatus,
+		"payee":             user.Nickname,
+		"pay_time":          utilsHelper.StringToSTime(req.PayTime),
+		"payee_id":          met.ID,
+		"receivable_amount": req.ReceivableAmount,
+		"actual_amount":     req.ActualAmount,
+		"invoice":           req.Invoice,
+		"remake":            req.Remake,
+		"pro_info_id":       pro.ID,
+		"pro_info_nickname": pro.Nickname,
+		"pro_info_title":    pro.Title,
+	}
+	if err := info.EditPayInfo(args); err != nil {
+		res.Message = "修改失败"
+		return
+	}
+	res.Status = true
+	res.Message = "修改成功"
+	return
+}
+
+// 修改收款
+func EditPayInfo(id int64, req entity.PayInfoRequest) (res entity.ResponseData) {
+	payInfo := model.PayInfo{}
+	payInfo.ID = id
+	if err := payInfo.QueryPayInfoByID(); err != nil {
+		res.Message = "收款记录不存在"
+		return
+	}
+	info := model.PayInfo{
+		ProInfoID: req.ProInfoID,
+	}
+	if err := info.QueryPayInfoByProInfoID(); err != nil && id != info.ID {
+		res.Message = "此物业已收款"
+		return
+	}
+	if req.Name == "" {
+		res.Message = "收款人姓名不能为空"
+		return
+	}
+	met := model.PayMethond{}
+	met.ID = req.PayMethondID
+	if err := met.QueryPayMethondByID(); err != nil {
+		res.Message = "付款方式不存在"
+		return
+	}
+	if req.PayTime == "" {
+		res.Message = "收款时间不能为空"
+		return
+	}
+	pro := model.PropertyInfoScan{}
+	pro.ID = req.ProInfoID
+	if err := pro.QueryPropertyInfoByID(); err != nil {
+		res.Message = "物业信息不存在"
+		return
+	}
+	user := model.User{}
+	user.ID = req.PayeeID
+	if err := user.QueryEmployeeById(); err != nil {
+		res.Message = "业绩归属用户不存在"
+		return
+	}
+	args := map[string]interface{}{
+		"name":              req.Name,
+		"pay_methond":       met.Name,
+		"pay_methond_id":    met.ID,
+		"pay_status":        req.PayStatus,
+		"payee":             user.Nickname,
+		"pay_time":          utilsHelper.StringToSTime(req.PayTime),
+		"payee_id":          met.ID,
+		"receivable_amount": req.ReceivableAmount,
+		"actual_amount":     req.ActualAmount,
+		"invoice":           req.Invoice,
+		"remake":            req.Remake,
+		"pro_info_id":       pro.ID,
+		"pro_info_nickname": pro.Nickname,
+		"pro_info_title":    pro.Title,
+	}
+	if err := payInfo.EditPayInfo(args); err != nil {
+		res.Message = "修改失败"
+		return
+	}
+	res.Status = true
+	res.Message = "修改成功"
+	return
+}
+
+// 收款详情（物业列表）
+func QueryPayInfoByProInfo(id int64) (res entity.ResponseData) {
+	pay := model.PayInfo{
+		ProInfoID: id,
+	}
+	if err := pay.QueryPayInfoByProInfoID(); err != nil {
+		res.Message = "未找到业绩信息"
+		return
+	}
+	res.Status = true
+	res.Message = "获取成功"
+	res.Data = map[string]interface{}{"pay_info": pay}
+	return
+}
+
+// 收款详情（收款列表）
+func QueryPayInfo(id int64) (res entity.ResponseData) {
+	pay := model.PayInfo{}
+	pay.ID = id
+	if err := pay.QueryPayInfoByID(); err != nil {
+		res.Message = "获取失败"
+		return
+	}
+	res.Status = true
+	res.Message = "获取成功"
+	res.Data = map[string]interface{}{"pay_info": pay}
+	return
+}
+
+// 收款列表
+func QueryPayInfos(pageSize int, page int, args map[string]interface{}) (res entity.ResponseData) {
+	count, pay_infos := model.QueryPayInfo(pageSize, page, args)
+	res.Status = true
+	res.Message = "获取成功"
+	res.Data = map[string]interface{}{"pay_infos": pay_infos, "count": count}
+	return
+}
+
+// 添加付款方式
+func AddPayMethond(req entity.PayMethondRequest) (res entity.ResponseData) {
+	if req.Name == "" {
+		res.Message = "付款方式不能为空"
+		return
+	}
+	met := model.PayMethond{
+		Name: req.Name,
+		Card: req.Card,
+	}
+	if err := met.AddPayMethond(); err != nil {
+		res.Message = "添加失败"
+		return
+	}
+	res.Message = "添加成功"
+	res.Status = true
+	return
+}
+
+// 修改付款方式
+func EditPayMethond(id int64, req entity.PayMethondRequest) (res entity.ResponseData) {
+	met := model.PayMethond{}
+	met.ID = id
+	if err := met.QueryPayMethondByID(); err != nil {
+		res.Message = "付款方式不存在"
+		return
+	}
+	if req.Name == "" {
+		res.Message = "付款方式不能为空"
+		return
+	}
+	args := map[string]interface{}{
+		"name": req.Name,
+		"card": req.Card,
+	}
+	if err := met.EditPayMethond(args); err != nil {
+		res.Message = "修改成功"
+		return
+	}
+	res.Status = true
+	res.Message = "修改成功"
+	return
+}
+
+// 删除付款
+func DelPayInfo(ids []int64) (res entity.ResponseData) {
+	count := model.DelPayInfo(ids)
+	if count == 0 {
+		res.Message = "删除失败"
+		return
+	}
+	res.Status = true
+	res.Message = fmt.Sprintf("成功删除%v条，失败%v条", count, int64(len(ids))-count)
+	return
+}
+
+// 删除付款方式
+func DelPayMethond(ids []int64) (res entity.ResponseData) {
+	count := model.DelPayMethond(ids)
+	if count == 0 {
+		res.Message = "删除失败"
+		return
+	}
+	res.Status = true
+	res.Message = fmt.Sprintf("成功删除%v条，失败%v条", count, int64(len(ids))-count)
+	return
+}
+
+// 付款方式详情
+func QueryPayMethondByID(id int64) (res entity.ResponseData) {
+	met := model.PayMethond{}
+	met.ID = id
+	if err := met.QueryPayMethondByID(); err != nil {
+		res.Message = "付款方式不存在"
+		return
+	}
+	res.Status = true
+	res.Message = "获取成功"
+	res.Data = map[string]interface{}{"pay_methond": met}
+	return
+}
+
+// 付款方式列表
+func QueryPayMethond() (res entity.ResponseData) {
+	pay_methonds := model.QueryPayMethond()
+	res.Status = true
+	res.Message = "获取成功"
+	res.Data = map[string]interface{}{"pay_methonds": pay_methonds, "count": len(pay_methonds)}
+	return
+}
+
+// 查询用户菜单
+func QueryUserMenu(token string) (res entity.ResponseData) {
+	user := model.User{
+		Token: token,
+	}
+	if err := user.QueryByToken(); err != nil {
+		res.Message = "token错误"
+		return
+	}
+	count, menus := model.QueryMenuByUser(user.UserInfo.RoleID)
+	res.Status = true
+	res.Data = map[string]interface{}{"menus": menus, "count": count}
 	return
 }

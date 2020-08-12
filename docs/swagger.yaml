@@ -37,17 +37,32 @@ definitions:
     type: object
   entity.AddProLog:
     properties:
-      content:
+      content_text:
         description: 跟单内容
         type: string
-      shop_transfer_id:
-        description: 店铺转让ID
+    type: object
+  entity.AdvertRequest:
+    properties:
+      end_time:
+        description: 展示结束时间
+        type: string
+      floor:
+        description: F楼
+        type: boolean
+      hot:
+        description: 首页最热推广
+        type: boolean
+      property_info_id:
+        description: 物业ID
         type: integer
-      with_id:
-        description: 跟单人ID
+      sort:
+        description: 显示排序
         type: integer
-      with_name:
-        description: 跟单人姓名
+      start_time:
+        description: 展示开始时间
+        type: string
+      type:
+        description: 信息列表推广 1-一栏四分之一图片广告 | 2-二栏四分之一图片广告 | 3-三栏重点推荐 | 4-五栏框架广告
         type: string
     type: object
   entity.AreaTypeRequest:
@@ -58,6 +73,18 @@ definitions:
       min_area:
         description: 最小面积（单位：平方米）
         type: number
+    type: object
+  entity.CarouselRequest:
+    properties:
+      link:
+        description: 跳转连接
+        type: string
+      sort:
+        description: 排序 越大越靠前
+        type: integer
+      url:
+        description: 图片地址
+        type: string
     type: object
   entity.DepartmentRequest:
     properties:
@@ -201,6 +228,78 @@ definitions:
         type: integer
       title:
         description: 菜单标题
+        type: string
+    type: object
+  entity.PayInfoRequest:
+    properties:
+      actual_amount:
+        description: 实收金额
+        type: number
+      invoice:
+        description: 发票
+        type: boolean
+      name:
+        description: 收款人姓名
+        type: string
+      pay_methond_id:
+        description: 付款方式ID
+        type: integer
+      pay_status:
+        description: 收款情况
+        type: string
+      pay_time:
+        description: 收款时间
+        type: string
+      payee_id:
+        description: 业绩归属ID
+        type: integer
+      pro_info_id:
+        description: 物业ID
+        type: integer
+      receivable_amount:
+        description: 应收金额
+        type: number
+      remake:
+        description: 备注说明
+        type: string
+    type: object
+  entity.PayInfoRequestByProInfo:
+    properties:
+      actual_amount:
+        description: 实收金额
+        type: number
+      invoice:
+        description: 发票
+        type: boolean
+      name:
+        description: 收款人姓名
+        type: string
+      pay_methond_id:
+        description: 付款方式ID
+        type: integer
+      pay_status:
+        description: 收款情况
+        type: string
+      pay_time:
+        description: 收款时间
+        type: string
+      payee_id:
+        description: 业绩归属ID
+        type: integer
+      receivable_amount:
+        description: 应收金额
+        type: number
+      remake:
+        description: 备注说明
+        type: string
+    type: object
+  entity.PayMethondRequest:
+    properties:
+      card:
+        description: 付款卡号
+        type: string
+      name:
+        description: 付款方式名称
         type: string
     type: object
   entity.PostRequest:
@@ -360,6 +459,138 @@ paths:
       summary: 查看用户信息
       tags:
       - 后台
+  /api/v1/admin/advert:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 首页最热推广
+        in: query
+        name: hot
+        type: boolean
+      - description: F楼
+        in: query
+        name: floor
+        type: boolean
+      - description: 信息列表推广 1-一栏四分之一图片广告 | 2-二栏四分之一图片广告 | 3-三栏重点推荐 | 4-五栏框架广告
+        in: query
+        name: type
+        type: string
+      - description: 是否已审核
+        in: query
+        name: enable
+        type: boolean
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 广告列表
+      tags:
+      - 后台
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AdvertRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加广告
+      tags:
+      - 后台
+  /api/v1/admin/advert/{id}:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 广告ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 广告详情
+      tags:
+      - 后台
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 广告ID
+        in: path
+        name: id
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AdvertRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改广告
+      tags:
+      - 后台
+  /api/v1/admin/advert/{ids}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID 多个用,分开
+        in: path
+        name: ids
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除广告
+      tags:
+      - 后台
   /api/v1/admin/areaType:
     get:
       consumes:
@@ -467,6 +698,128 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 删除面积分类
+      tags:
+      - 后台
+  /api/v1/admin/carousel:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 轮播列表
+      tags:
+      - 后台
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 图片
+        in: formData
+        name: url
+        type: file
+      - description: 跳转链接
+        in: formData
+        name: link
+        type: string
+      - description: 排序
+        in: formData
+        name: sort
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加轮播
+      tags:
+      - 后台
+  /api/v1/admin/carousel/{id}:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 轮播ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 轮播详情
+      tags:
+      - 后台
+    put:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 轮播ID
+        in: path
+        name: id
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.CarouselRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改轮播
+      tags:
+      - 后台
+  /api/v1/admin/carousel/{ids}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID 多个用,分开
+        in: path
+        name: ids
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除轮播
       tags:
       - 后台
   /api/v1/admin/department:
@@ -1087,7 +1440,7 @@ paths:
         in: formData
         name: bus_type
         type: string
-      - description: 模型类型 0-转让 ｜ 1-出售 ｜ 2-出租
+      - description: 模型类型 0-转让 ｜ 1-出售 ｜ 3-出租
         in: formData
         name: model_type
         type: string
@@ -1192,6 +1545,627 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 发布物业信息
+      tags:
+      - 后台
+  /api/v1/admin/new/propertyInfo/{id}:
+    put:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        type: string
+      - description: 标题
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: 客户姓名
+        in: formData
+        name: nickname
+        required: true
+        type: string
+      - description: 联系手机
+        in: formData
+        name: telephone
+        required: true
+        type: string
+      - description: 店名
+        in: formData
+        name: store_name
+        required: true
+        type: string
+      - description: 图片
+        in: formData
+        name: image
+        type: file
+      - description: 业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库
+        in: formData
+        name: bus_type
+        type: string
+      - description: 模型类型 0-转让 ｜ 1-出售 ｜ 3-出租
+        in: formData
+        name: model_type
+        type: string
+      - description: 省代码
+        in: formData
+        name: province_code
+        required: true
+        type: string
+      - description: 城市代码
+        in: formData
+        name: city_code
+        required: true
+        type: string
+      - description: 区代码
+        in: formData
+        name: district_code
+        required: true
+        type: string
+      - description: 街道代码
+        in: formData
+        name: street_code
+        type: string
+      - description: 详细地址
+        in: formData
+        name: address
+        required: true
+        type: string
+      - description: 经营业态ID
+        in: formData
+        name: industry_id
+        required: true
+        type: integer
+      - description: 店铺类型ID
+        in: formData
+        name: store_type_id
+        required: true
+        type: integer
+      - description: 可否空转
+        in: formData
+        name: idling
+        required: true
+        type: boolean
+      - description: 是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中
+        in: formData
+        name: in_operation
+        required: true
+        type: string
+      - description: 面积（单位：平方米）
+        in: formData
+        name: area
+        required: true
+        type: string
+      - description: 租金（单位：元/月）
+        in: formData
+        name: rent
+        required: true
+        type: string
+      - description: 转让费用（单位：万元 不录入则显示为面议）
+        in: formData
+        name: transfer_fee
+        type: string
+      - description: 适合经营范围id，多个用，拼接
+        in: formData
+        name: industry_ranges
+        required: true
+        type: string
+      - description: 详细描述
+        in: formData
+        name: description
+        type: string
+      - description: 是否外显号码
+        in: formData
+        name: explicit_tel
+        type: boolean
+      - description: 外显号码1
+        in: formData
+        name: tel1
+        type: string
+      - description: 外显号码2
+        in: formData
+        name: tel2
+        type: string
+      - description: 报价
+        in: formData
+        name: quoted_price
+        type: string
+      - description: 跟进备注
+        in: formData
+        name: remake
+        type: string
+      - description: 是否保护
+        in: formData
+        name: protect
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改物业信息
+      tags:
+      - 后台
+  /api/v1/admin/new/qzqgPropertyInfo:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 标题
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: 客户姓名
+        in: formData
+        name: nickname
+        required: true
+        type: string
+      - description: 联系手机
+        in: formData
+        name: telephone
+        required: true
+        type: string
+      - description: 店名
+        in: formData
+        name: store_name
+        required: true
+        type: string
+      - description: 图片
+        in: formData
+        name: image
+        type: file
+      - description: 业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库
+        in: formData
+        name: bus_type
+        type: string
+      - description: 模型类型 0-转让 ｜ 1-出售 ｜ 3-出租
+        in: formData
+        name: model_type
+        type: string
+      - description: 城市代码
+        in: formData
+        name: city_code
+        required: true
+        type: string
+      - description: 经营业态ID
+        in: formData
+        name: industry_id
+        required: true
+        type: integer
+      - description: 最小面积
+        in: query
+        name: min_area
+        type: string
+      - description: 最大面积
+        in: query
+        name: max_area
+        type: string
+      - description: 最小租金
+        in: query
+        name: min_rent
+        type: string
+      - description: 最大租金
+        in: query
+        name: max_rent
+        type: string
+      - description: 可否空转
+        in: formData
+        name: idling
+        required: true
+        type: boolean
+      - description: 是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中
+        in: formData
+        name: in_operation
+        required: true
+        type: string
+      - description: 转让费用（单位：万元 不录入则显示为面议）
+        in: formData
+        name: transfer_fee
+        type: string
+      - description: 适合经营范围id，多个用，拼接
+        in: formData
+        name: industry_ranges
+        required: true
+        type: string
+      - description: 详细描述
+        in: formData
+        name: description
+        type: string
+      - description: 是否外显号码
+        in: formData
+        name: explicit_tel
+        type: boolean
+      - description: 外显号码1
+        in: formData
+        name: tel1
+        type: string
+      - description: 外显号码2
+        in: formData
+        name: tel2
+        type: string
+      - description: 报价
+        in: formData
+        name: quoted_price
+        type: string
+      - description: 跟进备注
+        in: formData
+        name: remake
+        type: string
+      - description: 是否保护
+        in: formData
+        name: protect
+        type: boolean
+      - description: 来源描述
+        in: formData
+        name: source_info
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 发布求租求购
+      tags:
+      - 后台
+  /api/v1/admin/new/qzqgPropertyInfo/{id}:
+    put:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        type: string
+      - description: 标题
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: 客户姓名
+        in: formData
+        name: nickname
+        required: true
+        type: string
+      - description: 联系手机
+        in: formData
+        name: telephone
+        required: true
+        type: string
+      - description: 店名
+        in: formData
+        name: store_name
+        required: true
+        type: string
+      - description: 图片
+        in: formData
+        name: image
+        type: file
+      - description: 业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库
+        in: formData
+        name: bus_type
+        type: string
+      - description: 模型类型 0-转让 ｜ 1-出售 ｜ 3-出租
+        in: formData
+        name: model_type
+        type: string
+      - description: 城市代码
+        in: formData
+        name: city_code
+        required: true
+        type: string
+      - description: 经营业态ID
+        in: formData
+        name: industry_id
+        required: true
+        type: integer
+      - description: 最小面积
+        in: query
+        name: min_area
+        type: string
+      - description: 最大面积
+        in: query
+        name: max_area
+        type: string
+      - description: 最小租金
+        in: query
+        name: min_rent
+        type: string
+      - description: 最大租金
+        in: query
+        name: max_rent
+        type: string
+      - description: 可否空转
+        in: formData
+        name: idling
+        required: true
+        type: boolean
+      - description: 是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中
+        in: formData
+        name: in_operation
+        required: true
+        type: string
+      - description: 转让费用（单位：万元 不录入则显示为面议）
+        in: formData
+        name: transfer_fee
+        type: string
+      - description: 适合经营范围id，多个用，拼接
+        in: formData
+        name: industry_ranges
+        required: true
+        type: string
+      - description: 详细描述
+        in: formData
+        name: description
+        type: string
+      - description: 是否外显号码
+        in: formData
+        name: explicit_tel
+        type: boolean
+      - description: 外显号码1
+        in: formData
+        name: tel1
+        type: string
+      - description: 外显号码2
+        in: formData
+        name: tel2
+        type: string
+      - description: 报价
+        in: formData
+        name: quoted_price
+        type: string
+      - description: 跟进备注
+        in: formData
+        name: remake
+        type: string
+      - description: 是否保护
+        in: formData
+        name: protect
+        type: boolean
+      - description: 来源描述
+        in: formData
+        name: source_info
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改求租求购
+      tags:
+      - 后台
+  /api/v1/admin/payInfo:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 业绩归属人ID
+        in: query
+        name: payee_id
+        type: string
+      - description: 支付方式ID
+        in: query
+        name: pay_methond_id
+        type: string
+      - description: 按月查询
+        in: query
+        name: pay_month
+        type: string
+      - description: 按年查询
+        in: query
+        name: pay_year
+        type: string
+      - description: 收款人
+        in: query
+        name: name
+        type: string
+      - description: 页大小 （默认30）
+        in: query
+        name: pageSize
+        type: string
+      - description: 跳转页码
+        in: query
+        name: page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 收款列表
+      tags:
+      - 后台
+  /api/v1/admin/payInfo/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 收款详情（收款列表）
+      tags:
+      - 后台
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 收款ID
+        in: path
+        name: id
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.PayInfoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改收款（收款列表）
+      tags:
+      - 后台
+  /api/v1/admin/payInfo/{ids}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID 多个用,分开
+        in: path
+        name: ids
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除支付
+      tags:
+      - 后台
+  /api/v1/admin/payMethond:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 收款方式列表
+      tags:
+      - 后台
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.PayMethondRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加收款方式
+      tags:
+      - 后台
+  /api/v1/admin/payMethond/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 收款方式详情
+      tags:
+      - 后台
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 收款方式ID
+        in: path
+        name: id
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.PayMethondRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改收款方式
+      tags:
+      - 后台
+  /api/v1/admin/payMethond/{ids}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID 多个用,分开
+        in: path
+        name: ids
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除支付方式
       tags:
       - 后台
   /api/v1/admin/post:
@@ -1324,6 +2298,131 @@ paths:
       summary: 删除岗位
       tags:
       - 后台
+  /api/v1/admin/proInfo/log/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 物业信息ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AddProLog'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 跟单记录详情
+      tags:
+      - 后台
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 物业信息ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AddProLog'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 物业添加跟单记录
+      tags:
+      - 后台
+  /api/v1/admin/proInfo/payInfo:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.PayInfoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加收款（物业列表）
+      tags:
+      - 后台
+  /api/v1/admin/proInfo/payInfo/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 物业ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 收款详情（物业列表）
+      tags:
+      - 后台
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 物业ID
+        in: path
+        name: id
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/entity.PayInfoRequestByProInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改收款（物业列表）
+      tags:
+      - 后台
   /api/v1/admin/propertyInfo:
     get:
       consumes:
@@ -1397,6 +2496,10 @@ paths:
       - description: 是否保护 查询我的重点信息传true；查询我的历史重点信息true
         in: query
         name: protect
+        type: string
+      - description: 创建时间
+        in: query
+        name: created_at
         type: string
       - description: 页大小 （默认30）
         in: query
@@ -1620,22 +2723,16 @@ paths:
       summary: 删除图片（单张）
       tags:
       - 后台
-  /api/v1/admin/propertyInfo/log/:id:
+  /api/v1/admin/propertyInfo/notprotect/{id}:
     post:
       consumes:
       - application/json
       parameters:
       - description: 物业信息ID
         in: path
-        name: pro_id
+        name: id
         required: true
         type: string
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/entity.AddProLog'
       produces:
       - application/json
       responses:
@@ -1645,7 +2742,7 @@ paths:
             $ref: '#/definitions/entity.ResponseData'
       security:
       - ApiKeyAuth: []
-      summary: 物业添加跟单记录
+      summary: 取消保护
       tags:
       - 后台
   /api/v1/admin/propertyInfo/protect/{id}:
@@ -1951,6 +3048,22 @@ paths:
       summary: 删除角色
       tags:
       - 后台
+  /api/v1/admin/rolemenus:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户菜单
+      tags:
+      - 后台
   /api/v1/admin/storeType:
     get:
       consumes:
@@ -2187,6 +3300,40 @@ paths:
       summary: 查询已启用最上级行业
       tags:
       - 基础数据
+  /api/v1/basic/industrys:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 根据上级查询下级行业
+      tags:
+      - 基础数据
+  /api/v1/basic/proInfoDynamic:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 最新动态
+      tags:
+      - 基础数据
   /api/v1/basic/province:
     get:
       consumes:
@@ -2235,6 +3382,34 @@ paths:
       summary: 根据区代码获取街道
       tags:
       - 基础数据
+  /api/v1/basic/streets:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 获取所有街道
+      tags:
+      - 基础数据
+  /api/v1/basic/systemConfig:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      summary: 获取配置信息
+      tags:
+      - 基础数据
   /api/v1/common/verificationcode:
     get:
       consumes:
@@ -2271,6 +3446,10 @@ paths:
       - description: 信息列表推广 1-一栏四分之一图片广告 | 2-二栏四分之一图片广告 | 3-三栏重点推荐 | 4-五栏框架广告
         in: query
         name: type
+        type: string
+      - description: 行业ID
+        in: query
+        name: industry_id
         type: string
       - description: 页大小 （默认30）
         in: query
@@ -2427,6 +3606,10 @@ paths:
       - description: 排序 area-面积 ｜ rent-租金 ｜ created_at-发布时间（默认）
         in: query
         name: sort_condition
+        type: string
+      - description: 创建时间
+        in: query
+        name: created_at
         type: string
       - description: 页大小 （默认30）
         in: query

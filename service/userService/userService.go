@@ -1,6 +1,7 @@
 package userService
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/Biubiubiuuuu/yuepuwebsite/entity"
@@ -338,8 +339,8 @@ func UserStoretransfer(token string, req entity.UserStoretransferRequest) (res e
 		Rent:           req.Rent,
 		Idling:         req.Idling,
 		TransferFee:    req.TransferFee,
-		ModelType:      "0",
-		BusType:        "0",
+		ModelType:      0,
+		BusType:        0,
 		SourceID:       user.ID,
 		IndustryRanges: industryRangeArr,
 		StoreTypeID:    req.StoreTypeID,
@@ -366,7 +367,7 @@ func FindStore(token string, req entity.UserFindStoreRequest) (res entity.Respon
 		SourceID: user.ID,
 	}
 	if pros := store.QueryPropertyInfoByUserID(); len(pros) > 0 {
-		res.Message = "你已经发布物业信息，请不要重复提交"
+		res.Message = "普通用户只能发布一条信息，有疑问请联系管理员"
 		return
 	}
 	industry := model.Industry{}
@@ -428,8 +429,9 @@ func FindStore(token string, req entity.UserFindStoreRequest) (res entity.Respon
 		Nickname:    req.Nickname,
 		Telephone:   req.Telephone,
 		Description: req.Description,
-		ModelType:   "4",
-		BusType:     "0",
+		ModelType:   4,
+		BusType:     0,
+		SourceID:    user.ID,
 	}
 	if err := pro.CreatePropertyInfo(); err != nil {
 		res.Message = "发布失败"
@@ -870,7 +872,7 @@ func AddReport(token string, id int64, req entity.ReportRequest) (res entity.Res
 
 // 首页轮播
 func QueryCarouse(pageSize int, page int) (res entity.ResponseData) {
-	count, carouses := model.QueryCarouse(pageSize, page)
+	count, carouses := model.QueryCarousel(pageSize, page)
 	res.Status = true
 	res.Message = "获取成功"
 	res.Data = map[string]interface{}{
@@ -891,8 +893,27 @@ func QueryAdvert(pageSize int, page int, args map[string]interface{}) (res entit
 	for _, item := range adverts {
 		ids = append(ids, item.PropertyInfoID)
 	}
+
 	args2 := map[string]interface{}{
-		"id": ids,
+		"id":     ids,
+		"enable": "true",
+	}
+	if v, ok := args["industry_id"]; ok && v.(string) != "" {
+		ind_id, _ := strconv.ParseInt(v.(string), 10, 64)
+		ind := model.Industry{}
+		ind.ID = ind_id
+		inds := ind.QueryIndustryByParentID()
+		if len(inds) > 0 {
+			var ind_ids []int64
+			for _, item := range inds {
+				ind_ids = append(ind_ids, item.ID)
+			}
+			ind_ids = append(ind_ids, ind_id)
+			args2["industry_id"] = ind_ids
+		} else {
+			res.Message = "请输入最上级行业分类，或者行业类型不存在"
+			return
+		}
 	}
 	pro, count2 := model.QueryPropertyInfo(pageSize, page, args2)
 	res.Status = true

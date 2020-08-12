@@ -1,6 +1,9 @@
 package model
 
 import (
+	"strconv"
+	"strings"
+
 	"github.com/Biubiubiuuuu/yuepuwebsite/db/mysql"
 )
 
@@ -48,13 +51,22 @@ func QueryPosts(pageSize int, page int, args map[string]interface{}) (count int,
 	db := mysql.GetMysqlDB()
 	query := db.Table("post").Select("post.*")
 	if v, ok := args["name"]; ok && v.(string) != "" {
-		query = query.Where("name = %?%", v.(string))
+		var buf strings.Builder
+		buf.WriteString("%")
+		buf.WriteString(v.(string))
+		buf.WriteString("%")
+		query = query.Where("name like ?", buf.String())
 	}
 	if v, ok := args["enable"]; ok && v.(string) != "" {
-		query = query.Where("enable = ?", v.(string))
+		enable, _ := strconv.ParseBool(v.(string))
+		query = query.Where("enable = ?", enable)
 	}
 	if v, ok := args["code"]; ok && v.(string) != "" {
-		query = query.Where("code = %?%", v.(string))
+		var buf strings.Builder
+		buf.WriteString("%")
+		buf.WriteString(v.(string))
+		buf.WriteString("%")
+		query = query.Where("code like ?", buf.String())
 	}
 	query.Count(&count)
 	query.Limit(pageSize).Offset((page - 1) * pageSize).Order("sort desc").Find(&posts)

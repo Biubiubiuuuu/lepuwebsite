@@ -28,7 +28,7 @@ func main() {
 		&model.Street{},
 		&model.PropertyInfo{},
 		&model.LeaveMessage{},
-		&model.ShopTransferLog{},
+		&model.ProInfoLog{},
 		&model.StoreType{},
 		&model.IndustryRange{},
 		&model.Picture{},
@@ -43,6 +43,10 @@ func main() {
 		&model.Report{},
 		&model.Advert{},
 		&model.Carousel{},
+		&model.PayInfo{},
+		&model.PayMethond{},
+		&model.SystemConfig{},
+		&model.Link{},
 	)
 	// 添加默认管理员 username:Admin,password:123456
 	uuid, _ := uuid.NewUUID()

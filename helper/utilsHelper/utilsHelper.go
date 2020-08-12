@@ -24,7 +24,6 @@ func CheckTelFormat(tel string) bool {
 //  param password
 //  return bool
 func CheckPasswordFormat(password string) bool {
-	fmt.Println(password)
 	str := `^([a-zA-Z0-9]|[!@#$&*.,]){6,20}$`
 	rgx := regexp.MustCompile(str)
 	return rgx.MatchString(password)

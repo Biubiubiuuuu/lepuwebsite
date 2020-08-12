@@ -31,3 +31,12 @@ func (s *Street) QueryStreetByCodeAndDist() error {
 	db := mysql.GetMysqlDB()
 	return db.Where("code = ? AND district_code = ?", s.Code, s.DistrictCode).First(&s).Error
 }
+
+// 获取所有街道
+func QueryStreet() (count int, streers []Street) {
+	db := mysql.GetMysqlDB()
+	query := db.Table("street").Select("street.*")
+	query.Count(&count)
+	query.Find(&streers)
+	return
+}

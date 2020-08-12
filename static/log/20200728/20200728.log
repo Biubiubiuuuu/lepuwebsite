@@ -1,0 +1,78 @@
+========================================
+开始时间：2020-07-28 23:55:11.515466 +0800 CST m=+32.874432510
+请求URL：127.0.0.1:8030/api/v1/admin/propertyInfo/1
+method：PUT
+Content-Type：multipart/form-data; boundary=----WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Authorization：eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyTmFtZSI6ImFkbWluIiwiUGFzc3dvcmQiOiJlMTBhZGMzOTQ5YmE1OWFiYmU1NmUwNTdmMjBmODgzZSIsImV4cCI6MTU5NTk2MDE4OCwiaXNzIjoieXVlcHUifQ.mzdJrYkuXsEjfDzK78lRSrPh_wSmt_-yG6B5s6Y7rl0
+请求IP：127.0.0.1
+postData：
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="industry_id"
+
+8
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="title"
+
+d
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="nickname"
+
+1
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="telephone"
+
+1
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="province_code"
+
+1
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="city_code"
+
+1
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="district_code"
+
+1
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="address"
+
+1
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="store_type_id"
+
+1
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="idling"
+
+false
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="area"
+
+1
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="in_operation"
+
+0
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="rent"
+
+0
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="transfer_fee"
+
+0
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="industry_ranges"
+
+8
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A
+Content-Disposition: form-data; name="explicit_tel"
+
+false
+------WebKitFormBoundaryv0h7Bsjf2qHbpP5A--
+
+responseBody：
+{"status":false,"data":null,"message":"租金必须大于0"}
+结束时间：2020-07-28 23:55:11.549118 +0800 CST m=+32.908083915
+========================================

@@ -917,6 +917,7 @@ func GetEmployee(c *gin.Context) {
 // @Param sort_condition query string false "排序 area-面积 ｜ rent-租金 ｜ created_at-发布时间（默认）"
 // @Param status query string false "是否成功 查询我的已成功信息传true；查询我的历史重点信息true"
 // @Param protect query string false "是否保护 查询我的重点信息传true；查询我的历史重点信息true"
+// @Param created_at query string false "创建时间"
 // @Param pageSize query string false "页大小 （默认30）"
 // @Param page query string false "跳转页码"
 // @Success 200 {object} entity.ResponseData "desc"
@@ -1029,8 +1030,12 @@ func EditUserStoretransfer(c *gin.Context) {
 			filename = uuid.String() + ".png"
 		} else if strings.EqualFold(arr[len(arr)-1], "jpg") {
 			filename = uuid.String() + ".jpg"
+		} else if strings.EqualFold(arr[len(arr)-1], "jpeg") {
+			filename = uuid.String() + ".jpeg"
+		} else if strings.EqualFold(arr[len(arr)-1], "gif") {
+			filename = uuid.String() + ".gif"
 		} else {
-			res.Message = "图片格式只支持png、jpg"
+			res.Message = "图片格式只支持png、jpg、jpeg、gif"
 			c.JSON(http.StatusOK, res)
 			return
 		}
@@ -1098,6 +1103,20 @@ func EditProtectionProInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+// @Summary 取消保护
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "物业信息ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/propertyInfo/notprotect/{id} [POST]
+// @Security ApiKeyAuth
+func EditNotProtectionProInfo(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.EditNotProtectionProInfo(id)
+	c.JSON(http.StatusOK, res)
+}
+
 // @Summary 上传图集图片（单张）
 // @tags 后台
 // @Accept  multipart/form-data
@@ -1127,8 +1146,10 @@ func AddPictures(c *gin.Context) {
 			filename = uuid.String() + ".jpg"
 		} else if strings.EqualFold(arr[len(arr)-1], "jpeg") {
 			filename = uuid.String() + ".jpeg"
+		} else if strings.EqualFold(arr[len(arr)-1], "gif") {
+			filename = uuid.String() + ".gif"
 		} else {
-			res.Message = "图片格式只支持png、jpg、jpeg"
+			res.Message = "图片格式只支持png、jpg、jpeg、gif"
 			c.JSON(http.StatusOK, res)
 			return
 		}
@@ -1170,10 +1191,10 @@ func DelPrictures(c *gin.Context) {
 // @tags 后台
 // @Accept application/json
 // @Produce  json
-// @Param pro_id path string true "物业信息ID"
+// @Param id path string true "物业信息ID"
 // @Param body body entity.AddProLog true "body"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/admin/propertyInfo/log/:id [POST]
+// @Router /api/v1/admin/proInfo/log/{id} [POST]
 // @Security ApiKeyAuth
 func AddProInfoLog(c *gin.Context) {
 	var token string
@@ -1193,6 +1214,21 @@ func AddProInfoLog(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+// @Summary 跟单记录详情
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Param id path string true "物业信息ID"
+// @Param body body entity.AddProLog true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/proInfo/log/{id} [GET]
+// @Security ApiKeyAuth
+func QueryProInfoLog(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryByProInfoID(id)
+	c.JSON(http.StatusOK, res)
+}
+
 // @Summary 发布物业信息
 // @tags 后台
 // @Accept  multipart/form-data
@@ -1203,7 +1239,7 @@ func AddProInfoLog(c *gin.Context) {
 // @Param store_name formData string true "店名"
 // @Param image formData file false "图片"
 // @Param bus_type formData string false "业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库"
-// @Param model_type formData string false "模型类型 0-转让 ｜ 1-出售 ｜ 2-出租"
+// @Param model_type formData string false "模型类型 0-转让 ｜ 1-出售 ｜ 3-出租"
 // @Param province_code formData string true "省代码""
 // @Param city_code formData string true "城市代码"
 // @Param district_code formData string true "区代码"
@@ -1251,8 +1287,12 @@ func AddProInfo(c *gin.Context) {
 			filename = uuid.String() + ".png"
 		} else if strings.EqualFold(arr[len(arr)-1], "jpg") {
 			filename = uuid.String() + ".jpg"
+		} else if strings.EqualFold(arr[len(arr)-1], "jpeg") {
+			filename = uuid.String() + ".jpeg"
+		} else if strings.EqualFold(arr[len(arr)-1], "gif") {
+			filename = uuid.String() + ".gif"
 		} else {
-			res.Message = "图片格式只支持png、jpg"
+			res.Message = "图片格式只支持png、jpg、jpeg、gif"
 			c.JSON(http.StatusOK, res)
 			return
 		}
@@ -1313,6 +1353,126 @@ func AddProInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+// @Summary 修改物业信息
+// @tags 后台
+// @Accept  multipart/form-data
+// @Produce  json
+// @Param id path string false "ID"
+// @Param title formData string true "标题"
+// @Param nickname formData string true "客户姓名"
+// @Param telephone formData string true "联系手机"
+// @Param store_name formData string true "店名"
+// @Param image formData file false "图片"
+// @Param bus_type formData string false "业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库"
+// @Param model_type formData string false "模型类型 0-转让 ｜ 1-出售 ｜ 3-出租"
+// @Param province_code formData string true "省代码""
+// @Param city_code formData string true "城市代码"
+// @Param district_code formData string true "区代码"
+// @Param street_code formData string false "街道代码"
+// @Param address formData string true "详细地址"
+// @Param industry_id formData int true "经营业态ID"
+// @Param store_type_id formData int true "店铺类型ID"
+// @Param idling formData bool true "可否空转"
+// @Param in_operation formData string true "是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中"
+// @Param area formData string true "面积（单位：平方米）"
+// @Param rent formData string true "租金（单位：元/月）"
+// @Param transfer_fee formData string false "转让费用（单位：万元 不录入则显示为面议）"
+// @Param industry_ranges formData string true "适合经营范围id，多个用，拼接"
+// @Param description formData string false "详细描述"
+// @Param explicit_tel formData bool false "是否外显号码"
+// @Param tel1 formData string false "外显号码1"
+// @Param tel2 formData string false "外显号码2"
+// @Param quoted_price formData string false "报价"
+// @Param remake formData string false "跟进备注"
+// @Param protect formData bool false "是否保护"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/new/propertyInfo/{id} [PUT]
+// @Security ApiKeyAuth
+func EditProInfo(c *gin.Context) {
+	res := entity.ResponseData{}
+	industryID, _ := strconv.ParseInt(c.PostForm("industry_id"), 10, 64)
+	storeTypeID, _ := strconv.ParseInt(c.PostForm("store_type_id"), 10, 64)
+	idling, _ := strconv.ParseBool(c.PostForm("idling"))
+
+	// 获取主机头
+	r := c.Request
+	host := r.Host
+	if strings.HasPrefix(host, "http://") == false {
+		host = "http://" + host
+	}
+
+	var image string
+	if file, err := c.FormFile("image"); err == nil {
+		// 文件名 避免重复取uuid
+		var filename string
+		uuid, _ := uuid.NewUUID()
+		arr := strings.Split(file.Filename, ".")
+		if strings.EqualFold(arr[len(arr)-1], "png") {
+			filename = uuid.String() + ".png"
+		} else if strings.EqualFold(arr[len(arr)-1], "jpg") {
+			filename = uuid.String() + ".jpg"
+		} else if strings.EqualFold(arr[len(arr)-1], "jpeg") {
+			filename = uuid.String() + ".jpeg"
+		} else if strings.EqualFold(arr[len(arr)-1], "gif") {
+			filename = uuid.String() + ".gif"
+		} else {
+			res.Message = "图片格式只支持png、jpg、jpeg、gif"
+			c.JSON(http.StatusOK, res)
+			return
+		}
+		pathFile := configHelper.ImageDir
+		if !fileHelper.IsExist(pathFile) {
+			fileHelper.CreateDir(pathFile)
+		}
+		pathFile = pathFile + filename
+		if err := c.SaveUploadedFile(file, pathFile); err == nil {
+			image = host + "/" + pathFile
+		}
+	}
+	if image == "" {
+		pathFile := configHelper.ImageDir
+		if !fileHelper.IsExist(pathFile) {
+			fileHelper.CreateDir(pathFile)
+		}
+		pathFile = pathFile + "default-store.7e8792da.jpg"
+		image = host + "/" + pathFile
+	}
+	explicit_tel, _ := strconv.ParseBool(c.PostForm("explicit_tel"))
+	protect, _ := strconv.ParseBool(c.PostForm("protect"))
+	req := entity.AddPropertyInfoRequest{
+		Title:          c.PostForm("title"),
+		Nickname:       c.PostForm("nickname"),
+		Telephone:      c.PostForm("telephone"),
+		Image:          image,
+		ProvinceCode:   c.PostForm("province_code"),
+		CityCode:       c.PostForm("city_code"),
+		DistrictCode:   c.PostForm("district_code"),
+		StreetCode:     c.PostForm("street_code"),
+		Address:        c.PostForm("address"),
+		StoreTypeID:    storeTypeID,
+		Idling:         idling,
+		InOperation:    c.PostForm("in_operation"),
+		Area:           c.PostForm("area"),
+		Rent:           c.PostForm("rent"),
+		TransferFee:    c.PostForm("transfer_fee"),
+		IndustryRanges: c.PostForm("industry_ranges"),
+		Description:    c.PostForm("description"),
+		IndustryID:     industryID,
+		QuotedPrice:    c.PostForm("quoted_price"),
+		ExplicitTel:    explicit_tel,
+		Remake:         c.PostForm("remake"),
+		ShopName:       c.PostForm("shop_name"),
+		Tel1:           c.PostForm("tel1"),
+		Tel2:           c.PostForm("tel2"),
+		Protect:        protect,
+		BusType:        c.PostForm("bus_type"),
+		ModelType:      c.PostForm("model_type"),
+	}
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res = adminService.EditProInfo(id, req)
+	c.JSON(http.StatusOK, res)
+}
+
 // @Summary 留言列表
 // @tags 后台
 // @Accept  application/x-www-form-urlencoded
@@ -1370,5 +1530,742 @@ func QueryReport(c *gin.Context) {
 func QueryReportByID(c *gin.Context) {
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	res := adminService.QueryReportByID(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 添加轮播
+// @tags 后台
+// @Accept  multipart/form-data
+// @Produce  json
+// @Param url formData file false "图片"
+// @Param link formData string false "跳转链接"
+// @Param sort formData int false "排序"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/carousel [POST]
+// @Security ApiKeyAuth
+func AddCarousel(c *gin.Context) {
+	res := entity.ResponseData{}
+	// 获取主机头
+	r := c.Request
+	host := r.Host
+	if strings.HasPrefix(host, "http://") == false {
+		host = "http://" + host
+	}
+
+	var image string
+	if file, err := c.FormFile("image"); err == nil {
+		// 文件名 避免重复取uuid
+		var filename string
+		uuid, _ := uuid.NewUUID()
+		arr := strings.Split(file.Filename, ".")
+		if strings.EqualFold(arr[len(arr)-1], "png") {
+			filename = uuid.String() + ".png"
+		} else if strings.EqualFold(arr[len(arr)-1], "jpg") {
+			filename = uuid.String() + ".jpg"
+		} else if strings.EqualFold(arr[len(arr)-1], "jpeg") {
+			filename = uuid.String() + ".jpeg"
+		} else if strings.EqualFold(arr[len(arr)-1], "gif") {
+			filename = uuid.String() + ".gif"
+		} else {
+			res.Message = "图片格式只支持png、jpg、jpeg、gif"
+			c.JSON(http.StatusOK, res)
+			return
+		}
+		pathFile := configHelper.ImageDir
+		if !fileHelper.IsExist(pathFile) {
+			fileHelper.CreateDir(pathFile)
+		}
+		pathFile = pathFile + filename
+		if err := c.SaveUploadedFile(file, pathFile); err == nil {
+			image = host + "/" + pathFile
+		}
+	}
+	if image == "" {
+		pathFile := configHelper.ImageDir
+		if !fileHelper.IsExist(pathFile) {
+			fileHelper.CreateDir(pathFile)
+		}
+		pathFile = pathFile + "default-store.7e8792da.jpg"
+		image = host + "/" + pathFile
+	}
+	sort, _ := strconv.ParseInt(c.PostForm("sort"), 10, 64)
+	req := entity.CarouselRequest{
+		Url:  image,
+		Link: c.PostForm("link"),
+		Sort: sort,
+	}
+	res = adminService.AddCarousel(req)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 修改轮播
+// @tags 后台
+// @Accept  multipart/form-data
+// @Produce  json
+// @Param id path string false "轮播ID"
+// @Param body body entity.CarouselRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/carousel/{id} [PUT]
+// @Security ApiKeyAuth
+func EditCarousel(c *gin.Context) {
+	res := entity.ResponseData{}
+	req := entity.CarouselRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+		res = adminService.EditCarousel(id, req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 删除轮播
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param ids path string true "ID 多个用,分开"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/carousel/{ids} [DELETE]
+// @Security ApiKeyAuth
+func DelCarousel(c *gin.Context) {
+	id := c.Param("ids")
+	idArr := strings.Split(id, ",")
+	var ids []int64
+	for _, v := range idArr {
+		item, _ := strconv.ParseInt(v, 10, 64)
+		ids = append(ids, item)
+	}
+	res := adminService.DelCarousel(ids)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 轮播详情
+// @tags 后台
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Param id path string false "轮播ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/carousel/{id} [GET]
+// @Security ApiKeyAuth
+func QueryCarouselByID(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryCarouselByID(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 轮播列表
+// @tags 后台
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Param pageSize query string false "页大小 （默认30）"
+// @Param page query string false "跳转页码"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/carousel [GET]
+// @Security ApiKeyAuth
+func QueryCarousel(c *gin.Context) {
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "30"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	res := adminService.QueryCarousel(pageSize, page)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 添加广告
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Param body body entity.AdvertRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/advert [POST]
+// @Security ApiKeyAuth
+func AddAdvert(c *gin.Context) {
+	res := entity.ResponseData{}
+	req := entity.AdvertRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		res = adminService.AddAdvert(req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 修改广告
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Param id path string false "广告ID"
+// @Param body body entity.AdvertRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/advert/{id} [PUT]
+// @Security ApiKeyAuth
+func EditAdvert(c *gin.Context) {
+	res := entity.ResponseData{}
+	req := entity.AdvertRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+		res = adminService.EditAdvert(id, req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 删除广告
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param ids path string true "ID 多个用,分开"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/advert/{ids} [DELETE]
+// @Security ApiKeyAuth
+func DelAdvert(c *gin.Context) {
+	id := c.Param("ids")
+	idArr := strings.Split(id, ",")
+	var ids []int64
+	for _, v := range idArr {
+		item, _ := strconv.ParseInt(v, 10, 64)
+		ids = append(ids, item)
+	}
+	res := adminService.DelAdvert(ids)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 广告详情
+// @tags 后台
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Param id path string false "广告ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/advert/{id} [GET]
+// @Security ApiKeyAuth
+func QueryAdvertByID(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryAdvertByID(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 广告列表
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param hot query bool false "首页最热推广"
+// @Param floor query bool false "F楼"
+// @Param type query string false "信息列表推广 1-一栏四分之一图片广告 | 2-二栏四分之一图片广告 | 3-三栏重点推荐 | 4-五栏框架广告"
+// @Param enable query bool false "是否已审核"
+// @Param pageSize query string false "页大小 （默认30）"
+// @Param page query string false "跳转页码"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/advert [GET]
+// @Security ApiKeyAuth
+func QueryAdvert(c *gin.Context) {
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "30"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	res := adminService.QueryAdvert(pageSize, page, map[string]interface{}{
+		"hot":    c.Query("hot"),
+		"floor":  c.Query("floor"),
+		"type":   c.Query("type"),
+		"enable": c.Query("enable"),
+	})
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 发布求租求购
+// @tags 后台
+// @Accept  multipart/form-data
+// @Produce  json
+// @Param title formData string true "标题"
+// @Param nickname formData string true "客户姓名"
+// @Param telephone formData string true "联系手机"
+// @Param store_name formData string true "店名"
+// @Param image formData file false "图片"
+// @Param bus_type formData string false "业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库"
+// @Param model_type formData string false "模型类型 0-转让 ｜ 1-出售 ｜ 3-出租"
+// @Param city_code formData string true "城市代码"
+// @Param industry_id formData int true "经营业态ID"
+// @Param min_area query string false "最小面积"
+// @Param max_area query string false "最大面积"
+// @Param min_rent query string false "最小租金"
+// @Param max_rent query string false "最大租金"
+// @Param idling formData bool true "可否空转"
+// @Param in_operation formData string true "是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中"
+// @Param transfer_fee formData string false "转让费用（单位：万元 不录入则显示为面议）"
+// @Param industry_ranges formData string true "适合经营范围id，多个用，拼接"
+// @Param description formData string false "详细描述"
+// @Param explicit_tel formData bool false "是否外显号码"
+// @Param tel1 formData string false "外显号码1"
+// @Param tel2 formData string false "外显号码2"
+// @Param quoted_price formData string false "报价"
+// @Param remake formData string false "跟进备注"
+// @Param protect formData bool false "是否保护"
+// @Param source_info formData string false "来源描述"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/new/qzqgPropertyInfo [POST]
+// @Security ApiKeyAuth
+func AddQZQGProInfo(c *gin.Context) {
+	var token string
+	res := entity.ResponseData{}
+	industryID, _ := strconv.ParseInt(c.PostForm("industry_id"), 10, 64)
+	idling, _ := strconv.ParseBool(c.PostForm("idling"))
+
+	// 获取主机头
+	r := c.Request
+	host := r.Host
+	if strings.HasPrefix(host, "http://") == false {
+		host = "http://" + host
+	}
+
+	var image string
+	if file, err := c.FormFile("image"); err == nil {
+		// 文件名 避免重复取uuid
+		var filename string
+		uuid, _ := uuid.NewUUID()
+		arr := strings.Split(file.Filename, ".")
+		if strings.EqualFold(arr[len(arr)-1], "png") {
+			filename = uuid.String() + ".png"
+		} else if strings.EqualFold(arr[len(arr)-1], "jpg") {
+			filename = uuid.String() + ".jpg"
+		} else if strings.EqualFold(arr[len(arr)-1], "jpeg") {
+			filename = uuid.String() + ".jpeg"
+		} else if strings.EqualFold(arr[len(arr)-1], "gif") {
+			filename = uuid.String() + ".gif"
+		} else {
+			res.Message = "图片格式只支持png、jpg、jpeg、gif"
+			c.JSON(http.StatusOK, res)
+			return
+		}
+		pathFile := configHelper.ImageDir
+		if !fileHelper.IsExist(pathFile) {
+			fileHelper.CreateDir(pathFile)
+		}
+		pathFile = pathFile + filename
+		if err := c.SaveUploadedFile(file, pathFile); err == nil {
+			image = host + "/" + pathFile
+		}
+	}
+	if image == "" {
+		pathFile := configHelper.ImageDir
+		if !fileHelper.IsExist(pathFile) {
+			fileHelper.CreateDir(pathFile)
+		}
+		pathFile = pathFile + "default-store.7e8792da.jpg"
+		image = host + "/" + pathFile
+	}
+	explicit_tel, _ := strconv.ParseBool(c.PostForm("explicit_tel"))
+	protect, _ := strconv.ParseBool(c.PostForm("protect"))
+	min_area, _ := strconv.ParseFloat(c.PostForm("min_area"), 64)
+	max_area, _ := strconv.ParseFloat(c.PostForm("max_area"), 64)
+	min_rent, _ := strconv.ParseFloat(c.PostForm("min_rent"), 64)
+	max_rent, _ := strconv.ParseFloat(c.PostForm("max_rent"), 64)
+	req := entity.AddQZQGPropertyInfoRequest{
+		Title:       c.PostForm("title"),
+		Nickname:    c.PostForm("nickname"),
+		Telephone:   c.PostForm("telephone"),
+		Image:       image,
+		CityCode:    c.PostForm("city_code"),
+		Idling:      idling,
+		InOperation: c.PostForm("in_operation"),
+		TransferFee: c.PostForm("transfer_fee"),
+		Description: c.PostForm("description"),
+		IndustryID:  industryID,
+		QuotedPrice: c.PostForm("quoted_price"),
+		ExplicitTel: explicit_tel,
+		Remake:      c.PostForm("remake"),
+		ShopName:    c.PostForm("shop_name"),
+		Tel1:        c.PostForm("tel1"),
+		Tel2:        c.PostForm("tel2"),
+		Protect:     protect,
+		BusType:     c.PostForm("bus_type"),
+		ModelType:   c.PostForm("model_type"),
+		MinArea:     min_area,
+		MaxArea:     max_area,
+		MinRent:     min_rent,
+		MaxRent:     max_rent,
+		Lots:        c.PostForm("lots"),
+		SourceInfo:  c.PostForm("source_info"),
+	}
+	if token, res = commonController.GetToken(c); res.Status {
+		res = adminService.AddQZQGProInfo(token, req)
+	} else {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, res)
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 修改求租求购
+// @tags 后台
+// @Accept  multipart/form-data
+// @Produce  json
+// @Param id path string false "ID"
+// @Param title formData string true "标题"
+// @Param nickname formData string true "客户姓名"
+// @Param telephone formData string true "联系手机"
+// @Param store_name formData string true "店名"
+// @Param image formData file false "图片"
+// @Param bus_type formData string false "业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库"
+// @Param model_type formData string false "模型类型 0-转让 ｜ 1-出售 ｜ 3-出租"
+// @Param city_code formData string true "城市代码"
+// @Param industry_id formData int true "经营业态ID"
+// @Param min_area query string false "最小面积"
+// @Param max_area query string false "最大面积"
+// @Param min_rent query string false "最小租金"
+// @Param max_rent query string false "最大租金"
+// @Param idling formData bool true "可否空转"
+// @Param in_operation formData string true "是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中"
+// @Param transfer_fee formData string false "转让费用（单位：万元 不录入则显示为面议）"
+// @Param industry_ranges formData string true "适合经营范围id，多个用，拼接"
+// @Param description formData string false "详细描述"
+// @Param explicit_tel formData bool false "是否外显号码"
+// @Param tel1 formData string false "外显号码1"
+// @Param tel2 formData string false "外显号码2"
+// @Param quoted_price formData string false "报价"
+// @Param remake formData string false "跟进备注"
+// @Param protect formData bool false "是否保护"
+// @Param source_info formData string false "来源描述"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/new/qzqgPropertyInfo/{id} [PUT]
+// @Security ApiKeyAuth
+func EditQZQGProInfo(c *gin.Context) {
+	res := entity.ResponseData{}
+	industryID, _ := strconv.ParseInt(c.PostForm("industry_id"), 10, 64)
+	idling, _ := strconv.ParseBool(c.PostForm("idling"))
+	// 获取主机头
+	r := c.Request
+	host := r.Host
+	if strings.HasPrefix(host, "http://") == false {
+		host = "http://" + host
+	}
+
+	var image string
+	if file, err := c.FormFile("image"); err == nil {
+		// 文件名 避免重复取uuid
+		var filename string
+		uuid, _ := uuid.NewUUID()
+		arr := strings.Split(file.Filename, ".")
+		if strings.EqualFold(arr[len(arr)-1], "png") {
+			filename = uuid.String() + ".png"
+		} else if strings.EqualFold(arr[len(arr)-1], "jpg") {
+			filename = uuid.String() + ".jpg"
+		} else if strings.EqualFold(arr[len(arr)-1], "jpeg") {
+			filename = uuid.String() + ".jpeg"
+		} else if strings.EqualFold(arr[len(arr)-1], "gif") {
+			filename = uuid.String() + ".gif"
+		} else {
+			res.Message = "图片格式只支持png、jpg、jpeg、gif"
+			c.JSON(http.StatusOK, res)
+			return
+		}
+		pathFile := configHelper.ImageDir
+		if !fileHelper.IsExist(pathFile) {
+			fileHelper.CreateDir(pathFile)
+		}
+		pathFile = pathFile + filename
+		if err := c.SaveUploadedFile(file, pathFile); err == nil {
+			image = host + "/" + pathFile
+		}
+	}
+	if image == "" {
+		pathFile := configHelper.ImageDir
+		if !fileHelper.IsExist(pathFile) {
+			fileHelper.CreateDir(pathFile)
+		}
+		pathFile = pathFile + "default-store.7e8792da.jpg"
+		image = host + "/" + pathFile
+	}
+	explicit_tel, _ := strconv.ParseBool(c.PostForm("explicit_tel"))
+	protect, _ := strconv.ParseBool(c.PostForm("protect"))
+	min_area, _ := strconv.ParseFloat(c.PostForm("min_area"), 64)
+	max_area, _ := strconv.ParseFloat(c.PostForm("max_area"), 64)
+	min_rent, _ := strconv.ParseFloat(c.PostForm("min_rent"), 64)
+	max_rent, _ := strconv.ParseFloat(c.PostForm("max_rent"), 64)
+	req := entity.AddQZQGPropertyInfoRequest{
+		Title:       c.PostForm("title"),
+		Nickname:    c.PostForm("nickname"),
+		Telephone:   c.PostForm("telephone"),
+		Image:       image,
+		CityCode:    c.PostForm("city_code"),
+		Idling:      idling,
+		InOperation: c.PostForm("in_operation"),
+		TransferFee: c.PostForm("transfer_fee"),
+		Description: c.PostForm("description"),
+		IndustryID:  industryID,
+		QuotedPrice: c.PostForm("quoted_price"),
+		ExplicitTel: explicit_tel,
+		Remake:      c.PostForm("remake"),
+		ShopName:    c.PostForm("shop_name"),
+		Tel1:        c.PostForm("tel1"),
+		Tel2:        c.PostForm("tel2"),
+		Protect:     protect,
+		BusType:     c.PostForm("bus_type"),
+		ModelType:   c.PostForm("model_type"),
+		MinArea:     min_area,
+		MaxArea:     max_area,
+		MinRent:     min_rent,
+		MaxRent:     max_rent,
+		Lots:        c.PostForm("lots"),
+		SourceInfo:  c.PostForm("source_info"),
+	}
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res = adminService.EditQZQGProInfo(id, req)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 添加收款（物业列表）
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Param body body entity.PayInfoRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/proInfo/payInfo [POST]
+// @Security ApiKeyAuth
+func AddPayInfoByProInfo(c *gin.Context) {
+	res := entity.ResponseData{}
+	req := entity.PayInfoRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		res = adminService.AddPayInfo(req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 修改收款（物业列表）
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Param id path string false "物业ID"
+// @Param body body entity.PayInfoRequestByProInfo true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/proInfo/payInfo/{id} [PUT]
+// @Security ApiKeyAuth
+func EditPayInfoByProInfo(c *gin.Context) {
+	res := entity.ResponseData{}
+	req := entity.PayInfoRequestByProInfo{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+		res = adminService.EditPayInfoByProInfo(id, req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 收款详情（物业列表）
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Param id path string false "物业ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/proInfo/payInfo/{id} [GET]
+// @Security ApiKeyAuth
+func QueryPayInfoByProInfo(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryPayInfoByProInfo(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 修改收款（收款列表）
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Param id path string false "收款ID"
+// @Param body body entity.PayInfoRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/payInfo/{id} [PUT]
+// @Security ApiKeyAuth
+func EditPayInfo(c *gin.Context) {
+	res := entity.ResponseData{}
+	req := entity.PayInfoRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+		res = adminService.EditPayInfo(id, req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 添加收款（收款列表）
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Param body body entity.PayInfoRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/payInfo [GET]
+// @Security ApiKeyAuth
+func AddPayInfo(c *gin.Context) {
+	res := entity.ResponseData{}
+	req := entity.PayInfoRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		res = adminService.AddPayInfo(req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 收款详情（收款列表）
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Param id path string false "ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/payInfo/{id} [GET]
+// @Security ApiKeyAuth
+func QueryPayInfo(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryPayInfo(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 收款列表
+// @tags 后台
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Param payee_id query string false "业绩归属人ID"
+// @Param pay_methond_id query string false "支付方式ID"
+// @Param pay_month query string false "按月查询"
+// @Param pay_year query string false "按年查询"
+// @Param name query string false "收款人"
+// @Param pageSize query string false "页大小 （默认30）"
+// @Param page query string false "跳转页码"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/payInfo [GET]
+// @Security ApiKeyAuth
+func QueryPayInfos(c *gin.Context) {
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "30"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	args := map[string]interface{}{
+		"payee_id":       c.Query("payee_id"),
+		"pay_methond_id": c.Query("pay_methond_id"),
+		"pay_month":      c.Query("pay_month"),
+		"pay_year":       c.Query("pay_year"),
+		"name":           c.Query("name"),
+	}
+	res := adminService.QueryPayInfos(pageSize, page, args)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 添加收款方式
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Param body body entity.PayMethondRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/payMethond [POST]
+// @Security ApiKeyAuth
+func AddPayMethond(c *gin.Context) {
+	res := entity.ResponseData{}
+	req := entity.PayMethondRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		res = adminService.AddPayMethond(req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 修改收款方式
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Param id path string false "收款方式ID"
+// @Param body body entity.PayMethondRequest true "body"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/payMethond/{id} [PUT]
+// @Security ApiKeyAuth
+func EditPayMethond(c *gin.Context) {
+	res := entity.ResponseData{}
+	req := entity.PayMethondRequest{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res.Message = "请求参数JSON错误"
+	} else {
+		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+		res = adminService.EditPayMethond(id, req)
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 删除支付
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param ids path string true "ID 多个用,分开"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/payInfo/{ids} [DELETE]
+// @Security ApiKeyAuth
+func DelPayInfo(c *gin.Context) {
+	id := c.Param("ids")
+	idArr := strings.Split(id, ",")
+	var ids []int64
+	for _, v := range idArr {
+		item, _ := strconv.ParseInt(v, 10, 64)
+		ids = append(ids, item)
+	}
+	res := adminService.DelPayInfo(ids)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 删除支付方式
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param ids path string true "ID 多个用,分开"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/payMethond/{ids} [DELETE]
+// @Security ApiKeyAuth
+func DelPayMethond(c *gin.Context) {
+	id := c.Param("ids")
+	idArr := strings.Split(id, ",")
+	var ids []int64
+	for _, v := range idArr {
+		item, _ := strconv.ParseInt(v, 10, 64)
+		ids = append(ids, item)
+	}
+	res := adminService.DelPayMethond(ids)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 收款方式详情
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Param id path string false "ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/payMethond/{id} [GET]
+// @Security ApiKeyAuth
+func QueryPayMethondByID(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.QueryPayMethondByID(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 收款方式列表
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/payMethond [GET]
+// @Security ApiKeyAuth
+func QueryPayMethond(c *gin.Context) {
+	res := adminService.QueryPayMethond()
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 获取用户菜单
+// @tags 后台
+// @Accept application/json
+// @Produce  json
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/rolemenus [GET]
+// @Security ApiKeyAuth
+func QueryUserMenu(c *gin.Context) {
+	var token string
+	res := entity.ResponseData{}
+	if token, res = commonController.GetToken(c); res.Status {
+		res = adminService.QueryUserMenu(token)
+	} else {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, res)
+		return
+	}
 	c.JSON(http.StatusOK, res)
 }

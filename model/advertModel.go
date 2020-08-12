@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -17,7 +16,9 @@ type Advert struct {
 	Hot            bool      `json:"hot"`                 // 首页最热推广
 	Floor          bool      `json:"floor"`               // F楼
 	Type           string    `gorm:"size:1;" json:"type"` // 信息列表推广 1-一栏四分之一图片广告 | 2-二栏四分之一图片广告 | 3-三栏重点推荐 | 4-五栏框架广告
+	TypeName       string    `json:"type_name"`           // 信息列表推广 1-一栏四分之一图片广告 | 2-二栏四分之一图片广告 | 3-三栏重点推荐 | 4-五栏框架广告
 	PropertyInfoID int64     `json:"property_info_id"`    // 物业ID
+	Enable         bool      `json:"enable"`              // 是否已审核
 }
 
 // 添加广告
@@ -41,7 +42,10 @@ func QueryAdvert(pageSize int, page int, args map[string]interface{}) (count int
 		floor, _ := strconv.ParseBool(v.(string))
 		query = query.Where("floor = ?", floor)
 	}
-	fmt.Println(time.Now())
+	if v, ok := args["enable"]; ok && v.(string) != "" {
+		enable, _ := strconv.ParseBool(v.(string))
+		query = query.Where("enable = ?", enable)
+	}
 	query = query.Where("TO_DAYS(end_time) >= TO_DAYS(?)", time.Now())
 	query.Count(&count)
 	query.Limit(pageSize).Offset((page - 1) * pageSize).Order("sort desc").Find(&adverts)
@@ -52,6 +56,12 @@ func QueryAdvert(pageSize int, page int, args map[string]interface{}) (count int
 func (a *Advert) QueryAdvertByID() error {
 	db := mysql.GetMysqlDB()
 	return db.First(&a).Error
+}
+
+// 查询广告详情
+func (a *Advert) QueryAdvertByProID() error {
+	db := mysql.GetMysqlDB()
+	return db.Where("property_info_id = ?", a.PropertyInfoID).First(&a).Error
 }
 
 // 修改广告

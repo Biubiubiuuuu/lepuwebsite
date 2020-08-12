@@ -80,3 +80,10 @@ func QueryEnableIndustryByParentID() (industrys []Industry) {
 	db.Where("is_enable = true AND parent_id = 0").Order("sort desc").Find(&industrys)
 	return
 }
+
+// 查询下级行业类型
+func (i *Industry) QueryIndustryByParentID() (industrys []Industry) {
+	db := mysql.GetMysqlDB()
+	db.Where("is_enable = true AND parent_id = ? AND parent_id IN (SELECT ID  FROM industry WHERE parent_id = 0)", i.ID).Order("sort desc").Find(&industrys)
+	return
+}

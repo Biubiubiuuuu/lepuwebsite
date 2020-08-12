@@ -39,13 +39,15 @@ func (r *Role) AddRole() error {
 // 查询角色详情 by id
 func (r *Role) QueryRoleByID() error {
 	db := mysql.GetMysqlDB()
-	return db.First(&r).Error
+	query := db.Table("role").Preload("MenuPowers")
+	return query.First(&r).Error
 }
 
 // 查询角色详情 by name
 func (r *Role) QueryRoleByName() error {
 	db := mysql.GetMysqlDB()
-	return db.Where("name = ?", r.Name).First(&r).Error
+	query := db.Table("role").Preload("MenuPowers")
+	return query.Where("name = ?", r.Name).First(&r).Error
 }
 
 // 删除角色，返回受影响行数
@@ -61,10 +63,20 @@ func (r *Role) EditRole(args map[string]interface{}) error {
 	return db.Model(&r).Updates(args).Error
 }
 
+// 查询角色是否关联菜单
+func QueryRoleByMenuID(ids []int64) bool {
+	db := mysql.GetMysqlDB()
+	var menu_powers []MenuPower
+	if count := db.Where("role_id in (?)", ids).Find(&menu_powers).RowsAffected; count > 0 {
+		return true
+	}
+	return false
+}
+
 // 查询角色
 func QueryRole(pageSize int, page int, name string, enable string) (count int, roles []Role) {
 	db := mysql.GetMysqlDB()
-	query := db.Table("role").Select("role.*")
+	query := db.Table("role").Preload("MenuPowers")
 	if name != "" {
 		var buf strings.Builder
 		buf.WriteString("%")
@@ -78,5 +90,15 @@ func QueryRole(pageSize int, page int, name string, enable string) (count int, r
 	}
 	query.Count(&count)
 	query.Limit(pageSize).Offset((page - 1) * pageSize).Order("sort desc").Find(&roles)
+	return
+}
+
+// 查询用户所拥有的角色菜单
+func QueryMenuByUser(id int64) (count int, menus []Menu) {
+	db := mysql.GetMysqlDB()
+	query := db.Table("menu").Select("menu.*")
+	query = query.Where("menu.id in (SELECT menu_id FROM menu_power WHERE role_id = ?)", id)
+	query.Count(&count)
+	query.Find(&menus)
 	return
 }

@@ -2,6 +2,7 @@ package basicController
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/Biubiubiuuuu/yuepuwebsite/service/basicService"
 
@@ -121,5 +122,51 @@ func QueryEnableIndustry(c *gin.Context) {
 // @Router /api/v1/basic/industryParent [GET]
 func QueryEnableIndustryByParentID(c *gin.Context) {
 	res := basicService.QueryEnableIndustryByParentID()
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 获取所有街道
+// @tags 基础数据
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/basic/streets [GET]
+func QueryStreet(c *gin.Context) {
+	res := basicService.QueryStreet()
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 根据上级查询下级行业
+// @tags 基础数据
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Param id query string true "id"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/basic/industrys [GET]
+func QueryIndustryByParentID(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Query("id"), 10, 64)
+	res := basicService.QueryIndustryByParentID(id)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 最新动态
+// @tags 基础数据
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/basic/proInfoDynamic [GET]
+func QueryProInfoDynamic(c *gin.Context) {
+	res := basicService.QueryProInfoDynamic()
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 获取配置信息
+// @tags 基础数据
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/basic/systemConfig [GET]
+func QuerySystemConfigByDefault(c *gin.Context) {
+	res := basicService.QuerySystemConfigByDefault()
 	c.JSON(http.StatusOK, res)
 }

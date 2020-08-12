@@ -8,7 +8,7 @@ import (
 type Carousel struct {
 	Model
 	Url  string `json:"url"`  // 图片地址
-	Link string `json:"link"` // 调整连接
+	Link string `json:"link"` // 跳转链接
 	Sort int64  `json:"sort"` // 排序 越大越靠前
 }
 
@@ -19,16 +19,16 @@ func (c *Carousel) AddCarousel() error {
 }
 
 // 查询所有轮播
-func QueryCarouse(pageSize int, page int) (count int, carousels []Carousel) {
+func QueryCarousel(pageSize int, page int) (count int, carousels []Carousel) {
 	db := mysql.GetMysqlDB()
-	db.Table("carousel").Select("carousel.*")
-	db.Count(&count)
-	db.Limit(pageSize).Offset((page - 1) * pageSize).Order("sort desc").Find(&carousels)
+	query := db.Table("carousel").Select("carousel.*")
+	query.Count(&count)
+	query.Limit(pageSize).Offset((page - 1) * pageSize).Order("sort desc").Find(&carousels)
 	return
 }
 
 // 轮播详情
-func (c *Carousel) QueryCarouseByID() error {
+func (c *Carousel) QueryCarouselByID() error {
 	db := mysql.GetMysqlDB()
 	return db.First(&c).Error
 }

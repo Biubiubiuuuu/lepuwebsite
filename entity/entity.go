@@ -189,7 +189,7 @@ type EditEmployeeRequest struct {
 	RoleID       int64  `json:"role_id"`       // 角色ID
 }
 
-// 管理员修改用户信息
+// 修改已发布物业信息
 type AdminStoretransferRequest struct {
 	IndustryID     int64   `json:"industry_id"`     // 经营业态ID
 	Title          string  `json:"title"`           // 标题
@@ -217,10 +217,7 @@ type AdminStoretransferRequest struct {
 }
 
 type AddProLog struct {
-	Content        string `json:"content"`          // 跟单内容
-	WithID         int64  `json:"with_id"`          // 跟单人ID
-	WithName       string `json:"with_name"`        // 跟单人姓名
-	ShopTransferID int64  `json:"shop_transfer_id"` // 店铺转让ID
+	ContentText string `json:"content_text"` // 跟单内容
 }
 
 // 添加物业信息
@@ -238,21 +235,49 @@ type AddPropertyInfoRequest struct {
 	StoreTypeID    int64  `form:"store_type_id"`   // 店铺类型ID
 	Idling         bool   `form:"idling"`          // 可否空转
 	InOperation    string `form:"in_operation"`    // 是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中
-	Area           string `form:"area"`            // 面积（单位：平方米）
-	Rent           string `form:"rent"`            // 租金（单位：元/月）
+	Area           string `form:"area"`            // 面积（单位：平方米）（模型类型 ： 0-转让 ｜ 1-出售 ｜ 3-出租）
+	Rent           string `form:"rent"`            // 租金（单位：元/月）（模型类型 ： 0-转让 ｜ 1-出售 ｜ 3-出租）
 	TransferFee    string `form:"transfer_fee"`    // 转让费用（单位：万元 不录入则前台显示为面议）
-	IndustryRanges string `form:"industry_ranges"` // 适合经营范围id , 多个用,分割
+	IndustryRanges string `form:"industry_ranges"` // 适合经营范围id , 多个用,分割 （模型类型 ： 0-转让 ｜ 1-出售 ｜ 3-出租）
 	Description    string `form:"description"`     // 详细描述
 	ShopName       string `form:"shop_name"`       // 店名
-	Video          string `form:"video"`           // 视频
 	BusType        string `form:"bus_type"`        // 业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库
-	ModelType      string `form:"model_type"`      // 模型类型 0-转让 ｜ 1-出售 ｜ 2-出租 | 3-求租 ｜ 4-求购
+	ModelType      string `form:"model_type"`      // 模型类型 0-转让 ｜ 1-出售 ｜ 3-出租
 	ExplicitTel    bool   `form:"explicit_tel"`    // 是否外显号码 true：客户号码 ｜ false：发布者号码
 	Tel1           string `form:"tel1"`            // 外显号码1
 	Tel2           string `form:"tel2"`            // 外显号码2
 	Protect        bool   `form:"protect"`         // 是否保护
 	QuotedPrice    string `form:"quoted_price"`    // 报价
 	Remake         string `form:"remake"`          // 跟进备注
+}
+
+// 添加求租求购
+type AddQZQGPropertyInfoRequest struct {
+	IndustryID  int64   `form:"industry_id"`  // 经营业态ID
+	Title       string  `form:"title"`        // 标题
+	Nickname    string  `form:"nickname"`     // 联系人
+	Telephone   string  `form:"telephone"`    // 联系手机
+	Image       string  `form:"image"`        // 图片
+	CityCode    string  `form:"city_code"`    // 城市代码
+	Idling      bool    `form:"idling"`       // 可否空转
+	InOperation string  `form:"in_operation"` // 是否营业中 0-新铺 ｜ 1-空置中 ｜ 2-营业中
+	TransferFee string  `form:"transfer_fee"` // 转让费用（单位：万元 不录入则前台显示为面议）
+	Description string  `form:"description"`  // 详细描述
+	ShopName    string  `form:"shop_name"`    // 店名
+	BusType     string  `form:"bus_type"`     // 业务类型 0-商铺 ｜ 1-写字楼 ｜ 2-厂房仓库
+	ModelType   string  `form:"model_type"`   // 模型类型 4-求租 ｜ 5-求购
+	ExplicitTel bool    `form:"explicit_tel"` // 是否外显号码 true：客户号码 ｜ false：发布者号码
+	Tel1        string  `form:"tel1"`         // 外显号码1
+	Tel2        string  `form:"tel2"`         // 外显号码2
+	Protect     bool    `form:"protect"`      // 是否保护
+	QuotedPrice string  `form:"quoted_price"` // 报价
+	Remake      string  `form:"remake"`       // 跟进备注
+	SourceInfo  string  `json:"source_info"`  // 来源描述（模型类型 ：3-求租 ｜ 4-求购）
+	MinArea     float64 `json:"min_area"`     // 最小面积（单位：平方米）（模型类型 ：4-求租 ｜ 5-求购）
+	MaxArea     float64 `json:"max_area"`     // 最大面积（单位：平方米）（模型类型 ：4-求租 ｜ 5-求购）
+	MinRent     float64 `json:"min_rent"`     // 最低租金（单位：元/月）（模型类型 ：4-求租 ｜ 5-求购）
+	MaxRent     float64 `json:"max_rent"`     // 最高租金（单位：元/月）（模型类型 ：4-求租 ｜ 5-求购）
+	Lots        string  `json:"lots"`         // 考虑地段区域 （多个区域用,分割）（模型类型 ：4-求租 ｜ 5-求购）
 }
 
 //  留言
@@ -282,6 +307,39 @@ type AdvertRequest struct {
 // 轮播图
 type CarouselRequest struct {
 	Url  string `json:"url"`  // 图片地址
-	Link string `json:"link"` // 调整连接
+	Link string `json:"link"` // 跳转连接
 	Sort int64  `json:"sort"` // 排序 越大越靠前
+}
+
+// 收款
+type PayInfoRequestByProInfo struct {
+	Name             string  `json:"name"`              // 收款人姓名
+	PayeeID          int64   `json:"payee_id"`          // 业绩归属ID
+	PayMethondID     int64   `json:"pay_methond_id"`    // 付款方式ID
+	PayTime          string  `json:"pay_time"`          // 收款时间
+	PayStatus        string  `json:"pay_status"`        // 收款情况
+	ActualAmount     float64 `json:"actual_amount"`     // 实收金额
+	ReceivableAmount float64 `json:"receivable_amount"` // 应收金额
+	Invoice          bool    `json:"invoice"`           // 发票
+	Remake           string  `json:"remake"`            // 备注说明
+}
+
+// 收款
+type PayInfoRequest struct {
+	Name             string  `json:"name"`              // 收款人姓名
+	PayeeID          int64   `json:"payee_id"`          // 业绩归属ID
+	PayMethondID     int64   `json:"pay_methond_id"`    // 付款方式ID
+	PayTime          string  `json:"pay_time"`          // 收款时间
+	PayStatus        string  `json:"pay_status"`        // 收款情况
+	ActualAmount     float64 `json:"actual_amount"`     // 实收金额
+	ReceivableAmount float64 `json:"receivable_amount"` // 应收金额
+	Invoice          bool    `json:"invoice"`           // 发票
+	Remake           string  `json:"remake"`            // 备注说明
+	ProInfoID        int64   `json:"pro_info_id"`       // 物业ID
+}
+
+// 付款方式
+type PayMethondRequest struct {
+	Name string `json:"name"` // 付款方式名称
+	Card string `json:"card"` // 付款卡号
 }

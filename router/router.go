@@ -11,6 +11,7 @@ import (
 	"github.com/Biubiubiuuuu/yuepuwebsite/middleware/crossMiddleware"
 	"github.com/Biubiubiuuuu/yuepuwebsite/middleware/errorMiddleware"
 	"github.com/Biubiubiuuuu/yuepuwebsite/middleware/jwtMiddleware"
+	"github.com/Biubiubiuuuu/yuepuwebsite/middleware/loggerMiddleware"
 	"github.com/gin-gonic/gin"
 	ginswagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -28,10 +29,10 @@ func Init() *gin.Engine {
 	}
 	router := gin.Default()
 	// 记录日志
-	//router.Use(loggerMiddleware.Logger())
+	router.Use(loggerMiddleware.Logger())
 	// 静态资源路径 /static 开头 或者 取自定义配置
-	//router.Static(configHelper.Static, "." + configHelper.Static)
-	router.Static("/static", "./static")
+	router.Static(configHelper.Static, "."+configHelper.Static)
+	//router.Static("/static", "./static")
 	//允许跨域请求
 	router.Use(crossMiddleware.Cors())
 
@@ -94,11 +95,15 @@ func InitBasic(router *gin.Engine) {
 	api.GET("district", basicController.QueryDistrictByCityCode)
 	api.GET("districts", basicController.QueryDistrict)
 	api.GET("street", basicController.QueryStreetByDistrictCode)
+	api.GET("streets", basicController.QueryStreet)
 	api.GET("areatype", basicController.QueryAreaType)
 	api.GET("renttype", basicController.QueryRentType)
 	api.GET("enableStoreType", basicController.QueryEnableStoreType)
 	api.GET("enableIndustry", basicController.QueryEnableIndustry)
 	api.GET("industryParent", basicController.QueryEnableIndustryByParentID)
+	api.GET("industrys", basicController.QueryIndustryByParentID)
+	api.GET("proInfoDynamic", basicController.QueryProInfoDynamic)
+	api.GET("systemConfig", basicController.QuerySystemConfigByDefault)
 }
 
 // 后台
@@ -168,15 +173,53 @@ func InitAdmin(router *gin.Engine) {
 		api.GET("propertyInfo", adminController.SearchPropertyInfo)
 		api.PUT("propertyInfo/:id", adminController.EditUserStoretransfer)
 		api.POST("propertyInfo/protect/:id", adminController.EditProtectionProInfo)
+		api.POST("propertyInfo/notprotect/:id", adminController.EditNotProtectionProInfo)
 		api.POST("propertyInfos/:id/picture", adminController.AddPictures)
 		api.DELETE("propertyInfos/:pro_id/picture/:pri_id", adminController.DelPrictures)
 
+		api.GET("proInfo/payInfo/:id", adminController.QueryPayInfoByProInfo)
+		api.POST("proInfo/payInfo", adminController.AddPayInfoByProInfo)
+		api.PUT("proInfo/payInfo/:id", adminController.EditPayInfoByProInfo)
+
+		// 跟单记录
+		api.GET("proInfo/log/:id", adminController.QueryProInfoLog)
+		api.POST("proInfo/log/:id", adminController.AddProInfoLog)
+
 		api.POST("new/propertyInfo", adminController.AddProInfo)
+		api.PUT("new/propertyInfo/:id", adminController.EditProInfo)
+		api.POST("new/qzqgPropertyInfo", adminController.AddQZQGProInfo)
+		api.PUT("new/qzqgPropertyInfo", adminController.EditQZQGProInfo)
 
 		api.GET("leaveMessage/:id", adminController.QueryLeaveMessageByID)
 		api.GET("leaveMessage", adminController.QueryLeaveMessage)
 
 		api.GET("report/:id", adminController.QueryReportByID)
 		api.GET("report", adminController.QueryReport)
+
+		api.GET("advert/:id", adminController.QueryAdvertByID)
+		api.GET("advert", adminController.QueryAdvert)
+		api.POST("advert", adminController.AddAdvert)
+		api.PUT("advert/:id", adminController.EditAdvert)
+		api.DELETE("advert/:ids", adminController.DelAdvert)
+
+		api.GET("carousel/:id", adminController.QueryCarouselByID)
+		api.GET("carousel", adminController.QueryCarousel)
+		api.POST("carousel", adminController.AddCarousel)
+		api.PUT("carousel/:id", adminController.EditCarousel)
+		api.DELETE("carousel/:ids", adminController.DelCarousel)
+
+		api.GET("payMethond/:id", adminController.QueryPayMethondByID)
+		api.GET("payMethond", adminController.QueryPayMethond)
+		api.POST("payMethond", adminController.AddPayMethond)
+		api.PUT("payMethond/:id", adminController.EditPayMethond)
+		api.DELETE("payMethond/:ids", adminController.DelPayMethond)
+
+		api.GET("payInfo/:id", adminController.QueryPayInfo)
+		api.GET("payInfo", adminController.QueryPayInfos)
+		api.POST("payInfo", adminController.AddPayInfo)
+		api.PUT("payInfo/:id", adminController.EditPayInfo)
+		api.DELETE("payInfo/:ids", adminController.DelPayInfo)
+
+		api.GET("rolemenus", adminController.QueryUserMenu)
 	}
 }
