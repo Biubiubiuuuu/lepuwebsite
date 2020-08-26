@@ -34,7 +34,7 @@ func (d *Department) EditDepartmentByID(args map[string]interface{}) error {
 // 查看部门详情 by id
 func (d *Department) QueryDepartmentByID() error {
 	db := mysql.GetMysqlDB()
-	return db.First(&d).Error
+	return db.First(&d, d.ID).Error
 }
 
 // 查询上级部门下的部门详情 by name and parent_id

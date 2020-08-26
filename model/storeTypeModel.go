@@ -31,7 +31,7 @@ func (s *StoreType) EditStoreType(args map[string]interface{}) error {
 // 查询店铺 by id
 func (s *StoreType) QueryStoreTypeByID() error {
 	db := mysql.GetMysqlDB()
-	return db.First(&s).Error
+	return db.First(&s, s.ID).Error
 }
 
 // 查询店铺 by name

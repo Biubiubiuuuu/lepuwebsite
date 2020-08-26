@@ -32,6 +32,8 @@ require (
 	github.com/gomodule/redigo v1.8.2
 	github.com/google/uuid v1.1.1
 	github.com/jinzhu/gorm v1.9.14
+	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.5.1
+	gopkg.in/ini.v1 v1.60.1 // indirect
 )

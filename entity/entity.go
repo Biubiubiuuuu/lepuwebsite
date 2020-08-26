@@ -302,6 +302,7 @@ type AdvertRequest struct {
 	Floor          bool   `json:"floor"`               // F楼
 	Type           string `gorm:"size:1;" json:"type"` // 信息列表推广 1-一栏四分之一图片广告 | 2-二栏四分之一图片广告 | 3-三栏重点推荐 | 4-五栏框架广告
 	PropertyInfoID int64  `json:"property_info_id"`    // 物业ID
+	Enable         bool   `json:"enable"`              // 是否已审核
 }
 
 // 轮播图

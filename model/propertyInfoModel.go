@@ -139,16 +139,20 @@ func (p *PropertyInfo) QueryPropertyInfoByUserID() (propertyInfoScans []Property
 // 修改物业信息 by id
 func (p *PropertyInfo) EditPropertyInfoByID(args map[string]interface{}) error {
 	db := mysql.GetMysqlDB()
+	query := db.Model(p)
 	if _, ok := args["industry_ranges"]; ok {
-		db.Model(&p).Association("IndustryRanges").Replace(p.IndustryRanges)
+		query.Association("IndustryRanges").Replace("IndustryRanges", args["industry_ranges"])
+		delete(args, "industry_ranges")
 	}
 	if _, ok := args["pictures"]; ok {
-		db.Model(&p).Association("Pictures").Replace(p.Pictures)
+		query.Association("Pictures").Replace(p.Pictures, args["pictures"])
+		delete(args, "pictures")
 	}
 	if _, ok := args["lots"]; ok {
-		db.Model(&p).Association("Lots").Replace(p.Lots)
+		query.Association("Lots").Replace(p.Lots, args["lots"])
+		delete(args, "lots")
 	}
-	return db.Model(&p).Update(args).Error
+	return query.Update(args).Error
 }
 
 // 根据条件查看物业信息
@@ -173,6 +177,13 @@ func QueryPropertyInfo(pageSize int, page int, args map[string]interface{}) (pro
 		buf.WriteString(v.(string))
 		buf.WriteString("%")
 		query = query.Where("property_info.telephone like ?", buf.String())
+	}
+	if v, ok := args["nickname"]; ok && v.(string) != "" {
+		var buf strings.Builder
+		buf.WriteString("%")
+		buf.WriteString(v.(string))
+		buf.WriteString("%")
+		query = query.Where("property_info.nickname like ?", buf.String())
 	}
 	if v, ok := args["title"]; ok && v.(string) != "" {
 		var buf strings.Builder
@@ -343,4 +354,10 @@ func QueryProInfoDynamic() (count1 int, count2 int, count3 int) {
 	query3 := query.Where("model_type IN (4,5) AND `status` IS NOT TRUE")
 	query3.Count(&count2)
 	return
+}
+
+// 删除物业信息 By ID
+func (p *PropertyInfo) DelProInfo() error {
+	db := mysql.GetMysqlDB()
+	return db.Where("id = ?", p.ID).Delete(&PropertyInfo{}).Error
 }

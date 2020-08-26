@@ -176,6 +176,7 @@ func InitAdmin(router *gin.Engine) {
 		api.POST("propertyInfo/notprotect/:id", adminController.EditNotProtectionProInfo)
 		api.POST("propertyInfos/:id/picture", adminController.AddPictures)
 		api.DELETE("propertyInfos/:pro_id/picture/:pri_id", adminController.DelPrictures)
+		api.PUT("proInfos/success/:id", adminController.EditProInfoSuccess)
 
 		api.GET("proInfo/payInfo/:id", adminController.QueryPayInfoByProInfo)
 		api.POST("proInfo/payInfo", adminController.AddPayInfoByProInfo)
@@ -187,6 +188,7 @@ func InitAdmin(router *gin.Engine) {
 
 		api.POST("new/propertyInfo", adminController.AddProInfo)
 		api.PUT("new/propertyInfo/:id", adminController.EditProInfo)
+		api.DELETE("new/propertyInfo/:id", adminController.DelProInfo)
 		api.POST("new/qzqgPropertyInfo", adminController.AddQZQGProInfo)
 		api.PUT("new/qzqgPropertyInfo", adminController.EditQZQGProInfo)
 

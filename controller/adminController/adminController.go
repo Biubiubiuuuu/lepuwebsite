@@ -1124,7 +1124,7 @@ func EditNotProtectionProInfo(c *gin.Context) {
 // @Param id path string true "物业信息ID"
 // @Param image formData file false "图片"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/admin/propertyInfo/{id}/picture [POST]
+// @Router /api/v1/admin/propertyInfos/{id}/picture [POST]
 // @Security ApiKeyAuth
 func AddPictures(c *gin.Context) {
 	res := entity.ResponseData{}
@@ -1178,7 +1178,7 @@ func AddPictures(c *gin.Context) {
 // @Param pro_id path string true "物业信息ID"
 // @Param pri_id path string true "图片ID"
 // @Success 200 {object} entity.ResponseData "desc"
-// @Router /api/v1/admin/propertyInfo/{pro_id}/picture/{pri_id} [DELETE]
+// @Router /api/v1/admin/propertyInfos/{pro_id}/picture/{pri_id} [DELETE]
 // @Security ApiKeyAuth
 func DelPrictures(c *gin.Context) {
 	pro_id, _ := strconv.ParseInt(c.Param("pro_id"), 10, 64)
@@ -1486,6 +1486,20 @@ func QueryLeaveMessage(c *gin.Context) {
 	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "30"))
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	res := adminService.QueryLeaveMessage(pageSize, page)
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 删除物业信息
+// @tags 后台
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Param id path string false "物业ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/new/propertyInfo/{id} [DELETE]
+// @Security ApiKeyAuth
+func DelProInfo(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.DelProInfo(id)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -2267,5 +2281,19 @@ func QueryUserMenu(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, res)
 		return
 	}
+	c.JSON(http.StatusOK, res)
+}
+
+// @Summary 物业成功
+// @tags 后台
+// @Accept  application/json
+// @Produce  json
+// @Param id path string true "物业ID"
+// @Success 200 {object} entity.ResponseData "desc"
+// @Router /api/v1/admin/proInfos/success/{id} [PUT]
+// @Security ApiKeyAuth
+func EditProInfoSuccess(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	res := adminService.EditProInfoSuccess(id)
 	c.JSON(http.StatusOK, res)
 }

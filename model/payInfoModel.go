@@ -48,7 +48,7 @@ func (p *PayInfo) AddPayInfo() error {
 // 查询收款详情
 func (p *PayInfo) QueryPayInfoByID() error {
 	db := mysql.GetMysqlDB()
-	return db.First(&p).Error
+	return db.First(&p, p.ID).Error
 }
 
 // 查询收款详情

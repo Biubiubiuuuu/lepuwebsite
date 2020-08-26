@@ -30,7 +30,7 @@ func QueryCarousel(pageSize int, page int) (count int, carousels []Carousel) {
 // 轮播详情
 func (c *Carousel) QueryCarouselByID() error {
 	db := mysql.GetMysqlDB()
-	return db.First(&c).Error
+	return db.First(&c, c.ID).Error
 }
 
 // 修改轮播

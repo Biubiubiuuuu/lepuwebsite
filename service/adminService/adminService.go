@@ -1357,11 +1357,15 @@ func EditUserStoretransfer(id int64, req entity.AdminStoretransferRequest) (res 
 		res.Message = "物业信息不存在"
 		return
 	}
+	if req.Telephone == "" {
+		res.Message = "联系手机号码不能为空"
+		return
+	}
 	args := map[string]interface{}{
 		"telephone": req.Telephone,
 	}
 	first, count := model.QueryPropertyInfo(1, 0, args)
-	if count > 0 && first[0].Telephone != store.Telephone {
+	if count > 0 && first[0].Telephone != store.Telephone && first[0].ID != id {
 		res.Message = "已存在该联系人物业信息"
 		return
 	}
@@ -1941,6 +1945,7 @@ func AddAdvert(req entity.AdvertRequest) (res entity.ResponseData) {
 		Floor:          req.Floor,
 		Type:           req.Type,
 		Sort:           req.Sort,
+		Enable:         req.Enable,
 	}
 	if err := advert.AddAdvert(); err != nil {
 		res.Message = "添加失败"
@@ -1980,6 +1985,7 @@ func EditAdvert(id int64, req entity.AdvertRequest) (res entity.ResponseData) {
 		"end_time":         utilsHelper.StringToSTime(req.EndTime),
 		"start_time":       utilsHelper.StringToSTime(req.StartTime),
 		"property_info_id": req.PropertyInfoID,
+		"enable":           req.Enable,
 	}
 	if err := advert.EditAdvertByID(args); err != nil {
 		res.Message = "修改失败"
@@ -2369,15 +2375,16 @@ func EditProInfo(id int64, req entity.AddPropertyInfoRequest) (res entity.Respon
 		id, _ := strconv.ParseInt(item, 10, 64)
 		ind.ID = id
 		if err := ind.QueryIndustryByID(); err != nil {
-			res.Message = "经营业态不存在"
+			res.Message = fmt.Sprintf("经营业态ID:%s不存在", item)
 			return
 		}
 		industryRange := model.IndustryRange{
-			IndustryID:   id,
+			IndustryID:   ind.ID,
 			IndustryName: ind.Name,
 		}
 		industryRangeArr = append(industryRangeArr, industryRange)
 	}
+	fmt.Println(industryRangeArr)
 	storeType := model.StoreType{}
 	storeType.ID = req.StoreTypeID
 	if err := storeType.QueryStoreTypeByID(); err != nil {
@@ -2432,6 +2439,19 @@ func EditProInfo(id int64, req entity.AddPropertyInfoRequest) (res entity.Respon
 		return
 	}
 	res.Message = "修改成功"
+	res.Status = true
+	return
+}
+
+// 删除物业信息
+func DelProInfo(id int64) (res entity.ResponseData) {
+	pro := model.PropertyInfo{}
+	pro.ID = id
+	if err := pro.DelProInfo(); err != nil {
+		res.Message = "删除失败"
+		return
+	}
+	res.Message = "删除成功"
 	res.Status = true
 	return
 }
@@ -2764,5 +2784,23 @@ func QueryUserMenu(token string) (res entity.ResponseData) {
 	count, menus := model.QueryMenuByUser(user.UserInfo.RoleID)
 	res.Status = true
 	res.Data = map[string]interface{}{"menus": menus, "count": count}
+	return
+}
+
+// 物业成功
+func EditProInfoSuccess(id int64) (res entity.ResponseData) {
+	pro := model.PropertyInfoScan{}
+	pro.ID = id
+	if err := pro.QueryPropertyInfoByID(); err != nil {
+		res.Message = "物业信息不存在"
+		return
+	}
+	args := map[string]interface{}{"status": true}
+	if err := pro.EditPropertyInfoByID(args); err != nil {
+		res.Message = "操作失败"
+		return
+	}
+	res.Message = "操作成功"
+	res.Status = true
 	return
 }

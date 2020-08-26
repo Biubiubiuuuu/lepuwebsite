@@ -417,6 +417,8 @@ func EditUserFindStore(c *gin.Context) {
 // @Accept application/x-www-form-urlencoded
 // @Produce  json
 // @Param industry_id query string false "行业ID"
+// @Param telephone query string false "联系人电话"
+// @Param nickname query string false "联系人姓名"
 // @Param store_type_id query string false "店铺类型ID"
 // @Param province_code query string false "省代码"
 // @Param city_code query string false "城市代码"
@@ -439,6 +441,8 @@ func EditUserFindStore(c *gin.Context) {
 func SearchPropertyInfo(c *gin.Context) {
 	args := map[string]interface{}{
 		"store_type_id":  c.Query("store_type_id"),
+		"telephone":      c.Query("telephone"),
+		"nickname":       c.Query("nickname"),
 		"industry_id":    c.Query("industry_id"),
 		"province_code":  c.Query("province_code"),
 		"city_code":      c.Query("city_code"),

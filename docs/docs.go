@@ -2008,6 +2008,39 @@ var doc = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "删除物业信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "物业ID",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/admin/new/qzqgPropertyInfo": {
@@ -3165,6 +3198,42 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/admin/proInfos/success/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台"
+                ],
+                "summary": "物业成功",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "物业ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/propertyInfo": {
             "get": {
                 "security": [
@@ -3609,7 +3678,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/admin/propertyInfo/{id}/picture": {
+        "/api/v1/admin/propertyInfos/{id}/picture": {
             "post": {
                 "security": [
                     {
@@ -3651,7 +3720,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/admin/propertyInfo/{pro_id}/picture/{pri_id}": {
+        "/api/v1/admin/propertyInfos/{pro_id}/picture/{pri_id}": {
             "delete": {
                 "security": [
                     {
@@ -4953,6 +5022,18 @@ var doc = `{
                     },
                     {
                         "type": "string",
+                        "description": "联系人电话",
+                        "name": "telephone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "联系人姓名",
+                        "name": "nickname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "店铺类型ID",
                         "name": "store_type_id",
                         "in": "query"
@@ -5805,6 +5886,10 @@ var doc = `{
         "entity.AdvertRequest": {
             "type": "object",
             "properties": {
+                "enable": {
+                    "description": "是否已审核",
+                    "type": "boolean"
+                },
                 "end_time": {
                     "description": "展示结束时间",
                     "type": "string"

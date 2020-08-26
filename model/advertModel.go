@@ -55,7 +55,7 @@ func QueryAdvert(pageSize int, page int, args map[string]interface{}) (count int
 // 查询广告详情
 func (a *Advert) QueryAdvertByID() error {
 	db := mysql.GetMysqlDB()
-	return db.First(&a).Error
+	return db.First(&a, a.ID).Error
 }
 
 // 查询广告详情

@@ -31,7 +31,7 @@ func QueryPayMethond() (payMethonds []PayMethond) {
 // 付款方式详情
 func (p *PayMethond) QueryPayMethondByID() error {
 	db := mysql.GetMysqlDB()
-	return db.First(&p).Error
+	return db.First(&p, p.ID).Error
 }
 
 // 删除付款方式，返回受影响行数

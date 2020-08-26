@@ -43,6 +43,9 @@ definitions:
     type: object
   entity.AdvertRequest:
     properties:
+      enable:
+        description: 是否已审核
+        type: boolean
       end_time:
         description: 展示结束时间
         type: string
@@ -1548,6 +1551,26 @@ paths:
       tags:
       - 后台
   /api/v1/admin/new/propertyInfo/{id}:
+    delete:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 物业ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除物业信息
+      tags:
+      - 后台
     put:
       consumes:
       - multipart/form-data
@@ -2423,6 +2446,28 @@ paths:
       summary: 修改收款（物业列表）
       tags:
       - 后台
+  /api/v1/admin/proInfos/success/{id}:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 物业ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 物业成功
+      tags:
+      - 后台
   /api/v1/admin/propertyInfo:
     get:
       consumes:
@@ -2670,59 +2715,6 @@ paths:
       summary: 修改物业信息
       tags:
       - 后台
-  /api/v1/admin/propertyInfo/{id}/picture:
-    post:
-      consumes:
-      - multipart/form-data
-      parameters:
-      - description: 物业信息ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: 图片
-        in: formData
-        name: image
-        type: file
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: desc
-          schema:
-            $ref: '#/definitions/entity.ResponseData'
-      security:
-      - ApiKeyAuth: []
-      summary: 上传图集图片（单张）
-      tags:
-      - 后台
-  /api/v1/admin/propertyInfo/{pro_id}/picture/{pri_id}:
-    delete:
-      consumes:
-      - application/x-www-form-urlencoded
-      parameters:
-      - description: 物业信息ID
-        in: path
-        name: pro_id
-        required: true
-        type: string
-      - description: 图片ID
-        in: path
-        name: pri_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: desc
-          schema:
-            $ref: '#/definitions/entity.ResponseData'
-      security:
-      - ApiKeyAuth: []
-      summary: 删除图片（单张）
-      tags:
-      - 后台
   /api/v1/admin/propertyInfo/notprotect/{id}:
     post:
       consumes:
@@ -2765,6 +2757,59 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 保护
+      tags:
+      - 后台
+  /api/v1/admin/propertyInfos/{id}/picture:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 物业信息ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 图片
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 上传图集图片（单张）
+      tags:
+      - 后台
+  /api/v1/admin/propertyInfos/{pro_id}/picture/{pri_id}:
+    delete:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: 物业信息ID
+        in: path
+        name: pro_id
+        required: true
+        type: string
+      - description: 图片ID
+        in: path
+        name: pri_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/entity.ResponseData'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除图片（单张）
       tags:
       - 后台
   /api/v1/admin/rentType:
@@ -3549,6 +3594,14 @@ paths:
       - description: 行业ID
         in: query
         name: industry_id
+        type: string
+      - description: 联系人电话
+        in: query
+        name: telephone
+        type: string
+      - description: 联系人姓名
+        in: query
+        name: nickname
         type: string
       - description: 店铺类型ID
         in: query

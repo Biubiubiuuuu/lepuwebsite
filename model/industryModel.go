@@ -32,7 +32,7 @@ func (i *Industry) EditIndustry(args map[string]interface{}) error {
 // 查询行业 by id
 func (i *Industry) QueryIndustryByID() error {
 	db := mysql.GetMysqlDB()
-	return db.First(&i).Error
+	return db.First(&i, i.ID).Error
 }
 
 // 查询行业 by name

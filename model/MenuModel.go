@@ -36,7 +36,7 @@ func QueryMenus() (menus []Menu) {
 // 获取菜单详情
 func (m *Menu) QueryMenuByID() error {
 	db := mysql.GetMysqlDB()
-	return db.First(&m).Error
+	return db.First(&m, m.ID).Error
 }
 
 // 删除菜单，返回受影响行数

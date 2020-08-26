@@ -31,5 +31,5 @@ func QueryReport(pageSize int, page int) (count int, reports []Report) {
 // 查看举报信息详情
 func (r *Report) QueryReportByID() error {
 	db := mysql.GetMysqlDB()
-	return db.First(&r).Error
+	return db.First(&r, r.ID).Error
 }

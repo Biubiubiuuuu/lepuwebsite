@@ -31,5 +31,5 @@ func QueryLeaveMessage(pageSize int, page int) (count int, leaveMessages []Leave
 // 查看留言详情
 func (l *LeaveMessage) QueryLeaveMessageByID() error {
 	db := mysql.GetMysqlDB()
-	return db.First(&l).Error
+	return db.First(&l, l.ID).Error
 }
