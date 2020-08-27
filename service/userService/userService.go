@@ -1,6 +1,7 @@
 package userService
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -220,7 +221,7 @@ func UserStoretransfer(token string, req entity.UserStoretransferRequest) (res e
 		SourceID: user.ID,
 	}
 	if pros := store.QueryPropertyInfoByUserID(); len(pros) > 0 {
-		res.Message = "你已经发布物业信息，请不要重复提交"
+		res.Message = "普通用户只能发布一条信息，有疑问请联系管理员"
 		return
 	}
 	industry := model.Industry{}
@@ -285,6 +286,11 @@ func UserStoretransfer(token string, req entity.UserStoretransferRequest) (res e
 	}
 	if !utilsHelper.CheckTelFormat(req.Telephone) {
 		res.Message = "联系手机格式不正确"
+		return
+	}
+	_, count := model.QueryPropertyInfo(30, 1, map[string]interface{}{"telephone": req.Telephone})
+	if count > 0 {
+		res.Message = fmt.Sprintf("联系人手机号码%v已存在物业信息，请勿重复添加", req.Telephone)
 		return
 	}
 	if len(req.IndustryRanges) == 0 {
@@ -403,6 +409,15 @@ func FindStore(token string, req entity.UserFindStoreRequest) (res entity.Respon
 	}
 	if req.Telephone == "" {
 		res.Message = "联系手机不能为空"
+		return
+	}
+	if !utilsHelper.CheckTelFormat(req.Telephone) {
+		res.Message = "联系手机格式不正确"
+		return
+	}
+	_, count := model.QueryPropertyInfo(30, 1, map[string]interface{}{"telephone": req.Telephone})
+	if count > 0 {
+		res.Message = fmt.Sprintf("联系人手机号码%v已存在物业信息，请勿重复添加", req.Telephone)
 		return
 	}
 	if req.MinRent < 0 || req.MaxArea < 0 || req.MaxRent < 0 || req.MinArea < 0 {

@@ -1696,13 +1696,13 @@ func AddProInfo(token string, req entity.AddPropertyInfoRequest) (res entity.Res
 		res.Message = "联系手机不能为空"
 		return
 	}
-	_, count := model.QueryPropertyInfo(30, 1, map[string]interface{}{"telephone": req.Telephone})
-	if count > 0 {
-		res.Message = "此联系人已存在物业信息，请勿重复添加"
-		return
-	}
 	if !utilsHelper.CheckTelFormat(req.Telephone) {
 		res.Message = "联系手机格式不正确"
+		return
+	}
+	_, count := model.QueryPropertyInfo(30, 1, map[string]interface{}{"telephone": req.Telephone})
+	if count > 0 {
+		res.Message = fmt.Sprintf("联系人手机号码%v已存在物业信息，请勿重复添加", req.Telephone)
 		return
 	}
 	if req.IndustryRanges == "" {
@@ -2054,13 +2054,13 @@ func AddQZQGProInfo(token string, req entity.AddQZQGPropertyInfoRequest) (res en
 		res.Message = "联系手机不能为空"
 		return
 	}
-	_, count := model.QueryPropertyInfo(30, 1, map[string]interface{}{"telephone": req.Telephone})
-	if count > 0 {
-		res.Message = "此联系人已存在物业信息，请勿重复添加"
-		return
-	}
 	if !utilsHelper.CheckTelFormat(req.Telephone) {
 		res.Message = "联系手机格式不正确"
+		return
+	}
+	_, count := model.QueryPropertyInfo(30, 1, map[string]interface{}{"telephone": req.Telephone})
+	if count > 0 {
+		res.Message = fmt.Sprintf("联系人手机号码%v已存在物业信息，请勿重复添加", req.Telephone)
 		return
 	}
 	city := model.City{
